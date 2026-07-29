@@ -1,10 +1,11 @@
 # Supabase Specs
 
-These spec files are used to generate the [reference documentation](https://supabase.com/docs/reference/cli/introduction).
+* == spec files /
+  * generate the [reference documentation](../features/docs/generated)
 
 ## Preparation
 
-To get started, run `make init`. This installs all dependencies.
+* `make init`
 
 ## Usage
 

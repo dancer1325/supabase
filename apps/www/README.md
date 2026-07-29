@@ -1,10 +1,18 @@
-# supabase.com
+# [supabase.com](https://supabase.com/)
 
-## Overview
+* site web
 
-Refer to the [Development Guide](../../DEVELOPERS.md) to learn how to run this site locally.
+## documentation
 
-To get started copy the example env file using `cp .env.local.example .env.local`.
+* [here](app)
+* [alternatives](_alternatives)
+* [blog](_blog)
+* [customer stories](_customers)
+* [events](_events)
+
+## how to run?
+
+* [here](../../DEVELOPERS.md)
 
 ## Best practices
 

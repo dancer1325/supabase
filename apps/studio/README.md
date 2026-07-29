@@ -1,12 +1,19 @@
 # Supabase Studio
 
-A dashboard for managing your self-hosted Supabase project, and used on our [hosted platform](https://supabase.com/dashboard). Built with:
-
-- [Next.js](https://nextjs.org/)
-- [Tailwind](https://tailwindcss.com/)
+* == Supabse dashboard 
+* allows
+  * managing your Supabase project
+* uses
+  * | ANY hosted Supabse approach
+    * [cloud](https://supabase.com/dashboard)
+    * [self-hosted](../docs/content/guides/self-hosting.md)
+* -- based on -- 
+  * [Next.js](https://nextjs.org/)
+  * [Tailwind](https://tailwindcss.com/)
 
 ## What's included
 
+TODO: 
 Studio is designed to work with existing deployments - either the local hosted, docker setup, or our CLI. It is not intended for managing the deployment and administration of projects - that's out of scope.
 
 As such, the features exposed on Studio for existing deployments are limited to those which manage your database:

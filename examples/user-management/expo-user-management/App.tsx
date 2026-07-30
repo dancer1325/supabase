@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from './lib/supabase'
+import { supabaseLocalStorage } from './lib/supabaseLocalStorage'
 import Auth from './components/Auth'
 import Account from './components/Account'
 import { View } from 'react-native'
@@ -9,17 +9,17 @@ export default function App() {
   const [email, setEmail] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    supabase.auth.getClaims().then(({ data: { claims } }) => {
+    supabaseLocalStorage.auth.getClaims().then(({ data: { claims } }) => {
       if (claims) {
         setUserId(claims.sub)
         setEmail(claims.email)
       }
     })
 
-    supabase.auth.onAuthStateChange(async (_event, _session) => {
+    supabaseLocalStorage.auth.onAuthStateChange(async (_event, _session) => {
       const {
         data: { claims },
-      } = await supabase.auth.getClaims()
+      } = await supabaseLocalStorage.auth.getClaims()
       if (claims) {
         setUserId(claims.sub)
         setEmail(claims.email)

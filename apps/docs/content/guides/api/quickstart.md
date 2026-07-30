@@ -5,7 +5,19 @@ breadcrumb: 'API Quickstart'
 hideToc: true
 ---
 
-This guide covers creating a REST route you can query using `cURL` or the browser by creating a database table called `leaderboard` to hold player scores. This creates a corresponding API route `/rest/v1/leaderboard` which can accept `GET`, `POST`, `PATCH`, and `DELETE` requests.
+* goal
+  * create a REST route -- by -- creating a database table / name: `leaderboard`
+  * ways to query
+    * -- via -- curl
+    * | browser
+  * -> create a corresponding API route `/rest/v1/leaderboard` / 
+    * accept 
+      * `GET` requests
+      * `POST` requests
+      * `PATCH` requests
+      * `DELETE` requests
+
+TODO: 
 
 <StepHikeCompact>
 
@@ -14,7 +26,8 @@ This guide covers creating a REST route you can query using `cURL` or the browse
 
     [Create a new project](/dashboard/_) in the Supabase Dashboard.
 
-After your project is ready, create a table in your Supabase database. You can do this with either the [Table Editor](/dashboard/project/_/editor) or the [SQL Editor](/dashboard/project/_/sql).
+After your project is ready, create a table in your Supabase database
+* You can do this with either the [Table Editor](/dashboard/project/_/editor) or the [SQL Editor](/dashboard/project/_/sql).
 
     </StepHikeCompact.Details>
 
@@ -58,7 +71,8 @@ After your project is ready, create a table in your Supabase database. You can d
   <StepHikeCompact.Step step={2}>
     <StepHikeCompact.Details title="Enable Data API access to Anon Role">
 
-    Expose the `leaderboard` table through the Data API so it can be queried over HTTP. A leaderboard is meant to be public, so anonymous clients only need read access.
+    Expose the `leaderboard` table through the Data API so it can be queried over HTTP
+* A leaderboard is meant to be public, so anonymous clients only need read access.
 
     For more control over which tables and functions are exposed, read the [Grant access explicitly guide](/docs/guides/api/securing-your-api#grant-access-explicitly).
 
@@ -96,7 +110,9 @@ After your project is ready, create a table in your Supabase database. You can d
 
     <StepHikeCompact.Details title="Configure RLS">
 
-    Enable Row Level Security (RLS) for this table and create the policies that control who can read and write rows. For a leaderboard, anyone should be able to read scores. Only authenticated users should be able to submit or update them.
+    Enable Row Level Security (RLS) for this table and create the policies that control who can read and write rows
+* For a leaderboard, anyone should be able to read scores
+* Only authenticated users should be able to submit or update them.
 
     </StepHikeCompact.Details>
 
@@ -177,7 +193,8 @@ After your project is ready, create a table in your Supabase database. You can d
   <StepHikeCompact.Step step={6}>
     <StepHikeCompact.Details title="Fetch the data">
 
-    You can find your API URL and Keys in the [**Settings > API Settings**](/dashboard/project/_/settings/api) section of the Dashboard. Query the `leaderboard` table by appending `/rest/v1/leaderboard` to the API URL.
+    You can find your API URL and Keys in the [**Settings > API Settings**](/dashboard/project/_/settings/api) section of the Dashboard
+* Query the `leaderboard` table by appending `/rest/v1/leaderboard` to the API URL.
 
     Copy this block of code, substitute `<PROJECT_REF>` and `<PUBLISHABLE_KEY>`, then run it from a terminal.
 
@@ -212,18 +229,8 @@ curl 'https://<PROJECT_REF>.supabase.co/rest/v1/leaderboard?select=*&order=score
   -H "apikey: <PUBLISHABLE_KEY>" \
 ```
 
-### Client libraries
-
-We provide a number of [Client Libraries](https://github.com/supabase/supabase#client-libraries).
-
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="js"
-  queryGroup="language"
->
-<TabPanel id="js" label="JavaScript">
+### [Client libraries](../../../../../README.md#client-libraries)
+#### JS
 
 ```js
 const { data, error } = await supabase
@@ -232,9 +239,7 @@ const { data, error } = await supabase
   .order('score', { ascending: false })
 ```
 
-</TabPanel>
-<$Show if="sdk:dart">
-<TabPanel id="dart" label="Dart">
+#### Dart
 
 ```dart
 final data = await supabase
@@ -243,10 +248,7 @@ final data = await supabase
   .order('score', ascending: false);
 ```
 
-</TabPanel>
-</$Show>
-<$Show if="sdk:python">
-<TabPanel id="python" label="Python">
+#### Python
 
 ```python
 response = (
@@ -257,10 +259,7 @@ response = (
 )
 ```
 
-</TabPanel>
-</$Show>
-<$Show if="sdk:swift">
-<TabPanel id="swift" label="Swift">
+#### Swift
 
 ```swift
 let response = try await supabase
@@ -268,7 +267,3 @@ let response = try await supabase
   .select()
   .order("score", ascending: false)
 ```
-
-</TabPanel>
-</$Show>
-</Tabs>

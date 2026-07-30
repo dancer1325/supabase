@@ -4,10 +4,29 @@ description: 'The Supabase CLI provides tools to develop your project locally, d
 subtitle: 'Develop locally, deploy to the Supabase Platform, and set up CI/CD workflows'
 ---
 
-The Supabase CLI enables you to run the entire Supabase stack locally, on your machine or in a CI environment. With two commands, you can set up and start a new local project:
+* Supabase CLI
+  * == tool /
+    * enables you to
+      * run the entire Supabase stack 
+        * | your machine, OR
+        * | CI environment
+      * manage hosted projects
+  * `supabase init`
+    * create a NEW LOCAL project
+  * `supabase start`
+    * launch the Supabase services
 
-1. `supabase init` to create a new local project
-2. `supabase start` to launch the Supabase services
+TODO: 
+* It provides a suite of commands for various tasks, including:
+
+- Setting up and managing local development environments
+- Generating TypeScript types for your database schema
+- Handling database migrations
+- Managing environment variables and secrets
+- Deploying your project to the Supabase platform
+
+With the CLI, you can streamline your development workflow, automate repetitive tasks, and maintain consistency across different environments
+
 
 <Admonition type="note" label="Global command vs. project dependency">
 
@@ -24,79 +43,72 @@ The rest of this page writes examples as `supabase <command>`; translate them to
 
 ## Installing the Supabase CLI
 
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="npm"
->
-<TabPanel id="npm" label="npm">
+* ways
+  * -- as -- project dev dependency
+    * == installation | 1! project
+    * ⚠️requirements⚠️
+      * Node.js v20+
+    * steps
 
-Install the CLI as a project dev dependency. This adds it to a single project rather than installing a global command:
+    ```sh
+    # 1. ways
+    # 1.1 -- via -- npm
+    npm install supabase --save-dev
 
-```sh
-npm install supabase --save-dev
-# or: pnpm add -D supabase / yarn add -D supabase / bun add -D supabase
-```
+    # 1.2 -- via -- yarn
+    NODE_OPTIONS=--no-experimental-fetch yarn add supabase --dev
+    
+    # 1.3 -- via -- pnpm
+    # 1.3.1 | pnpm v10-
+    pnpm add supabase --save-dev 
+    # 1.3.1 | pnpm v10+
+    pnpm add supabase --save-dev --allow-build=supabase
+    
+    # 1.4 -- via -- bun
+    bun add supabase --dev
+    
+    # 2. check
+    # 2.1 npm
+    npx supabase --help
+    
+    # 2.2 yarn
+    yarn supabase --help
+    
+    # 2.3 pnpm
+    pnpm supabase --help
+    
+    # 2.4 bun
+    bunx supabase --help
+    
+    ```
 
-Pin the version in `package.json` so your whole team uses the same CLI version. Then run every command through your package runner:
+  * globally
+    * | macOS
 
-```sh
-npx supabase --help
-# or: pnpm supabase / yarn supabase / bunx supabase
-```
+      ```sh
+      brew install supabase/tap/supabase
+      ```
+    * | Windows"
 
-<Admonition type="caution">
+      ```powershell
+      scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+      scoop install supabase
+      ```
+    * | Linux
 
-The Supabase CLI requires **Node.js 20 or later** when run via `npx` or `npm`. Older Node.js versions, such as 16, are not supported and fail to start the CLI.
-
-</Admonition>
-
-</TabPanel>
-<TabPanel id="macos" label="macOS">
-
-Install the CLI with [Homebrew](https://brew.sh):
-
-```sh
-brew install supabase/tap/supabase
-```
-
-</TabPanel>
-<TabPanel id="windows" label="Windows">
-
-Install the CLI with [Scoop](https://scoop.sh):
-
-```powershell
-scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-scoop install supabase
-```
-
-</TabPanel>
-<TabPanel id="linux" label="Linux">
-
-The CLI is available via [Homebrew](https://brew.sh) and Linux packages.
-
-#### Homebrew
-
-```sh
-brew install supabase/tap/supabase
-```
-
-#### Linux packages
-
-Linux packages are provided in [Releases](https://github.com/supabase/cli/releases).
-To install, download the `.apk`/`.deb`/`.rpm` file depending on your package manager
-and run one of the following:
-
-- `sudo apk add --allow-untrusted <...>.apk`
-- `sudo dpkg -i <...>.deb`
-- `sudo rpm -i <...>.rpm`
-
-</TabPanel>
-</Tabs>
+      ```
+      # 1. ways
+      # 1.1
+      sudo apk add --allow-untrusted <...>.apk
+      # 1.2
+      sudo dpkg -i <...>.deb
+      # 1.3
+      sudo rpm -i <...>.rpm
+      ```
 
 ## Beta channel
 
+TODO: 
 Pre-release CLI builds ship from the development branch (`X.Y.Z-beta.N` versions). Use the npm `beta` dist-tag, or install `supabase-beta` via Homebrew / Scoop (separate packages from stable).
 
 <Tabs

@@ -13,15 +13,18 @@ toc_depth: 3
 video: https://www.youtube.com/v/4t_63HT3rZY
 ---
 
-Supabase raised $80M in May, bringing our total funding to $116M. This comes one year after our Series A, and so we're revisiting the plans
-we outlined in our [Series A blog post](https://supabase.com/blog/supabase-series-a) tk hold ourselves accountable for the promises we made.
+* Supabase 
+  * raised
+    * | May, $80M
+      * == (TOTAL) $116M
 
 ## Where we've been
 
-We shared a few metrics in our Series A post. Since then we've grown a lot.
+* [Series A](2021-10-28-supabase-series-a.md)
 
 ### Database growth
 
+TODO: 
 At Series A we'd launched over 50,000 PostgreSQL databases (on our hosted platform).
 
 ![Series A databases](/images/blog/series-b/databases-2021.png)

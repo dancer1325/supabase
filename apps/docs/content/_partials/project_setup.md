@@ -11,59 +11,39 @@
 
 ### Create a project
 
-1. | [Supabase Dashboard](dash),
+1. | Supabase Dashboard,
    * create a NEW project
    * Enter your project details
    * -> NEW database is launched
 
 ### Set up the database schema
 
-TODO:
+* ways
+  * [-- via -- "User Management Starter" quickstart | SQL Editor](#---via----user-management-starter-quickstart--sql-editor)
+  * [-- via -- running the SQL ](#---via----running-the-sql)
 
-Now set up the database schema. You can use the "User Management Starter" quickstart in the SQL Editor, or you can copy/paste the SQL from below and run it.
+#### -- via -- "User Management Starter" quickstart | SQL Editor
 
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="dashboard"
-  queryGroup="database-method"
->
-<TabPanel id="dashboard" label="Dashboard">
+* steps
+  1. | Dashboard > choose your project > SQL Editor
+  2. Examples > User Management Starter** under the **Community > Quickstarts** tab.
+  3. Click **Run**
+  4. [pull the database schema down -- to -- your local project](../guides/local-development/database-migrations.md#link-your-project) 
 
-1. Go to the [SQL Editor](/dashboard/project/_/sql) page in the Dashboard.
-2. Click **User Management Starter** under the **Community > Quickstarts** tab.
-3. Click **Run**.
+    ```bash
+    supabase link --project-ref <project-id>
+    # You can get <project-id> from your project's dashboard URL: https://supabase.com/dashboard/project/<project-id>
+    supabase db pull
+    ```
 
-<Admonition type="note">
+#### -- via -- running the SQL
 
-You can pull the database schema down to your local project by running the `db pull` command. Read the [local development docs](/docs/guides/cli/local-development#link-your-project) for detailed instructions.
-
-```bash
-supabase link --project-ref <project-id>
-# You can get <project-id> from your project's dashboard URL: https://supabase.com/dashboard/project/<project-id>
-supabase db pull
-```
-
-</Admonition>
-
-</TabPanel>
-<TabPanel id="sql" label="SQL">
-
-<Admonition type="note">
-
-When working locally you can run the following command to create a new migration file:
-
-</Admonition>
+* use cases
+  * locally
 
 ```bash
 supabase migration new user_management_starter
 ```
 
-<$Partial path="user_management_quickstart_sql_template.mdx" />
-
-</TabPanel>
-</Tabs>
-
-<$Partial path="api_settings.mdx" variables={{ "framework": "{{ .framework }}", "tab": "{{ .tab }}" }}
-/>
+* [user_management_quickstart_sql_template.md](user_management_quickstart_sql_template.md)
+* [API settings](api_settings.md)

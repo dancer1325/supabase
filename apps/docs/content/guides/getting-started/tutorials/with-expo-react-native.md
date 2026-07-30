@@ -14,167 +14,53 @@ tocVideo: 'AE7dKIKMJy4'
 
 TODO: move ALL to the example?
 
-## Building the app
-
-Start by building the React Native app from scratch.
+## how has it been created?
 
 ### Initialize a React Native app
-
-Use [`expo`](https://docs.expo.dev/get-started/create-a-new-app/) to initialize
-an app called `expo-user-management`:
 
 ```bash
 npx create-expo-app -t expo-template-blank-typescript expo-user-management
 
 cd expo-user-management
-```
 
-Then install the additional dependencies:
-
-```bash
 npx expo install @supabase/supabase-js @react-native-async-storage/async-storage
 ```
 
-Now create a helper file to initialize the Supabase client using the API URL and the key that you copied [earlier](#get-api-details).
+* ways to store user session
+  * [LocalStorage](lib/supabaseLocalStorage.ts)
+    * initialize the Supabase client -- by using -- API URL + API key
+      * safe to expose -- thanks to -- enable [Row Level Security](../../database/postgres/row-level-security) | your Database  
+  * [SecureStore](lib/supabaseLargeSecureStore.ts)
+    * 's goal
+      * encrypt the user's session information
+    * 's approach
+      * use 
+        * [aes-js](https://github.com/ricmoo/aes-js)
+          * == JS-only implementation of AES  encryption algorithm / CTR mode
+        * [react-native-get-random-values](https://www.npmjs.com/package/react-native-get-random-values)
+          * generate 256-bit encryption key
+      * store the 
+        * encryption key | [Expo SecureStore](https://docs.expo.dev/versions/latest/sdk/securestore)
+          * choose the [`SecureStoreOptions`](https://docs.expo.dev/versions/latest/sdk/securestore/#securestoreoptions) -- based on -- your app's needs
+        * encrypted value | AsyncStorage
+    * requirements
 
-These variables are safe to expose in your Expo app since Supabase has
-[Row Level Security](/docs/guides/database/postgres/row-level-security) enabled on your Database.
-
-<Tabs
-  scrollable
-  size="large"
-  type="underlined"
-  defaultActiveId="local-storage"
-  queryGroup="auth-store"
->
-  <TabPanel id="local-storage" label="LocalStorage">
-
-    <$CodeSample
-    path="/user-management/expo-user-management/lib/supabase.ts"
-    lines={[[1, -1]]}
-    meta="name=lib/supabase.ts"
-    />
-
-  </TabPanel>
-  <TabPanel id="secure-store" label="SecureStore">
-
-    If you wish to encrypt the user's session information, you can use `aes-js` and store the encryption key in [Expo SecureStore](https://docs.expo.dev/versions/latest/sdk/securestore). The [`aes-js` library](https://github.com/ricmoo/aes-js) is a reputable JavaScript-only implementation of the AES encryption algorithm in CTR mode. A new 256-bit encryption key is generated using the `react-native-get-random-values` library. This key is stored inside Expo's SecureStore, while the value is encrypted and placed inside AsyncStorage.
-
-    Make sure that:
-
-    - You keep the `expo-secure-storage`, `aes-js` and `react-native-get-random-values` libraries up-to-date.
-    - Choose the correct [`SecureStoreOptions`](https://docs.expo.dev/versions/latest/sdk/securestore/#securestoreoptions) for your app's needs. E.g. [`SecureStore.WHEN_UNLOCKED`](https://docs.expo.dev/versions/latest/sdk/securestore/#securestorewhen_unlocked) regulates when the data can be accessed.
-    - Carefully consider optimizations or other modifications to the above example, as those can lead to introducing subtle security vulnerabilities.
-
-    Install the necessary dependencies in the root of your Expo project:
-
-    ```bash
-    npm install @supabase/supabase-js
-    npm install @react-native-async-storage/async-storage
-    npm install aes-js react-native-get-random-values
-    npm install --save-dev @types/aes-js
-    npx expo install expo-secure-store
-    ```
-
-    Implement a `LargeSecureStore` class to pass in as Auth storage for the `supabase-js` client:
-
-    <$CodeTabs>
-
-    ```ts name=lib/supabase.ts
-    import { createClient } from "@supabase/supabase-js";
-    import AsyncStorage from "@react-native-async-storage/async-storage";
-    import * as SecureStore from 'expo-secure-store';
-    import * as aesjs from 'aes-js';
-    import 'react-native-get-random-values';
-
-    // As Expo's SecureStore does not support values larger than 2048
-    // bytes, an AES-256 key is generated and stored in SecureStore, while
-    // it is used to encrypt/decrypt values stored in AsyncStorage.
-    class LargeSecureStore {
-      private async _encrypt(key: string, value: string) {
-        const encryptionKey = crypto.getRandomValues(new Uint8Array(256 / 8));
-
-        const cipher = new aesjs.ModeOfOperation.ctr(encryptionKey, new aesjs.Counter(1));
-        const encryptedBytes = cipher.encrypt(aesjs.utils.utf8.toBytes(value));
-
-        await SecureStore.setItemAsync(key, aesjs.utils.hex.fromBytes(encryptionKey));
-
-        return aesjs.utils.hex.fromBytes(encryptedBytes);
-      }
-
-      private async _decrypt(key: string, value: string) {
-        const encryptionKeyHex = await SecureStore.getItemAsync(key);
-        if (!encryptionKeyHex) {
-          return encryptionKeyHex;
-        }
-
-        const cipher = new aesjs.ModeOfOperation.ctr(aesjs.utils.hex.toBytes(encryptionKeyHex), new aesjs.Counter(1));
-        const decryptedBytes = cipher.decrypt(aesjs.utils.hex.toBytes(value));
-
-        return aesjs.utils.utf8.fromBytes(decryptedBytes);
-      }
-
-      async getItem(key: string) {
-        const encrypted = await AsyncStorage.getItem(key);
-        if (!encrypted) { return encrypted; }
-
-        return await this._decrypt(key, encrypted);
-      }
-
-      async removeItem(key: string) {
-        await AsyncStorage.removeItem(key);
-        await SecureStore.deleteItemAsync(key);
-      }
-
-      async setItem(key: string, value: string) {
-        const encrypted = await this._encrypt(key, value);
-
-        await AsyncStorage.setItem(key, encrypted);
-      }
-    }
-
-    const supabaseUrl = YOUR_REACT_NATIVE_SUPABASE_URL
-    const supabasePublishableKey = YOUR_REACT_NATIVE_SUPABASE_PUBLISHABLE_KEY
-
-    export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
-      auth: {
-        storage: new LargeSecureStore(),
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: false,
-      },
-    });
-    ```
-
-    </$CodeTabs>
-
-  </TabPanel>
-</Tabs>
-
-### App styling
-
-You can use the following `StyleSheet` component in `styles/styles.ts` to add style to the app:
-
-<$CodeSample
-path="/user-management/expo-user-management/styles/styles.ts"
-lines={[[1, -1]]}
-meta="name=styles/styles.ts"
-/>
+      ```bash
+      npm install @supabase/supabase-js
+      npm install @react-native-async-storage/async-storage
+      npm install aes-js react-native-get-random-values
+      npm install --save-dev @types/aes-js
+      npx expo install expo-secure-store
+      ```
 
 ### Set up a login component
 
-Set up a React Native component to manage logins and sign ups.
-Users should be able to sign in with their email and password.
-
-<$CodeSample
-path="/user-management/expo-user-management/components/Auth.tsx"
-lines={[[1, -1]]}
-meta="name=components/Auth.tsx"
-/>
+TODO: 
 
 <Admonition type="note">
 
-By default Supabase Auth requires email verification before a session is created for the users. To support email verification you need to [implement deep link handling](/docs/guides/auth/native-mobile-deep-linking?platform=react-native)!
+By default Supabase Auth requires email verification before a session is created for the users
+To support email verification you need to [implement deep link handling](/docs/guides/auth/native-mobile-deep-linking?platform=react-native)!
 
 While testing, you can disable email confirmation in your [project's email auth provider settings](/dashboard/project/_/auth/providers).
 

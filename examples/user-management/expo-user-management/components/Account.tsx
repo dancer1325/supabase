@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabaseLocalStorage } from '../lib/supabaseLocalStorage'
 import { View, Alert, TextInput, Text, TouchableOpacity } from 'react-native'
 import Avatar from './Avatar'
 import { appStyles } from '../styles/styles'
@@ -19,7 +19,7 @@ export default function Account({ userId, email }: { userId: string; email?: str
     try {
       setLoading(true)
 
-      let { data, error, status } = await supabase
+      let { data, error, status } = await supabaseLocalStorage
         .from('profiles')
         .select(`username, website, avatar_url`)
         .eq('id', userId)
@@ -62,7 +62,7 @@ export default function Account({ userId, email }: { userId: string; email?: str
         updated_at: new Date(),
       }
 
-      let { error } = await supabase.from('profiles').upsert(updates)
+      let { error } = await supabaseLocalStorage.from('profiles').upsert(updates)
 
       if (error) {
         throw error
@@ -123,7 +123,7 @@ export default function Account({ userId, email }: { userId: string; email?: str
       </View>
 
       <View style={styles.verticallySpaced}>
-        <TouchableOpacity style={styles.button} onPress={() => supabase.auth.signOut()}>
+        <TouchableOpacity style={styles.button} onPress={() => supabaseLocalStorage.auth.signOut()}>
           <Text style={styles.buttonText}>Sign Out</Text>
         </TouchableOpacity>
       </View>

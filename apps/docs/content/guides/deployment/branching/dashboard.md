@@ -3,16 +3,22 @@ title: 'Branching via the dashboard'
 subtitle: 'Create, manage, review, and merge branches directly in the dashboard'
 ---
 
-You can create, manage, review, and merge Supabase branches directly via the dashboard. This is useful for quick testing, prototyping, or when you prefer to work in a no-code way. You can also connect a Supabase branch to a GitHub branch at a later time if needed.
-
-<Admonition type="note" title="Public Alpha">
-
-Branch management via the dashboard is currently in public alpha. Features and functionality may change.
-
-</Admonition>
+* Branch management -- via -- Supabse dashboard
+  * == ⚠️public alpha⚠️ feature
+    * allows, about Supabase branches,
+      * create
+      * manage
+      * review
+      * merge
+      * being connected -- to -- GitHub branch 
+    * use cases
+      * quick testing
+      * prototyping
+      * NO-code approach
 
 ## How Branching works
 
+TODO: 
 You can do the following directly from the Supabase dashboard:
 
 - Create preview branches
@@ -22,7 +28,8 @@ You can do the following directly from the Supabase dashboard:
 
 ## Enable branch management via the dashboard
 
-This functionality is currently in beta and requires opting in. To opt in you must enable the feature preview:
+This functionality is currently in beta and requires opting in
+* To opt in you must enable the feature preview:
 
 1. Open the user menu by clicking on your user icon in the top right.
 1. Select **Branching via dashboard**.

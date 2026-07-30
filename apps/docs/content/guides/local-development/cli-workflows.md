@@ -5,18 +5,30 @@ description: 'Set up and run your day-to-day local development workflow with the
 subtitle: 'Set up and run your day-to-day local development workflow with the Supabase CLI.'
 ---
 
-This guide walks through two common starting points for local development with the Supabase CLI, and shows how they converge into the same daily workflow. By the end, you'll have a `./supabase` directory in your repo that anyone can clone to recreate the full project, locally or on a fresh remote instance.
-
-There are two starting points, both leading to the same place: database schema and migrations tracked in version control, with seed data for local development.
-
-- **[Move an existing project to local development](#move-an-existing-project-to-local-development)**: you have a project on the Supabase platform and want to bring it into a proper local development workflow.
-- **[Start a new project from scratch](#start-a-new-project-from-scratch)**: you're building locally and will eventually push to a remote instance.
+* goal
+  * 2 COMMON starting points for local development -- via -- Supabase CLI /
+    * are
+      * [move an EXISTING project -- to -- local development](#move-an-existing-project-to-local-development)
+      * [start a NEW project -- from -- scratch](#start-a-new-project-from-scratch)
+    * at the end
+      * SAME daily workflow
+        * database schema
+        * migration -- for -- local development
+      * | your repo, "./supabase/" /
+        * enable: recreate the full project
+          * locally OR
+          * | fresh remote instance
 
 ## Before you begin
 
-You need the Supabase CLI installed and a Docker-compatible runtime running. If you haven't set these up yet, see [Install and run the CLI](/docs/guides/local-development/cli/getting-started) for installation across macOS, Windows, and Linux, and for the details of what `supabase start` brings up and how to access each service.
+* [install & run Supabase CLI](cli/getting-started) 
+* Docker-compatible runtime
 
-Keep in mind that **the local stack is for development only**. It is not hardened for production use and must never be exposed to external traffic. It has no TLS, no rate limiting, and default credentials. Use it to develop and test, then deploy to the [Supabase Platform](https://supabase.com) or a proper self-hosted setup for anything beyond that.
+TODO: 
+Keep in mind that **the local stack is for development only**
+* It is not hardened for production use and must never be exposed to external traffic
+* It has no TLS, no rate limiting, and default credentials
+* Use it to develop and test, then deploy to the [Supabase Platform](https://supabase.com) or a proper self-hosted setup for anything beyond that.
 
 <Admonition type="note" label="`supabase` vs. `npx supabase`">
 
@@ -57,7 +69,9 @@ Many database commands accept `--local` and `--linked` flags to choose what they
 
 ## Move an existing project to local development
 
-You've built a project on the Supabase platform, with tables created via the Dashboard, SQL editor, or client libraries. Now you want a local dev setup with everything in version control.
+you have a project on the Supabase platform and want to bring it into a proper local development workflow.
+You've built a project on the Supabase platform, with tables created via the Dashboard, SQL editor, or client libraries
+* Now you want a local dev setup with everything in version control.
 
 ### Step 1: Initialize
 
@@ -67,7 +81,9 @@ In your project root:
 supabase init
 ```
 
-This creates `./supabase/config.toml`. If you already have a project directory with application code, run this at the root. The `supabase/` directory will sit alongside your app code.
+This creates `./supabase/config.toml`
+* If you already have a project directory with application code, run this at the root
+* The `supabase/` directory will sit alongside your app code.
 
 ### Step 2: Authenticate
 
@@ -75,7 +91,8 @@ This creates `./supabase/config.toml`. If you already have a project directory w
 supabase login
 ```
 
-Opens a browser to generate an access token. The token is stored locally and used for all subsequent CLI commands that interact with the platform.
+Opens a browser to generate an access token
+* The token is stored locally and used for all subsequent CLI commands that interact with the platform.
 
 ### Step 3: Link to your remote project
 
@@ -85,7 +102,8 @@ supabase link --project-ref <project-id>
 
 Find your project ID in the Supabase Dashboard URL: `https://supabase.com/dashboard/project/<project-id>`.
 
-This tells the CLI which remote project to connect to for `db pull`, `db push`, and other remote operations. You'll be prompted for the database password, which is the password set when you created the project.
+This tells the CLI which remote project to connect to for `db pull`, `db push`, and other remote operations
+* You'll be prompted for the database password, which is the password set when you created the project.
 
 ### Step 4: Pull the remote schema
 
@@ -99,11 +117,16 @@ This connects to your remote database, dumps the entire schema, and saves it as 
 supabase/migrations/<timestamp>_remote_schema.sql
 ```
 
-This initial migration is your baseline. It represents the current state of your database, and all future changes build on top of it. `db pull` also records this migration as already applied in the remote migration history (the `supabase_migrations.schema_migrations` table), so a later `db push` won't try to reapply it.
+This initial migration is your baseline
+* It represents the current state of your database, and all future changes build on top of it
+* `db pull` also records this migration as already applied in the remote migration history (the `supabase_migrations.schema_migrations` table), so a later `db push` won't try to reapply it.
 
 <Admonition type="caution" label="Review the generated migration">
 
-`db pull` diffs your remote database against the CLI's default local stack, so the generated file can include statements you didn't expect. A common example is `DROP EXTENSION pg_net;`, emitted when your remote project has an extension disabled that the local stack enables by default. These statements apply silently on `db reset` and change your local schema, so read the file before committing it. See [Cleaning up generated migrations](#cleaning-up-generated-migrations) for what to look for.
+`db pull` diffs your remote database against the CLI's default local stack, so the generated file can include statements you didn't expect
+* A common example is `DROP EXTENSION pg_net;`, emitted when your remote project has an extension disabled that the local stack enables by default
+* These statements apply silently on `db reset` and change your local schema, so read the file before committing it
+* See [Cleaning up generated migrations](#cleaning-up-generated-migrations) for what to look for.
 
 </Admonition>
 
@@ -132,13 +155,16 @@ supabase db dump --data-only --linked > supabase/seed.sql
 
 <Admonition type="caution">
 
-Review and clean up the dump before committing. Remove production user data, secrets, personal information, and anything sensitive. Keep only representative test data that a developer needs to work with the project.
+Review and clean up the dump before committing
+* Remove production user data, secrets, personal information, and anything sensitive
+* Keep only representative test data that a developer needs to work with the project.
 
 </Admonition>
 
 **Option B: Write seed data by hand** (recommended for most projects):
 
-Create `supabase/seed.sql` with INSERT statements that set up a useful local development state: a few test users, sample data, and so on. This is often better than dumping production data because you control exactly what's in it.
+Create `supabase/seed.sql` with INSERT statements that set up a useful local development state: a few test users, sample data, and so on
+* This is often better than dumping production data because you control exactly what's in it.
 
 For more on organizing seed files, glob patterns, and generating realistic data, see [Seeding your database](/docs/guides/local-development/seeding-your-database).
 
@@ -149,7 +175,9 @@ supabase start
 supabase db reset
 ```
 
-`db reset` destroys the local database and recreates it from scratch: it applies all migrations in order, then runs `seed.sql`. If this succeeds, your setup is reproducible. Anyone who clones the repo can do the same.
+`db reset` destroys the local database and recreates it from scratch: it applies all migrations in order, then runs `seed.sql`
+* If this succeeds, your setup is reproducible
+* Anyone who clones the repo can do the same.
 
 ### Step 7: Commit
 
@@ -162,13 +190,19 @@ Your project now has a fully reproducible local development environment.
 
 <Admonition type="note" label="What about declarative schemas?">
 
-For an existing project, the pulled migration already serves as your schema baseline. You don't need to also create a `schemas/` directory, because that would mean maintaining two representations of the same schema. If you want to adopt declarative schemas later, see [Declarative database schemas](/docs/guides/local-development/declarative-database-schemas). For day-to-day changes going forward, see [The daily workflow](#the-daily-workflow) below.
+For an existing project, the pulled migration already serves as your schema baseline
+* You don't need to also create a `schemas/` directory, because that would mean maintaining two representations of the same schema
+* If you want to adopt declarative schemas later, see [Declarative database schemas](/docs/guides/local-development/declarative-database-schemas)
+* For day-to-day changes going forward, see [The daily workflow](#the-daily-workflow) below.
 
 </Admonition>
 
 ## Start a new project from scratch
 
-No remote project yet. You're building from scratch and want to do it right from the start.
+No remote project yet
+* You're building from scratch and want to do it right from the start.
+
+you're building locally and will eventually push to a remote instance.
 
 ### Step 1: Initialize
 
@@ -182,7 +216,10 @@ supabase init
 supabase start
 ```
 
-On first run, Docker images are pulled, which takes a few minutes. Subsequent starts are fast. Once running, the CLI outputs local service URLs and credentials, including the Studio URL for a local instance of the Dashboard. See [Install and run the CLI](/docs/guides/local-development/cli/getting-started#access-your-projects-services) for the full output and how to reach each service.
+On first run, Docker images are pulled, which takes a few minutes
+* Subsequent starts are fast
+* Once running, the CLI outputs local service URLs and credentials, including the Studio URL for a local instance of the Dashboard
+* See [Install and run the CLI](/docs/guides/local-development/cli/getting-started#access-your-projects-services) for the full output and how to reach each service.
 
 ### Step 3: Create your schema
 
@@ -218,7 +255,8 @@ Then generate a migration from it:
 supabase db diff -f initial-schema
 ```
 
-This compares your declared schema against the current (empty) database and generates a migration file in `supabase/migrations/`. For the full declarative workflow, including managing views and functions, ordering schema files, and known caveats, see [Declarative database schemas](/docs/guides/local-development/declarative-database-schemas).
+This compares your declared schema against the current (empty) database and generates a migration file in `supabase/migrations/`
+* For the full declarative workflow, including managing views and functions, ordering schema files, and known caveats, see [Declarative database schemas](/docs/guides/local-development/declarative-database-schemas).
 
 **Option B: Write the migration directly**
 
@@ -226,7 +264,8 @@ This compares your declared schema against the current (empty) database and gene
 supabase migration new initial-schema
 ```
 
-This creates an empty file at `supabase/migrations/<timestamp>_initial-schema.sql`. Write your SQL in it, then apply:
+This creates an empty file at `supabase/migrations/<timestamp>_initial-schema.sql`
+* Write your SQL in it, then apply:
 
 ```bash
 supabase db reset

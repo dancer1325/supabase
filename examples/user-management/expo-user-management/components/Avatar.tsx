@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabaseLocalStorage } from '../lib/supabaseLocalStorage'
 import { View, Alert, Image, Text, TouchableOpacity } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { appStyles } from '../styles/styles'
@@ -22,7 +22,7 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
 
   async function downloadImage(path: string) {
     try {
-      const { data, error } = await supabase.storage.from('avatars').download(path)
+      const { data, error } = await supabaseLocalStorage.storage.from('avatars').download(path)
 
       if (error) {
         throw error
@@ -66,7 +66,7 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
 
       const fileExt = image.uri?.split('.').pop()?.toLowerCase() ?? 'jpeg'
       const path = `${Date.now()}.${fileExt}`
-      const { data, error: uploadError } = await supabase.storage
+      const { data, error: uploadError } = await supabaseLocalStorage.storage
         .from('avatars')
         .upload(path, arraybuffer, {
           contentType: image.mimeType ?? 'image/jpeg',

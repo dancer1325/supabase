@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { supabase } from '../lib/supabase'
+import { supabaseLocalStorage } from '../lib/supabaseLocalStorage'
 import { appStyles } from '../styles/styles'
 
 export default function Auth() {
@@ -11,7 +11,7 @@ export default function Auth() {
 
   async function signInWithEmail() {
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabaseLocalStorage.auth.signInWithPassword({
       email: email,
       password: password,
     })
@@ -22,7 +22,7 @@ export default function Auth() {
 
   async function signUpWithEmail() {
     setLoading(true)
-    const { error } = await supabase.auth.signUp({
+    const { error } = await supabaseLocalStorage.auth.signUp({
       email: email,
       password: password,
     })

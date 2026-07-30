@@ -1,12 +1,14 @@
 ### Get API details
 
-To interact with data in database tables, you use the client libraries that wrap [the auto-generated Data API endpoints](/docs/guides/api), authenticating using the Project URL and key from [the project **Connect** dialog](/dashboard/project/\_?showConnect=true&connectTab={{ .tab }}&framework={{ .framework }}).
+* client libraries
+  * allows
+    * interact -- with -- data | database tables
+  * wrap [the auto-generated Data API endpoints](../guides/api) 
 
-<ProjectConfigVariables variable="url" />
-<ProjectConfigVariables variable="publishable" />
+* steps
+  * | Supabase dashboard > choose a project > choose a branch > Connect > Framework (Use a client library)
+    * Framework: choose your framework >
+      * Project URL
+      * Publishable key
 
-<Admonition type="tip">
-
-[Read the API keys docs](/docs/guides/getting-started/api-keys) for a full explanation of all key types, their uses, and where to find them.
-
-</Admonition>
+* [API keys docs](../guides/getting-started/api-keys)

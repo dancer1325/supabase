@@ -15,12 +15,14 @@
         * [REST](apps/docs/content/guides/api/quickstart.md)
         * [GraphQL](apps/docs/content/guides/database/extensions/pg_graphql.md)
         * [Realtime subscriptions](apps/docs/content/guides/realtime/concepts.md)
-      * Functions.
+      * Functions
         * [Database Functions](apps/docs/content/guides/database/functions.md)
         * [Edge Functions](apps/docs/content/guides/functions/quickstart.md)
       * [File Storage](apps/docs/content/guides/storage/quickstart.md)
       * [AI + Vector/Embeddings Toolkit](apps/docs/content/guides/ai/concepts.md)
       * [Dashboard](apps/studio)
+    * is
+      * open source
 
 ## Documentation
 

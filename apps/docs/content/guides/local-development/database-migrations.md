@@ -7,30 +7,23 @@ video: 'https://www.youtube-nocookie.com/v/vyHyYpvjaks'
 tocVideo: 'vyHyYpvjaks'
 ---
 
-Supabase is a flexible platform that lets you decide how you want to build your projects. You can use the Dashboard directly to get up and running, or use a proper local setup. We suggest you work locally and deploy your changes to a linked project on the [Supabase Platform](https://app.supabase.io/).
+* goal
+  * database migrations
 
-Develop locally using the CLI to run a local Supabase stack. You can use the integrated Studio Dashboard to make changes, then capture your changes in schema migration files, which can be saved in version control.
-
-Alternatively, if you're comfortable with migration files and SQL, you can write your own migrations and push them to the local database for testing before sharing your changes.
-
-<Admonition type="tip" label="Looking for the full end-to-end workflow?">
-
-This page is a focused tutorial on migrations. If you want to move an existing platform project to local development, or set up a reproducible project from scratch and take it all the way to a remote deploy, see the [Local development workflow](/docs/guides/local-development/cli-workflows) guide. It covers both starting points, the daily development loop, pushing to production, cleaning up generated migrations, and troubleshooting.
-
-</Admonition>
+* ways to manage migrations locally
+  * make changes | integrated Studio Dashboard + capture your changes | schema migration files
+    * schema migration files
+      * can be versioned
+  * write your OWN migration files & SQL + push them | local database
 
 ## Database migrations
 
-Database changes are managed through "migrations." Database migrations are a common way of tracking changes to your database over time.
+* Database migrations
+  * allows
+    * tracking database changes | time 
+  * [video](https://www.youtube-nocookie.com/embed/Kx5nHBmIxyQ)
+    * TODO:
 
-<div className="video-container">
-  <iframe
-    src="https://www.youtube-nocookie.com/embed/Kx5nHBmIxyQ"
-    frameBorder="1"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowFullScreen
-  ></iframe>
-</div>
 
 For this guide, we'll create a table called `employees` and see how we can make changes to it.
 

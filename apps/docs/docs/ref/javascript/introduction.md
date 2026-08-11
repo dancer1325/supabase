@@ -4,8 +4,17 @@ title: Introduction
 hideTitle: true
 ---
 
-This reference documents every object and method available in Supabase's isomorphic JavaScript library, `supabase-js`. You can use `supabase-js` to interact with your Postgres database, listen to database changes, invoke Deno Edge Functions, build login and user management functionality, and manage large files.
+* goal
+  * every object + method / AVAILABLE | `supabase-js`
 
-To convert SQL queries to `supabase-js` calls, use the [SQL to REST API translator](/docs/guides/api/sql-to-rest).
-
-Using `supabase-js` on the server? See [which package to use](/docs/guides/auth/choosing-a-server-package) to decide between `supabase-js`, `@supabase/ssr`, and `@supabase/server`.
+* `supabase-js`
+  * == Supabase's isomorphic JS library 
+  * uses
+    * interact with your Postgres database
+    * listen to database changes
+    * invoke Deno Edge Functions
+    * build login + user management functionality
+    * manage large files
+  * if you want to 
+    * convert SQL queries -- to -- `supabase-js` calls -> use [SQL to REST API translator](../../../content/guides/api/sql-to-rest)
+    * use `supabase-js` | server -> [how to choose the package / use](../../../content/guides/auth/choosing-a-server-package)

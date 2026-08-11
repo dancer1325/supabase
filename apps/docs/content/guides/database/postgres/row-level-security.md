@@ -5,67 +5,68 @@ description: 'Secure your data using Postgres Row Level Security.'
 subtitle: 'Secure your data using Postgres Row Level Security.'
 ---
 
-When you need granular authorization rules, nothing beats Postgres's [Row Level Security (RLS)](https://www.postgresql.org/docs/current/ddl-rowsecurity.html).
+* Postgres's [Row Level Security (RLS)](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
+  * == Postgres primitive
+  * allow
+    * granular authorization rules
+      * == write complex SQL rules / fit your unique business needs
+  * provide
+    * "[defense in depth](<https://en.wikipedia.org/wiki/Defense_in_depth_(computing)>)" / protect your data -- from -- malicious actors
+      * even | access -- through -- third-party tooling
 
-## Row Level Security in Supabase
+## Row Level Security | Supabase
 
-<Admonition type="danger">
+* requirements
+  * ⚠️| ANY tables / stored | exposed schema, enable RLS⚠️ 
+    * default exposed schema: `public` schema
 
-Supabase allows convenient and secure data access from the browser, as long as you enable RLS.
+* RLS
+  * enable
+    * default,
+      * create the tables -- through -- Supadabase Dashboard > Table Editor
+    * if you want to enable RLS yourself
 
-RLS _must_ always be enabled on any tables stored in an exposed schema. By default, this is the `public` schema.
+      ```sql
+      alter table <schema_name>.<table_name>
+      enable row level security;
+      ```
 
-RLS is enabled by default on tables created with the Table Editor in the dashboard. If you create one in raw SQL or with the SQL editor, remember to enable RLS yourself and grant only the permissions each Postgres role needs.
-
-```sql
-GRANT SELECT ON <schema_name>.<table_name> TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON <schema_name>.<table_name> TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON <schema_name>.<table_name> TO service_role;
-
-alter table <schema_name>.<table_name>
-enable row level security;
-```
-
-</Admonition>
-
-RLS is incredibly powerful and flexible, allowing you to write complex SQL rules that fit your unique business needs. RLS can be combined with [Supabase Auth](/docs/guides/auth) for end-to-end user security from the browser to the database.
-
-RLS is a Postgres primitive and can provide "[defense in depth](<https://en.wikipedia.org/wiki/Defense_in_depth_(computing)>)" to protect your data from malicious actors even when accessed through third-party tooling.
+  * if it's enabled & you want to access data -- , through publishable key, to -- | [Supabase API](../../api) -> you need to create policies
+  * \+ [Supabase Auth](../../auth) == E2E user security (browser -- to the -- database)
+    * == | browser, you can access the data
+      * conveniently
+      * securely
 
 ## Policies
 
-[Policies](https://www.postgresql.org/docs/current/sql-createpolicy.html) are Postgres's rule engine. Policies are easy to understand once you get the hang of them. Each policy is attached to a table, and the policy is executed every time a table is accessed.
+* [Policies](https://www.postgresql.org/docs/current/sql-createpolicy.html) 
+  * == Postgres's rule engine
+    * are attached -- to -- a table
+    * executed / EACH access to a table
+  * == add a `WHERE` clause / EACH query
+    * _Example:_
 
-You can just think of them as adding a `WHERE` clause to every query. For example a policy like this ...
-
-```sql
-create policy "Individuals can view their own todos."
-on todos for select
-using ( (select auth.uid()) = user_id );
-```
-
-.. would translate to this whenever a user tries to select from the todos table:
-
-```sql
-select *
-from todos
-where auth.uid() = todos.user_id;
--- Policy is implicitly added.
-```
+        ```sql
+        create policy "Individuals can view their own todos."
+        on todos for select
+        using ( (select auth.uid()) = user_id );
+        
+        -- ==
+        -- select *
+        -- from todos
+        -- where auth.uid() = todos.user_id;
+        ```
 
 ## Enabling Row Level Security
 
-You can enable RLS for any table using the `enable row level security` clause:
-
 ```sql
 alter table "table_name" enable row level security;
-```
-
-Once you have enabled RLS, no data will be accessible via the [API](/docs/guides/api) when using a publishable key, until you create policies.
+``` 
 
 ## Auto-enable RLS for new tables
 
-If you want RLS enabled automatically for new tables, you can create an event trigger that runs after table creation. This uses a Postgres [event trigger](/docs/guides/database/postgres/event-triggers) to call `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` on each newly created table.
+If you want RLS enabled automatically for new tables, you can create an event trigger that runs after table creation
+* This uses a Postgres [event trigger](/docs/guides/database/postgres/event-triggers) to call `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` on each newly created table.
 
 ```sql
 CREATE OR REPLACE FUNCTION rls_auto_enable()
@@ -105,7 +106,8 @@ WHEN TAG IN ('CREATE TABLE', 'CREATE TABLE AS', 'SELECT INTO')
 EXECUTE FUNCTION rls_auto_enable();
 ```
 
-Note that this applies to tables created after the trigger is installed. Existing tables still need RLS enabled manually.
+Note that this applies to tables created after the trigger is installed
+* Existing tables still need RLS enabled manually.
 
 <Admonition type="caution" title="`auth.uid()` Returns `null` When Unauthenticated">
 
@@ -140,7 +142,8 @@ Supabase maps every request to one of the roles:
 - `anon`: an unauthenticated request (the user is not logged in)
 - `authenticated`: an authenticated request (the user is logged in)
 
-These are [Postgres Roles](/docs/guides/database/postgres/roles). You can use these roles within your Policies using the `TO` clause:
+These are [Postgres Roles](/docs/guides/database/postgres/roles)
+* You can use these roles within your Policies using the `TO` clause:
 
 ```sql
 create policy "Profiles are viewable by everyone"
@@ -158,15 +161,18 @@ using ( true );
 
 <Admonition type="note" title="Anonymous user vs the anon key">
 
-Using the `anon` Postgres role is different from an [anonymous user](/docs/guides/auth/auth-anonymous) in Supabase Auth. An anonymous user assumes the `authenticated` role to access the database and can be differentiated from a permanent user by checking the `is_anonymous` claim in the JWT.
+Using the `anon` Postgres role is different from an [anonymous user](/docs/guides/auth/auth-anonymous) in Supabase Auth
+* An anonymous user assumes the `authenticated` role to access the database and can be differentiated from a permanent user by checking the `is_anonymous` claim in the JWT.
 
 </Admonition>
 
 ## Creating policies
 
-Policies are SQL logic that you attach to a Postgres table. You can attach as many policies as you want to each table.
+Policies are SQL logic that you attach to a Postgres table
+* You can attach as many policies as you want to each table.
 
-Supabase provides some [helpers](#helper-functions) that simplify RLS if you're using Supabase Auth. We'll use these helpers to illustrate some basic policies:
+Supabase provides some [helpers](#helper-functions) that simplify RLS if you're using Supabase Auth
+* We'll use these helpers to illustrate some basic policies:
 
 ### SELECT policies
 
@@ -202,9 +208,11 @@ for select using ( (select auth.uid()) = user_id );
 
 ### INSERT policies
 
-You can specify insert policies with the `with check` clause. The `with check` expression ensures that any new row data adheres to the policy constraints.
+You can specify insert policies with the `with check` clause
+* The `with check` expression ensures that any new row data adheres to the policy constraints.
 
-Say you have a table called `profiles` in the public schema and you only want users to create a profile for themselves. In that case, we want to check their User ID matches the value that they are trying to insert:
+Say you have a table called `profiles` in the public schema and you only want users to create a profile for themselves
+* In that case, we want to check their User ID matches the value that they are trying to insert:
 
 ```sql
 -- 1. Create table
@@ -232,7 +240,8 @@ The `using` clause represents the condition that must be true for the update to 
 
 Say you have a table called `profiles` in the public schema and you only want users to update their own profile.
 
-You can create a policy where the `using` clause checks if the user owns the profile being updated. And the `with check` clause ensures that, in the resultant row, users do not change the `user_id` to a value that is not equal to their User ID, maintaining that the modified profile still meets the ownership condition.
+You can create a policy where the `using` clause checks if the user owns the profile being updated
+* And the `with check` clause ensures that, in the resultant row, users do not change the `user_id` to a value that is not equal to their User ID, maintaining that the modified profile still meets the ownership condition.
 
 ```sql
 -- 1. Create table

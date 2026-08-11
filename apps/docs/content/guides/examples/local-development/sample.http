@@ -1,0 +1,15 @@
+### REST (PostgREST)
+GET {{HOST}}/rest/v1/
+apikey: {{API_KEY}}
+
+### Realtime
+GET {{HOST}}/realtime/v1/
+apikey: {{API_KEY}}
+
+### Storage
+GET {{HOST}}/storage/v1/
+apikey: {{API_KEY}}
+
+### Auth (GoTrue)
+GET {{HOST}}/auth/v1/
+apikey: {{API_KEY}}

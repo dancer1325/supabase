@@ -74,3 +74,4 @@ Result: PASS
 - [Testing RLS policies](/docs/guides/database/extensions/pgtap#testing-rls-policies)
 - [pgTAP extension](/docs/guides/database/extensions/pgtap)
 - Official [pgTAP documentation](https://pgtap.org/)
+- [how to test RLS -- via -- pgTAP + dbdev](https://github.com/usebasejump/supabase-test-helpers/tree/main)

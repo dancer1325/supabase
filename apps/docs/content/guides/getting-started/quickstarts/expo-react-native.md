@@ -4,12 +4,11 @@ subtitle: 'Learn how to create a Supabase project, add some sample data to your 
 breadcrumb: 'Framework Quickstarts'
 ---
 
-<AiPrompt id="expo-react-native" />
-
-<$Partial path="quickstart_db_setup.mdx" />
+* [set up db](../../../_partials/quickstart_db_setup.md)
 
 ## 3. Create an Expo app
 
+TODO: 
 Create a minimal Expo app using the `create-expo-app` command with the blank TypeScript template.
 
 ```bash

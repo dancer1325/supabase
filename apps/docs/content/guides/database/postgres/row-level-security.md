@@ -11,7 +11,7 @@ subtitle: 'Secure your data using Postgres Row Level Security.'
     * granular authorization rules
       * == write complex SQL rules / fit your unique business needs
   * provide
-    * "[defense in depth](<https://en.wikipedia.org/wiki/Defense_in_depth_(computing)>)" / protect your data -- from -- malicious actors
+    * "[defense in depth](https://en.wikipedia.org/wiki/Defense_in_depth_(computing))" / protect your data -- from -- malicious actors
       * even | access -- through -- third-party tooling
 
 ## Row Level Security | Supabase
@@ -63,7 +63,7 @@ subtitle: 'Secure your data using Postgres Row Level Security.'
 alter table "table_name" enable row level security;
 ``` 
 
-## Auto-enable RLS for new tables
+## | NEW tables, auto-enable RLS 
 
 If you want RLS enabled automatically for new tables, you can create an event trigger that runs after table creation
 * This uses a Postgres [event trigger](/docs/guides/database/postgres/event-triggers) to call `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` on each newly created table.
@@ -111,7 +111,8 @@ Note that this applies to tables created after the trigger is installed
 
 <Admonition type="caution" title="`auth.uid()` Returns `null` When Unauthenticated">
 
-When a request is made without an authenticated user (e.g., no access token is provided or the session has expired), `auth.uid()` returns `null`.
+When a request is made without an authenticated user 
+(e.g., no access token is provided or the session has expired), `auth.uid()` returns `null`.
 
 This means that a policy like:
 
@@ -162,7 +163,8 @@ using ( true );
 <Admonition type="note" title="Anonymous user vs the anon key">
 
 Using the `anon` Postgres role is different from an [anonymous user](/docs/guides/auth/auth-anonymous) in Supabase Auth
-* An anonymous user assumes the `authenticated` role to access the database and can be differentiated from a permanent user by checking the `is_anonymous` claim in the JWT.
+* An anonymous user assumes the `authenticated` role to access the database and can be differentiated
+from a permanent user by checking the `is_anonymous` claim in the JWT.
 
 </Admonition>
 
@@ -236,12 +238,14 @@ with check ( (select auth.uid()) = user_id );      -- the actual Policy
 
 You can specify update policies by combining both the `using` and `with check` expressions.
 
-The `using` clause represents the condition that must be true for the update to be allowed, and `with check` clause ensures that the updates made adhere to the policy constraints.
+The `using` clause represents the condition that must be true for the update to be allowed, and `with check` clause
+ensures that the updates made adhere to the policy constraints.
 
 Say you have a table called `profiles` in the public schema and you only want users to update their own profile.
 
 You can create a policy where the `using` clause checks if the user owns the profile being updated
-* And the `with check` clause ensures that, in the resultant row, users do not change the `user_id` to a value that is not equal to their User ID, maintaining that the modified profile still meets the ownership condition.
+* And the `with check` clause ensures that, in the resultant row, users do not change the `user_id` to a value that 
+is not equal to their User ID, maintaining that the modified profile still meets the ownership condition.
 
 ```sql
 -- 1. Create table
@@ -262,11 +266,13 @@ using ( (select auth.uid()) = user_id )       -- checks if the existing row comp
 with check ( (select auth.uid()) = user_id ); -- checks if the new row complies with the policy expression
 ```
 
-If no `with check` expression is defined, then the `using` expression will be used both to determine which rows are visible (normal USING case) and which new rows will be allowed to be added (WITH CHECK case).
+If no `with check` expression is defined, then the `using` expression will be used both to determine 
+which rows are visible (normal USING case) and which new rows will be allowed to be added (WITH CHECK case).
 
 <Admonition type="caution">
 
-To perform an `UPDATE` operation, a corresponding [`SELECT` policy](#select-policies) is required. Without a `SELECT` policy, the `UPDATE` operation will not work as expected.
+To perform an `UPDATE` operation, a corresponding [`SELECT` policy](#select-policies) is required
+* Without a `SELECT` policy, the `UPDATE` operation will not work as expected.
 
 </Admonition>
 
@@ -296,7 +302,8 @@ using ( (select auth.uid()) = user_id );      -- the actual Policy
 
 ### Views
 
-Views bypass RLS by default because they are usually created with the `postgres` user. This is a feature of Postgres, which automatically creates views with `security definer`.
+Views bypass RLS by default because they are usually created with the `postgres` user
+* This is a feature of Postgres, which automatically creates views with `security definer`.
 
 In Postgres 15 and above, you can make a view obey the RLS policies of the underlying tables when invoked by `anon` and `authenticated` roles by setting `security_invoker = true`.
 
@@ -320,16 +327,22 @@ Returns the ID of the user making the request.
 
 <Admonition type="caution">
 
-Not all information present in the JWT should be used in RLS policies. For instance, creating an RLS policy that relies on the `user_metadata` claim can create security issues in your application as this information can be modified by authenticated end users.
+Not all information present in the JWT should be used in RLS policies
+* For instance, creating an RLS policy that relies on the `user_metadata` claim can create security issues in your application as this information can be modified by authenticated end users.
 
 </Admonition>
 
-Returns the JWT of the user making the request. Anything that you store in the user's `raw_app_meta_data` column or the `raw_user_meta_data` column will be accessible using this function. It's important to know the distinction between these two:
+Returns the JWT of the user making the request
+* Anything that you store in the user's `raw_app_meta_data` column or the `raw_user_meta_data` column will be accessible using this function
+* It's important to know the distinction between these two:
 
-- `raw_user_meta_data` - can be updated by the authenticated user using the `supabase.auth.update()` function. It is not a good place to store authorization data.
+- `raw_user_meta_data` - can be updated by the authenticated user using the `supabase.auth.update()` function
+* It is not a good place to store authorization data.
 - `raw_app_meta_data` - cannot be updated by the user, so it's a good place to store authorization data.
 
-The `auth.jwt()` function is extremely versatile. For example, if you store some team data inside `app_metadata`, you can use it to determine whether a particular user belongs to a team. For example, if this was an array of IDs:
+The `auth.jwt()` function is extremely versatile
+* For example, if you store some team data inside `app_metadata`, you can use it to determine whether a particular user belongs to a team
+* For example, if this was an array of IDs:
 
 ```sql
 create policy "User is in team"
@@ -340,15 +353,18 @@ using ( team_id in (select auth.jwt() -> 'app_metadata' -> 'teams'));
 
 <Admonition type="caution">
 
-Keep in mind that a JWT is not always "fresh". In the example above, even if you remove a user from a team and update the `app_metadata` field, that will not be reflected using `auth.jwt()` until the user's JWT is refreshed.
+Keep in mind that a JWT is not always "fresh"
+* In the example above, even if you remove a user from a team and update the `app_metadata` field, that will not be reflected using `auth.jwt()` until the user's JWT is refreshed.
 
-Also, if you are using Cookies for Auth, then you must be mindful of the JWT size. Some browsers are limited to 4096 bytes for each cookie, and so the total size of your JWT should be small enough to fit inside this limitation.
+Also, if you are using Cookies for Auth, then you must be mindful of the JWT size
+* Some browsers are limited to 4096 bytes for each cookie, and so the total size of your JWT should be small enough to fit inside this limitation.
 
 </Admonition>
 
 ### MFA
 
-The `auth.jwt()` function can be used to check for [Multi-Factor Authentication](/docs/guides/auth/auth-mfa#enforce-rules-for-mfa-logins). For example, you could restrict a user from updating their profile unless they have at least 2 levels of authentication (Assurance Level 2):
+The `auth.jwt()` function can be used to check for [Multi-Factor Authentication](/docs/guides/auth/auth-mfa#enforce-rules-for-mfa-logins)
+* For example, you could restrict a user from updating their profile unless they have at least 2 levels of authentication (Assurance Level 2):
 
 ```sql
 create policy "Restrict updates."
@@ -362,7 +378,8 @@ to authenticated using (
 
 ## Bypassing Row Level Security
 
-Supabase provides special "Service" keys, which can be used to bypass RLS. These should never be used in the browser or exposed to customers, but they are useful for administrative tasks.
+Supabase provides special "Service" keys, which can be used to bypass RLS
+* These should never be used in the browser or exposed to customers, but they are useful for administrative tasks.
 
 <Admonition type="note">
 
@@ -376,17 +393,21 @@ You can also create new [Postgres Roles](/docs/guides/database/postgres/roles) w
 alter role "role_name" with bypassrls;
 ```
 
-This can be useful for system-level access. You should _never_ share login credentials for any Postgres Role with this privilege.
+This can be useful for system-level access
+* You should _never_ share login credentials for any Postgres Role with this privilege.
 
 ## RLS performance recommendations
 
-Every authorization system has an impact on performance. While row level security is powerful, the performance impact is important to keep in mind. This is especially true for queries that scan every row in a table - like many `select` operations, including those using limit, offset, and ordering.
+Every authorization system has an impact on performance
+* While row level security is powerful, the performance impact is important to keep in mind
+* This is especially true for queries that scan every row in a table - like many `select` operations, including those using limit, offset, and ordering.
 
 Based on a series of [tests](https://github.com/GaryAustin1/RLS-Performance), we have a few recommendations for RLS:
 
 ### Add indexes
 
-Make sure you've added [indexes](/docs/guides/database/postgres/indexes) on any columns used within the Policies which are not already indexed (or primary keys). For a Policy like this:
+Make sure you've added [indexes](/docs/guides/database/postgres/indexes) on any columns used within the Policies which are not already indexed (or primary keys)
+* For a Policy like this:
 
 ```sql
 create policy "rls_test_select" on test_table
@@ -410,7 +431,8 @@ using btree (user_id);
 
 ### Call functions with `select`
 
-You can use `select` statement to improve policies that use functions. For example, instead of this:
+You can use `select` statement to improve policies that use functions
+* For example, instead of this:
 
 ```sql
 create policy "rls_test_select" on test_table
@@ -426,7 +448,8 @@ to authenticated
 using ( (select auth.uid()) = user_id );
 ```
 
-This method works well for JWT functions like `auth.uid()` and `auth.jwt()` as well as `security definer` Functions. Wrapping the function causes an `initPlan` to be run by the Postgres optimizer, which allows it to "cache" the results per-statement, rather than calling the function on each row.
+This method works well for JWT functions like `auth.uid()` and `auth.jwt()` as well as `security definer` Functions
+* Wrapping the function causes an `initPlan` to be run by the Postgres optimizer, which allows it to "cache" the results per-statement, rather than calling the function on each row.
 
 <Admonition type="caution">
 
@@ -446,7 +469,9 @@ You can only use this technique if the results of the query or function do not c
 
 ### Add filters to every query
 
-Policies are "implicit where clauses," so it's common to run `select` statements without any filters. This is a bad pattern for performance. Instead of doing this (JS client example):
+Policies are "implicit where clauses," so it's common to run `select` statements without any filters
+* This is a bad pattern for performance
+* Instead of doing this (JS client example):
 
 {/* prettier-ignore */}
 ```js
@@ -475,7 +500,9 @@ Even though this duplicates the contents of the Policy, Postgres can use the fil
 
 ### Use security definer functions
 
-A "security definer" function runs using the same role that _created_ the function. This means that if you create a role with a superuser (like `postgres`), then that function will have `bypassrls` privileges. For example, if you had a policy like this:
+A "security definer" function runs using the same role that _created_ the function
+* This means that if you create a role with a superuser (like `postgres`), then that function will have `bypassrls` privileges
+* For example, if you had a policy like this:
 
 ```sql
 create policy "rls_test_select" on test_table
@@ -519,7 +546,8 @@ Security-definer functions should never be created in a schema in the "Exposed s
 
 ### Minimize joins
 
-You can often rewrite your Policies to avoid joins between the source and the target table. Instead, try to organize your policy to fetch all the relevant data from the target table into an array or set, then you can use an `IN` or `ANY` operation in your filter.
+You can often rewrite your Policies to avoid joins between the source and the target table
+* Instead, try to organize your policy to fetch all the relevant data from the target table into an array or set, then you can use an `IN` or `ANY` operation in your filter.
 
 For example, this is an example of a slow policy which joins the source `test_table` to the target `team_user`:
 
@@ -565,7 +593,8 @@ If the list exceeds 1000 items, a different approach may be needed or you may ne
 
 ### Specify roles in your policies
 
-Always use the Role of inside your policies, specified by the `TO` operator. For example, instead of this query:
+Always use the Role of inside your policies, specified by the `TO` operator
+* For example, instead of this query:
 
 ```sql
 create policy "rls_test_select" on rls_test
@@ -587,9 +616,3 @@ This prevents the policy `( (select auth.uid()) = user_id )` from running for an
 | Test                                                                                          | Before (ms) | After (ms) | % Improvement | Change                                                                                                                           |
 | --------------------------------------------------------------------------------------------- | ----------- | ---------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | [test6-To-role](https://github.com/GaryAustin1/RLS-Performance/tree/main/tests/test6-To-role) | 170         | < 0.1      | 99.78%        | <details className="cursor-pointer">Before:<br/>No `TO` policy<br/><br/>After:<br/>`TO authenticated` (anon accessing)</details> |
-
-## More resources
-
-- [Testing your database](/docs/guides/database/testing)
-- [RLS Guide and Best Practices](https://github.com/orgs/supabase/discussions/14576)
-- Community repo on testing RLS using [pgTAP and dbdev](https://github.com/usebasejump/supabase-test-helpers/tree/main)

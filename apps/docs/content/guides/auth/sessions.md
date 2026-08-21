@@ -64,7 +64,7 @@ title: 'User sessions'
 
 * ⚠️requirements⚠️
   * Supabase Pro Plans OR better
-    * if you want to modify locally -> | "config.toml", set
+    * 💡if you want to modify it locally -> | "config.toml", set💡
 
       ```toml
       ...

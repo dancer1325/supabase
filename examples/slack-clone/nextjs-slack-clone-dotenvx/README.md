@@ -1,18 +1,16 @@
-# Integrating Dotenvx with a Supabase Project
+# | Supabase Project, integrate Dotenvx
 
-This project is a full-stack Slack clone built using:
+### FE
 
-### Frontend:
+- **[Next.js](https://github.com/vercel/next.js)
+- **[Supabase.js](https://supabase.com/docs/library/getting-started)
 
-- **[Next.js](https://github.com/vercel/next.js):** A React framework optimized for production.
-- **[Supabase.js](https://supabase.com/docs/library/getting-started):** For user management and real-time data syncing.
+### BE
 
-### Backend:
-
-- **[Supabase](https://supabase.com/dashboard):** A hosted Postgres database with a RESTful API, used alongside Supabase.js.
-- **GitHub Authentication:** For user login.
-
----
+- **[Supabase](https://supabase.com/dashboard)**
+- **GitHub Authentication**
+  - uses
+    - user login
 
 ## Introduction
 

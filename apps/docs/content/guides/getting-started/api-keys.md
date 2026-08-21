@@ -27,6 +27,9 @@ description: "First-layer protection for your project's data"
   * authenticates an application component / give it access -- to -- Supabase services
     * _Example of application component:_ web page, a mobile app, or a server
   * types | Supabase
+    * ⚠️[deprecated API key types](../../_partials/api_keys_deprecation.md)⚠️
+    * | SAME time, you can use NEW & legacy keys
+      * if you want, [you can disable using legacy keys](migrating-to-new-api-keys.md)
 
 | Type             | Format                 | Privileges | Availability   | Use                                             |
 |------------------|------------------------| ---------- |----------------|-------------------------------------------------|
@@ -35,69 +38,64 @@ description: "First-layer protection for your project's data"
 | `anon`           | JWT (long lived)       | Low        | Platform, CLI  | == ⚠️Legacy version -- of -- publishable keys⚠️ |
 | `service_role`   | JWT (long lived)       | Elevated   | Platform, CLI  | == ⚠️Legacy version -- of -- secret keys⚠️      |
 
-TODO: 
-
-<Admonition type="note" title="Creating new keys does not revoke your legacy keys">
-
-Both key types work simultaneously
-* Creating publishable and secret keys adds them _alongside_ your existing `anon` and `service_role` keys without affecting them — your legacy keys keep working
-* They remain valid until you explicitly disable them in the [**Settings > API Keys**](/dashboard/project/_/settings/api-keys/) section of the Dashboard which is a separate step
-* See [Migrating to new API keys](/docs/guides/getting-started/migrating-to-new-api-keys) for the full process.
-
-</Admonition>
-
-* ⚠️[deprecated API key types](../../_partials/api_keys_deprecation.md)⚠️
-
 ## Publishable keys
 
-Publishable keys identify the public components of your application
-* Public components run in environments where it is impossible to secure any secrets
-* These include:
+* Publishable keys 
+  * allows
+    * identify your application's public components 
 
-- Web pages, where the key is bundled in source code.
-- Mobile or desktop applications, where the key is bundled inside the compiled packages or executables.
-- CLI, scripts, tools, or other pre-built executables.
-- Other publicly available APIs that return the key without prior additional authorization.
+* your application's public components
+  * run | environments /
+    * ⚠️IMPOSSIBLE to secure any secrets⚠️
+      * Reason:🧠anyone can retrieve -- , from the source code OR build artifacts, , -- the key🧠 
+      * _Examples:_
+        * web pages -- key bundled | source code --
+        * mobile / desktop apps -- key bundled | compiled packages / executables --
+        * CLI / scripts / tools / pre-built executables
+        * publicly available APIs / return the key WITHOUT prior authorization
 
-Safe to expose online: web page, mobile or desktop app, GitHub actions, CLIs, source code.
+### interaction -- with -- Supabase Auth
 
-These environments are always considered public because anyone can retrieve the key from the source code or build artifacts.
-
-### Interaction with Supabase Auth
-
+TODO: 
 Using a publishable key does not mean that your user is anonymous
-* You can authenticate your application with the publishable key, while your user is authenticated (via Supabase Auth) with their personal JWT:
+* You can authenticate your application with the publishable key, while your user is authenticated 
+(via Supabase Auth) with their personal JWT:
 
-| Key             | User logged in via Supabase Auth | Postgres role used for RLS, etc. |
-| --------------- | -------------------------------- | -------------------------------- |
-| Publishable key | No                               | `anon`                           |
-| Publishable key | Yes                              | `authenticated`                  |
+| Key             | User logged in -- via -- Supabase Auth | Postgres role / used for RLS, etc. |
+| --------------- |----------------------------------------|------------------------------------|
+| Publishable key | No                                     | `anon`                             |
+| Publishable key | Yes                                    | `authenticated`                    |
 
 ### Security considerations
 
-Publishable keys are not intended to protect from the following, since key retrieval is always possible from a public component:
+Publishable keys are not intended to protect from the following, since key retrieval is always possible
+from a public component:
 
 - Static or dynamic code analysis and reverse engineering attempts.
 - Use of the Network inspector in the browser.
 - Cross-site request forgery, cross-site scripting, phishing attacks.
 - Man-in-the-middle attacks.
 
-When using a publishable key, access to your project's data is guarded by Postgres via the built-in `anon` and `authenticated` roles
+When using a publishable key, access to your project's data is guarded by Postgres via the built-in `anon`
+and `authenticated` roles
 * For full protection make sure:
 
 - You have enabled Row Level Security on all tables.
-- You regularly review your Row Level Security policies for permissions granted to the `anon` and `authenticated` roles.
+- You regularly review your Row Level Security policies for permissions granted to the `anon` and
+`authenticated` roles.
 - You do not modify the role's attributes without understanding the changes you are making.
 
-Your project's [Security Advisor](/dashboard/project/_/advisors/security) constantly checks for common security problems with the built-in Postgres roles
+Your project's [Security Advisor](/dashboard/project/_/advisors/security) constantly checks for common security problems 
+with the built-in Postgres roles
 * Make sure you carefully review each finding before dismissing it.
 
 ## Secret keys
 
 * TODO: 
-\| your app's backend components: servers, already secured APIs (admin panels), Edge Functions, microservices, etc <br/> provide: FULL access -- to -- your project's data <br/> &nbsp;&nbsp; Reason:🧠 bypass Row Level Security🧠
+\| your app's backend components: servers, already secured APIs (admin panels), Edge Functions, microservices, etc <br/> 
+provide: FULL access -- to -- your project's data <br/> &nbsp;&nbsp; Reason:🧠 bypass Row Level Security🧠
 
-## What secret keys allow access to
+### What secret keys allow access to
 
 Unlike publishable keys, secret keys allow elevated access to your project's data
 * It is meant to be used only in secure, developer-controlled components of your application, such as:
@@ -130,13 +128,19 @@ Secret keys authorize access to your project's data via the built-in `service_ro
 * By design, this role has full access to your project's data
 * It also uses the [`BYPASSRLS` attribute](https://www.postgresql.org/docs/current/ddl-rowsecurity.html#:~:text=BYPASSRLS), skipping any and all Row Level Security policies you attach.
 
-The secret key is an improvement over the old JWT-based `service_role` key, and we recommend using it where possible
-* It adds more checks to prevent misuse, specifically:
+* secret key 
+  * recommendation
+    * use it -- rather than -- `service_role` key
+      * Reason:🧠prevent misuse
+        * can NOT be used | browser 
+          * matches vs `User-Agent` header 
+          * == reply with HTTP 401 Unauthorized
+        * if you are NOT using them ->  NOT need to have any secret keys🧠 
 
-- You cannot use a secret key in the browser (matches on the `User-Agent` header) and it will always reply with HTTP 401 Unauthorized.
-- You don't need to have any secret keys if you are not using them.
+* `service_role` key
+  * == JWT-based
 
-### Best practices for handling secret keys
+#### Best practices for handling secret keys
 
 Below are some starting guidelines on how to securely work with secret keys:
 
@@ -151,7 +155,7 @@ Below are some starting guidelines on how to securely work with secret keys:
 - If you must include them in logs, log the first few random characters (but never more than 6).
 - If you wish to log or store which valid API key was used, store it as a SHA256 hash.
 
-### What to do if a secret key or `service_role` has been leaked or compromised?
+#### What to do if a secret key or `service_role` has been leaked or compromised?
 
 Don't rush if this has happened, or you are suspecting it has
 * Make sure you have fully considered the situation and have remediated the root cause of the suspicion or vulnerability **first**
@@ -165,7 +169,7 @@ To rotate a secret key (`sb_secret_...`), use the [**Settings > API Keys**](/das
 If you are still using the JWT-based `service_role` key, replace the `service_role` key with a new secret key instead
 * Follow the guide from above as if you are rotating an existing secret key.
 
-## Known limitations and compatibility differences
+## Known limitations & compatibility differences
 
 As the publishable and secret keys are no longer JWT-based, there are some known limitations and compatibility differences that you may need to plan for:
 

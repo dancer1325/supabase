@@ -1,6 +1,5 @@
-# Supabase Studio
+# Supabase Studio / Supabase Dashboard
 
-* == Supabse dashboard 
 * allows
   * managing your Supabase project
 * uses
@@ -10,26 +9,26 @@
 * -- based on -- 
   * [Next.js](https://nextjs.org/)
   * [Tailwind](https://tailwindcss.com/)
-
-## What's included
-
-TODO: 
-Studio is designed to work with existing deployments - either the local hosted, docker setup, or our CLI. It is not intended for managing the deployment and administration of projects - that's out of scope.
-
-As such, the features exposed on Studio for existing deployments are limited to those which manage your database:
-
-- Table & SQL editors
-  - Saved queries are unavailable
-- Database management
-  - Policies, roles, extensions, replication
-- API documentation
+* ❌NOT allow❌
+  * deploy & manage projects
+* allows
+  * | EXISTING deployments,
+    * Table & SQL editors
+      * EXCEPT to: ❌save queries❌
+    * database management
+    * API documentation
 
 ## Managing Project Settings
 
-Project settings are managed outside of the Dashboard. If you use docker compose, you should manage the settings in your docker-compose file. If you're deploying Supabase to your own cloud, you should store your secrets and env vars in a vault or secrets manager.
+* Project settings 
+  * managed | ⚠️outside of the Dashboard⚠️
+    * if you use 
+      * docker compose -> managed | your docker-compose file
+      * Supabase cloud -> store your secrets & env vars | vault or secrets manager
 
 ## How to contribute?
 
+TODO: 
 - Branch from `master` and name your branches with the following structure
   - `{type}/{branch_name}`
     - Type: `chore | fix | feature`
@@ -40,28 +39,30 @@ Project settings are managed outside of the Dashboard. If you use docker compose
 
 ### Developer Quickstart
 
-> [!NOTE]  
-> **Supabase internal use:** To develop on Studio locally with the backend services, see the instructions in the [internal `infrastructure` repo](https://github.com/supabase/platform/blob/develop/docs/contributing.md).
+* | Supabase internal,
+  * [internal `infrastructure` repo](https://github.com/supabase/platform/blob/develop/docs/contributing.md)
 
-```bash
-# You'll need to be on Node v22
-# in /studio
-
-## For external contributors
-pnpm install # install dependencies
-pnpm run dev # start dev server
-
-## For internal contributors
-## First clone the private supabase/platform repo and follow instructions for setting up mise
-mise studio  # Run from supabase/platform alongside `mise infra`
-
-## For all
-pnpm run test # run tests
-pnpm run test -- --watch # run tests in watch mode
-```
+* steps
+  ```bash
+  # You'll need to be on Node v22
+  # in /studio
+  
+  ## For external contributors
+  pnpm install # install dependencies
+  pnpm run dev # start dev server
+  
+  ## For internal contributors
+  ## First clone the private supabase/platform repo and follow instructions for setting up mise
+  mise studio  # Run from supabase/platform alongside `mise infra`
+  
+  ## For all
+  pnpm run test # run tests
+  pnpm run test -- --watch # run tests in watch mode
+  ```
 
 ## Running within a self-hosted environment
 
+TODO: 
 Follow the [self-hosting guide](https://supabase.com/docs/guides/hosting/docker) to get started.
 
 ```
@@ -85,7 +86,8 @@ npm install
 npm run dev
 ```
 
-If you would like to configure different defaults for "Default Organization" and "Default Project", you will need to update the `.env` in the studio folder with the corresponding values.
+If you would like to configure different defaults for "Default Organization" and "Default Project", 
+you will need to update the `.env` in the studio folder with the corresponding values.
 
 ```
 DEFAULT_ORGANIZATION_NAME=

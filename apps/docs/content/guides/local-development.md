@@ -9,12 +9,14 @@ subtitle: Learn how to develop locally and use the Supabase CLI
 * ⚠️requirements⚠️
   * install the [Supabase CLI](local-development/cli/getting-started)
   * container runtime / Docker APIs-compatible
-    * [Docker Desktop](https://docs.docker.com/desktop/)
-      * recommended on
-    * [Rancher Desktop](https://rancherdesktop.io/) (macOS, Windows, Linux)
-    * [Podman](https://podman.io/) (macOS, Windows, Linux)
-    * [OrbStack](https://orbstack.dev/) (macOS)
-    * [colima](https://github.com/abiosoft/colima) (macOS)
+    * Reason:🧠| run supabase project, bootstrap Supabase's components -- as -- containers🧠
+    * _Example:_
+      * [Docker Desktop](https://docs.docker.com/desktop/)
+        * recommended on
+      * [Rancher Desktop](https://rancherdesktop.io/) (macOS, Windows, Linux)
+      * [Podman](https://podman.io/) (macOS, Windows, Linux)
+      * [OrbStack](https://orbstack.dev/) (macOS)
+      * [colima](https://github.com/abiosoft/colima) (macOS)
 
 ## how to start?
 

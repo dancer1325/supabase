@@ -2,6 +2,10 @@
 
 * == spec files /
   * generate the [reference documentation](../features/docs/generated)
+  * are
+    * [cli_v1_config.yaml](cli_v1_config.yaml)
+      * == Supabase CLI configuration
+    * TODO: rest
 
 ## Preparation
 

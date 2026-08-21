@@ -1,0 +1,15 @@
+###
+# curl http://127.0.0.1:54321/auth/v1/settings
+GET http://127.0.0.1:54321/auth/v1/settings
+
+### create an user
+POST http://127.0.0.1:54321/auth/v1/signup
+apikey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "testtest123"
+}
+
+###

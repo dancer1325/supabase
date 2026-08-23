@@ -6,6 +6,11 @@ subtitle: 'Customize the access token issued by Supabase Auth'
 
 The custom access token hook runs before a token is issued and allows you to add additional claims based on the authentication method used.
 
+* allows, about claims | token
+  * add
+  * remove
+  * change 
+
 Claims returned must conform to our specification. Supabase Auth will check for these claims after the hook is run and return an error if they are not present.
 
 These are the fields currently available on an access token:

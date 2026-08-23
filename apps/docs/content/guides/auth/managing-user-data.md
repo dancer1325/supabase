@@ -4,80 +4,50 @@ title: 'User Management'
 subtitle: 'View, delete, and export user information.'
 ---
 
-You can view your users on the [Users page](/dashboard/project/_/auth/users) of the Dashboard. You can also view the contents of the Auth schema in the [Table Editor](/dashboard/project/_/editor).
+* Supabase Dashboard > 
+  * Authentication > Users
+    * display your current users
+  * Table editor > choose a schema
+    * display Auth schema
 
-## Accessing user data via API
+## Accessing user data -- via -- API
 
-For security, the Auth schema is not exposed in the auto-generated API. If you want to access users data via the API, you can create your own user tables in the `public` schema.
+* Auth schema 
+  * ❌| auto-generated API, is NOT exposed❌
+    * Reason:🧠security🧠
 
-Make sure to protect the table by enabling [Row Level Security](/docs/guides/database/postgres/row-level-security) and only granting the necessary privileges for each role. Reference the `auth.users` table to ensure data integrity. Specify `on delete cascade` in the reference. For example, a `public.profiles` table might look like this:
+* steps
+  * create your OWN user tables | `public` schema /
+    * protect the table -- by --
+      * enabling [Row Level Security](../database/postgres/row-level-security)
+      * ONLY granting the necessary privileges / EACH role
+  * reference the `auth.users` table
+    * Reason:🧠ensure data integrity🧠
+  * | reference, specify `on delete cascade` 
 
-```sql
-create table public.profiles (
-  id uuid not null references auth.users on delete cascade,
-  first_name text,
-  last_name text,
+* primary keys
+  * vs columns OR indices OR constraints OR OTHER database objects / managed -- by -- Supabase
+    * change
+      * primary keys
+        * NOT change
+      * columns OR indices OR constraints OR OTHER database objects / managed -- by -- Supabase
+        * may change | ANY time
+  * uses
+    * as [foreign key references](https://www.postgresql.org/docs/current/tutorial-fk.html) | schemas & tables / are managed by Supabase
 
-  primary key (id)
-);
-
--- Grant the privileges the roles need
-GRANT SELECT ON public.profiles TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.profiles TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.profiles TO service_role;
-
--- Enable row level security for the table
-alter table public.profiles enable row level security;
-```
-
-<Admonition type="caution">
-
-Only use primary keys as [foreign key references](https://www.postgresql.org/docs/current/tutorial-fk.html) for schemas and tables like `auth.users` which are managed by Supabase. Postgres lets you specify a foreign key reference for columns backed by a unique index (not necessarily primary keys).
-
-Primary keys are **guaranteed not to change**. Columns, indices, constraints or other database objects managed by Supabase **may change at any time** and you should be careful when referencing them directly.
-
-</Admonition>
-
-To update your `public.profiles` table every time a user signs up, set up a trigger. If the trigger fails, it could block signups, so test your code thoroughly.
-
-```sql
--- inserts a row into public.profiles
-create function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer set search_path = ''
-as $$
-begin
-  insert into public.profiles (id, first_name, last_name)
-  values (new.id, new.raw_user_meta_data ->> 'first_name', new.raw_user_meta_data ->> 'last_name');
-  return new;
-end;
-$$;
-
--- trigger the function every time a user is created
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
-```
+* recommendation
+  * if you want to update a table / EACH user signs up -> set up a trigger
+    * ⚠️if the trigger fails -> it could block signups⚠️
 
 ## Adding and retrieving user metadata
 
-You can assign metadata to users on sign up:
+* user metadata
+  * can be assigned | sign up
+  * stored | `raw_user_meta_data` column | `auth.users` table
 
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="js"
-  queryGroup="language"
->
-<TabPanel id="js" label="JavaScript">
+### JavaScript
 
 ```js
-import { createClient } from '@supabase/supabase-js'
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
-
-// ---cut---
 const { data, error } = await supabase.auth.signUp({
   email: 'valid.email@supabase.io',
   password: 'example-password',
@@ -90,9 +60,14 @@ const { data, error } = await supabase.auth.signUp({
 })
 ```
 
-</TabPanel>
-<$Show if="sdk:dart">
-<TabPanel id="dart" label="Dart">
+```js
+const {
+  data: { user },
+} = await supabase.auth.getUser()
+let metadata = user?.user_metadata
+```
+
+### Dart
 
 ```dart
 final res = await supabase.auth.signUp(
@@ -105,10 +80,12 @@ final res = await supabase.auth.signUp(
 );
 ```
 
-</TabPanel>
-</$Show>
-<$Show if="sdk:swift">
-<TabPanel id="swift" label="Swift">
+```dart
+final User? user = supabase.auth.currentUser;
+final Map<String, dynamic>? metadata = user?.userMetadata;
+```
+
+### Swift
 
 ```swift
 try await supabase.auth.signUp(
@@ -121,10 +98,12 @@ try await supabase.auth.signUp(
 )
 ```
 
-</TabPanel>
-</$Show>
-<$Show if="sdk:kotlin">
-<TabPanel id="kotlin" label="Kotlin">
+```swift
+let user = try await supabase.auth.user()
+let metadata = user.userMetadata
+```
+
+### Kotlin
 
 ```kotlin
 val data = supabase.auth.signUpWith(Email) {
@@ -137,56 +116,6 @@ val data = supabase.auth.signUpWith(Email) {
 }
 ```
 
-</TabPanel>
-</$Show>
-</Tabs>
-
-User metadata is stored on the `raw_user_meta_data` column of the `auth.users` table. To view the metadata:
-
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="js"
-  queryGroup="language"
->
-<TabPanel id="js" label="JavaScript">
-
-```js
-import { createClient } from '@supabase/supabase-js'
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
-
-// ---cut---
-const {
-  data: { user },
-} = await supabase.auth.getUser()
-let metadata = user?.user_metadata
-```
-
-</TabPanel>
-<$Show if="sdk:dart">
-<TabPanel id="dart" label="Dart">
-
-```dart
-final User? user = supabase.auth.currentUser;
-final Map<String, dynamic>? metadata = user?.userMetadata;
-```
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:swift">
-<TabPanel id="swift" label="Swift">
-
-```swift
-let user = try await supabase.auth.user()
-let metadata = user.userMetadata
-```
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:kotlin">
-<TabPanel id="kotlin" label="Kotlin">
-
 ```kotlin
 val user = supabase.auth.retrieveUserForCurrentSession()
 //Or you can use the user from the current session:
@@ -194,19 +123,18 @@ val user = supabase.auth.currentUserOrNull()
 val metadata = user?.userMetadata
 ```
 
-</TabPanel>
-</$Show>
-</Tabs>
-
 ## Deleting users
 
-You may delete users directly or via the management console at Authentication > Users. Note that deleting a user from the `auth.users` table does not automatically sign out a user. As Supabase makes use of JSON Web Tokens (JWT), a user's JWT will remain "valid" until it has expired.
+You may delete users directly or via the management console at Authentication > Users
+* Note that deleting a user from the `auth.users` table does not automatically sign out a user
+* As Supabase makes use of JSON Web Tokens (JWT), a user's JWT will remain "valid" until it has expired.
 
 <Admonition type="caution">
 
 You cannot delete a user if they are the owner of any objects in Supabase Storage.
 
-You will encounter an error when you try to delete an Auth user that owns any Storage objects. If this happens, try deleting all the objects for that user, or reassign ownership to another user.
+You will encounter an error when you try to delete an Auth user that owns any Storage objects
+* If this happens, try deleting all the objects for that user, or reassign ownership to another user.
 
 </Admonition>
 

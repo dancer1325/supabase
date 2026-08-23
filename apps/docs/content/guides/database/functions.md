@@ -5,396 +5,90 @@ description: 'Creating and using Postgres functions.'
 video: 'https://www.youtube.com/v/MJZCCpCYEqk'
 ---
 
-Postgres has built-in support for [SQL functions](https://www.postgresql.org/docs/current/sql-createfunction.html).
-These functions live inside your database, and they can be [used with the API](../../reference/javascript/rpc).
+* Postgres
+  * has built-in support for [SQL functions](https://www.postgresql.org/docs/current/sql-createfunction.html) /
+    * live | your database
+    * uses
+      * [with the API](../../reference/javascript/rpc)
+  * [Postgres's Chapter 9. Functions and Operators](https://www.postgresql.org/docs/current/functions.html)
 
 ## Quick demo
 
-<div className="video-container">
-  <iframe
-    src="https://www.youtube-nocookie.com/embed/MJZCCpCYEqk"
-    frameBorder="1"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowFullScreen
-  ></iframe>
-</div>
+* [video](https://www.youtube.com/watch?v=MJZCCpCYEqk)
+  * TODO:
 
 ## Getting started
 
-Supabase provides several options for creating database functions. You can use the Dashboard or create them directly using SQL.
-We provide a SQL editor within the Dashboard, or you can [connect](../../guides/database/connecting-to-postgres) to your database
-and run the SQL queries yourself.
-
-1. Go to the "SQL editor" section.
-2. Click "New Query".
-3. Enter the SQL to create or replace your Database function.
-4. Click "Run" or cmd+enter (ctrl+enter).
+* ways to create database functions / provided -- by -- Supabase
+  * | Supabase Dashboard > SQL editor 
+    * steps
+      * "New Query" > enter the SQL > run
+  * -- via -- SQL
+    * steps
+      * [connect -- to -- your database](../../guides/database/connecting-to-postgres)
+      * run the SQL queries
 
 ## Basic functions [#simple-functions]
 
-Create a basic database function that returns the string "hello world".
+* 's parts
+  * `create function <FUNCTION_NAME>` OR `replace function <FUNCTION_NAME>` OR `create or replace function <FUNCTION_NAME>`
+    * == function declaration
+    * `<FUNCTION_NAME>`
+      * requirements
+        * ⚠️MUST be unique⚠️
+          * Reason:🧠overloaded functions are NOT supported🧠
+  * `returns <RETURNED_TYPE>`
+    * == type of data / function returns 
+      * ALLOWED `<RETURNED_TYPE>`
+        * scalar value
+        * NOTHING == `returns void`
+          * == nothing is returned
+        * [tables' data sets OR views' data sets](#returning-data-sets) 
+  * `language sql` OR `language <ANY_PROCEDURAL_LANGUAGE>`
+    * == language / used | function body
+    * _Example of <ANY_PROCEDURAL_LANGUAGE>:_ `plpgsql`, `plpython`, ...
+  * `as $$ <FUNCTION_BODY> $$`
+    * `$$`
+      * == function wrapper
+    * `<FUNCTION_BODY>`
+      * if you want a final `select` statement | function body, is returned -> you need NO statements / follow it
 
-```sql
-create or replace function hello_world() -- 1
-returns text -- 2
-language sql -- 3
-as $$  -- 4
-  select 'hello world';  -- 5
-$$; --6
+* steps to use a function
+  * create it
+  * execute it
 
-```
-
-<details>
-<summary>Show/Hide Details</summary>
-
-At it's most basic a function has the following parts:
-
-1. `create or replace function hello_world()`: The function declaration, where `hello_world` is the name of the function. You can use either `create` when creating a new function or `replace` when replacing an existing function. Or you can use `create or replace` together to handle either.
-2. `returns text`: The type of data that the function returns. If it returns nothing, you can `returns void`.
-3. `language sql`: The language used inside the function body. This can also be a procedural language: `plpgsql`, `plpython`, etc.
-4. `as $$`: The function wrapper. Anything enclosed inside the `$$` symbols will be part of the function body.
-5. `select 'hello world';`: A basic function body. The final `select` statement inside a function body will be returned if there are no statements following it.
-6. `$$;`: The closing symbols of the function wrapper.
-
-</details>
-
-<br />
-
-<Admonition type="caution">
-
-When naming your functions, make the name of the function unique as overloaded functions are not supported.
-
-</Admonition>
-
-After the Function is created, we have several ways of "executing" the function - either directly inside the database using SQL, or with one of the client libraries.
-
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="sql"
-  queryGroup="language"
->
-<TabPanel id="sql" label="SQL">
-
-```sql
-select hello_world();
-```
-
-</TabPanel>
-<TabPanel id="js" label="JavaScript">
-
-```js
-const { data, error } = await supabase.rpc('hello_world')
-```
-
-Reference: [`rpc()`](../../reference/javascript/rpc)
-
-</TabPanel>
-<$Show if="sdk:dart">
-<TabPanel id="dart" label="Dart">
-
-```dart
-final data = await supabase
-  .rpc('hello_world');
-```
-
-Reference: [`rpc()`](../../reference/dart/rpc)
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:swift">
-<TabPanel id="swift" label="Swift">
-
-```swift
-try await supabase.rpc("hello_world").execute()
-```
-
-Reference: [`rpc()`](../../reference/swift/rpc)
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:kotlin">
-<TabPanel id="kotlin" label="Kotlin">
-
-```kotlin
-val data = supabase.postgrest.rpc("hello_world")
-```
-
-Reference: [`rpc()`](../../reference/kotlin/rpc)
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:python">
-<TabPanel id="python" label="Python">
-
-```python
-data = supabase.rpc('hello_world').execute()
-```
-
-Reference: [`rpc()`](../../reference/python/rpc)
-
-</TabPanel>
-</$Show>
-</Tabs>
+* ways of "executing" the function
+  * -- via -- SQL
+  * -- via -- client libraries
+    * JS
+    * Dart
+    * Swift
+    * Kotlin
+    * Python
 
 ## Returning data sets
 
-Database Functions can also return data sets from [Tables](../../guides/database/tables) or Views.
-
-For example, if we had a database with some Star Wars data inside:
-
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="data"
-  queryGroup="example-view"
->
-<TabPanel id="data" label="Data">
-
-<h4>Planets</h4>
-
-```
-| id  | name     |
-| --- | -------- |
-| 1   | Tatooine |
-| 2   | Alderaan |
-| 3   | Kashyyyk |
-```
-
-<h4>People</h4>
-
-```
-| id  | name             | planet_id |
-| --- | ---------------- | --------- |
-| 1   | Anakin Skywalker | 1         |
-| 2   | Luke Skywalker   | 1         |
-| 3   | Princess Leia    | 2         |
-| 4   | Chewbacca        | 3         |
-```
-
-</TabPanel>
-<TabPanel id="sql" label="SQL">
-
-```sql
-create table planets (
-  id serial primary key,
-  name text
-);
-
-insert into planets
-  (id, name)
-values
-  (1, 'Tattoine'),
-  (2, 'Alderaan'),
-  (3, 'Kashyyyk');
-
-create table people (
-  id serial primary key,
-  name text,
-  planet_id bigint references planets
-);
-
-insert into people
-  (id, name, planet_id)
-values
-  (1, 'Anakin Skywalker', 1),
-  (2, 'Luke Skywalker', 1),
-  (3, 'Princess Leia', 2),
-  (4, 'Chewbacca', 3);
-```
-
-</TabPanel>
-</Tabs>
-
-We could create a function which returns all the planets:
-
-```sql
-create or replace function get_planets()
-returns setof planets
-language sql
-as $$
-  select * from planets;
-$$;
-```
-
-Because this function returns a table set, we can also apply filters and selectors. For example, if we only wanted the first planet:
-
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="sql"
-  queryGroup="language"
->
-<TabPanel id="sql" label="SQL">
-
-```sql
-select *
-from get_planets()
-where id = 1;
-```
-
-</TabPanel>
-<TabPanel id="js" label="JavaScript">
-
-```js
-const { data, error } = supabase.rpc('get_planets').eq('id', 1)
-```
-
-</TabPanel>
-<$Show if="sdk:dart">
-<TabPanel id="dart" label="Dart">
-
-```dart
-final data = await supabase
-  .rpc('get_planets')
-  .eq('id', 1);
-```
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:swift">
-<TabPanel id="swift" label="Swift">
-
-```swift
-let response = try await supabase.rpc("get_planets").eq("id", value: 1).execute()
-```
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:kotlin">
-<TabPanel id="kotlin" label="Kotlin">
-
-```kotlin
-val data = supabase.postgrest.rpc("get_planets") {
-    filter {
-        eq("id", 1)
-    }
-}
-```
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:python">
-<TabPanel id="python" label="Python">
-
-```python
-data = supabase.rpc('get_planets').eq('id', 1).execute()
-```
-
-</TabPanel>
-</$Show>
-</Tabs>
+* allows
+  * apply filters & selectors
+    * -- via -- SQL
+    * -- via -- client libraries
+      * JS
+      * Dart
+      * Swift
+      * Kotlin
+      * Python
 
 ## Passing parameters
 
-Create a function to insert a new planet into the `planets` table and return the new ID. Note that this time we're using the `plpgsql` language.
-
-```sql
-create or replace function add_planet(name text)
-returns bigint
-language plpgsql
-as $$
-declare
-  new_row bigint;
-begin
-  insert into planets(name)
-  values (add_planet.name)
-  returning id into new_row;
-
-  return new_row;
-end;
-$$;
-```
-
-Once again, you can execute this function either inside your database using a `select` query, or with the client libraries:
-
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="sql"
-  queryGroup="language"
->
-<TabPanel id="sql" label="SQL">
-
-```sql
-select * from add_planet('Jakku');
-```
-
-</TabPanel>
-<TabPanel id="js" label="JavaScript">
-
-```js
-const { data, error } = await supabase.rpc('add_planet', { name: 'Jakku' })
-```
-
-</TabPanel>
-<$Show if="sdk:dart">
-<TabPanel id="dart" label="Dart">
-
-```dart
-final data = await supabase
-  .rpc('add_planet', params: { 'name': 'Jakku' });
-```
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:swift">
-<TabPanel id="swift" label="Swift">
-
-Using `Encodable` type:
-
-```swift
-struct Planet: Encodable {
-  let name: String
-}
-
-try await supabase.rpc(
-  "add_planet",
-  params: Planet(name: "Jakku")
-)
-.execute()
-```
-
-Using `AnyJSON` convenience` type:
-
-```swift
-try await supabase.rpc(
-  "add_planet",
-  params: ["name": AnyJSON.string("Jakku")]
-)
-.execute()
-```
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:kotlin">
-<TabPanel id="kotlin" label="Kotlin">
-
-```kotlin
-val data = supabase.postgrest.rpc(
-    function = "add_planet",
-    parameters = buildJsonObject { //You can put here any serializable object including your own classes
-        put("name", "Jakku")
-    }
-)
-```
-
-</TabPanel>
-</$Show>
-<$Show if="sdk:python">
-<TabPanel id="python" label="Python">
-
-```python
-data = supabase.rpc('add_planet', params={'name': 'Jakku'}).execute()
-```
-
-</TabPanel>
-</$Show>
-</Tabs>
+* == execute a function / accepts parameters
+  * ways
+    * -- via -- SQL
+    * -- via -- client libraries
+      * JS
+      * Dart
+      * Swift
+      * Kotlin
+      * Python
 
 ## Suggestions
 
@@ -407,7 +101,8 @@ For use-cases which require low-latency, use [Edge Functions](../../guides/funct
 
 ### Security `definer` vs `invoker`
 
-Postgres allows you to specify whether you want the function to be executed as the user _calling_ the function (`invoker`), or as the _creator_ of the function (`definer`). For example:
+Postgres allows you to specify whether you want the function to be executed as the user _calling_ the function (`invoker`), or as the _creator_ of the function (`definer`)
+* For example:
 
 ```sql
 create function hello_world()
@@ -421,13 +116,16 @@ end;
 $$;
 ```
 
-It is best practice to use `security invoker` (which is also the default). If you ever use `security definer`, you _must_ set the `search_path`.
-If you use an empty search path (`search_path = ''`), you must explicitly state the schema for every relation in the function body (e.g. `from public.table`).
+It is best practice to use `security invoker` (which is also the default)
+* If you ever use `security definer`, you _must_ set the `search_path`.
+If you use an empty search path (`search_path = ''`), you must explicitly state the schema for every relation in the function body (e.g
+* `from public.table`).
 This limits the potential damage if you allow access to schemas which the user executing the function should not have.
 
 ### Function privileges
 
-By default, database functions can be executed by any role. There are two main ways to restrict this:
+By default, database functions can be executed by any role
+* There are two main ways to restrict this:
 
 1.  On a case-by-case basis. Specifically revoke permissions for functions you want to protect. Execution needs to be revoked for both `public` and the role you're restricting:
 
@@ -625,13 +323,6 @@ $$;
 
 select advanced_example();
 ```
-
-## Resources
-
-- Official Client libraries: [JavaScript](../../reference/javascript/rpc) and [Flutter](../../reference/dart/rpc)
-- Community client libraries: [github.com/supabase-community](https://github.com/supabase-community)
-- Postgres Official Docs: [Chapter 9. Functions and Operators](https://www.postgresql.org/docs/current/functions.html)
-- Postgres Reference: [CREATE FUNCTION](https://www.postgresql.org/docs/9.1/sql-createfunction.html)
 
 ## Deep dive
 

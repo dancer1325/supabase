@@ -4,39 +4,56 @@ title: 'JWT Claims Reference'
 subtitle: 'Complete reference for claims appearing in JWTs created by Supabase Auth'
 ---
 
-This page provides a comprehensive reference for all JWT claims used in Supabase authentication tokens. This information is essential for server-side JWT validation and serialization, especially when implementing authentication in languages like Rust where field names like `ref` are reserved keywords.
+* goal
+  * Supabase authentication tokens' ALL JWT claims
+    * uses
+      * server-side JWT validation & serialization
+        * _Examples:_ | implement authentication | languages (Rust) / `ref` are reserved keywords
 
-## JWT structure overview
+## JWT structure
 
-Supabase JWTs follow the standard JWT structure with three parts:
+* [here](jwts.md)
 
-- **Header**: Contains algorithm and key information
-- **Payload**: Contains the claims (user data and metadata)
-- **Signature**: Cryptographic signature for verification
+## REQUIRED claims
 
-The payload contains various claims that provide user identity, authentication level, and authorization information.
+* == present | ALL Supabase JWTs
+* == ❌can NOT be removed❌
 
-## Required claims
+| Field          | Type                 | Description                                                        | Example                                       |
+| -------------- | -------------------- |--------------------------------------------------------------------|-----------------------------------------------|
+| `iss`          | `string`             | **Issuer**                                                         | `"https://project-ref.supabase.co/auth/v1"`   |
+| `aud`          | `string \| string[]` | **Audience** <br/> == JWT's intended recipient                     | `"authenticated"` OR `"anon"`                 |
+| `exp`          | `number`             | **Expiration Time** <br/> == Unix timestamp \| token expires       | `1640995200`                                  |
+| `iat`          | `number`             | **Issued At**  <br/> == Unix timestamp                             | token was issued                              | `1640991600`                                  |
+| `sub`          | `string`             | **Subject** <br/> == user's unique ID (UUID)                       | `"123e4567-e89b-12d3-a456-426614174000"`      |
+| `role`         | `string`             | **Role**                                                           | `"authenticated"`, `"anon"`, `"service_role"` |
+| `aal`          | `string`             | **Authenticator Assurance Level** <br/> == Authentication strength | `"aal1"`, `"aal2"`                            |
+| `session_id`   | `string`             | **Session ID**                                                     | `"session-uuid"`                              |
+| `email`        | `string`             | **Email** <br/> User's email address                               | `"user@example.com"`                          |
+| `phone`        | `string`             | **Phone** <br/> User's phone number                                | `"+1234567890"`                               |
+| `is_anonymous` | `boolean`            | **Anonymous Flag** <br/> Whether the user is anonymous             | `false`                                       |
 
-These claims are always present in Supabase JWTs and cannot be removed:
+### `iss`
 
-| Field          | Type                 | Description                                                 | Example                                       |
-| -------------- | -------------------- | ----------------------------------------------------------- | --------------------------------------------- |
-| `iss`          | `string`             | **Issuer** - The entity that issued the JWT                 | `"https://project-ref.supabase.co/auth/v1"`   |
-| `aud`          | `string \| string[]` | **Audience** - The intended recipient of the JWT            | `"authenticated"` or `"anon"`                 |
-| `exp`          | `number`             | **Expiration Time** - Unix timestamp when the token expires | `1640995200`                                  |
-| `iat`          | `number`             | **Issued At** - Unix timestamp when the token was issued    | `1640991600`                                  |
-| `sub`          | `string`             | **Subject** - The user ID (UUID)                            | `"123e4567-e89b-12d3-a456-426614174000"`      |
-| `role`         | `string`             | **Role** - User's role in the system                        | `"authenticated"`, `"anon"`, `"service_role"` |
-| `aal`          | `string`             | **Authenticator Assurance Level** - Authentication strength | `"aal1"`, `"aal2"`                            |
-| `session_id`   | `string`             | **Session ID** - Unique session identifier                  | `"session-uuid"`                              |
-| `email`        | `string`             | **Email** - User's email address                            | `"user@example.com"`                          |
-| `phone`        | `string`             | **Phone** - User's phone number                             | `"+1234567890"`                               |
-| `is_anonymous` | `boolean`            | **Anonymous Flag** - Whether the user is anonymous          | `false`                                       |
+* == server / issued the token
+* `"<iss_value>/.well-known/jwks.json"`
+  * display
+    * public keys with / you can verify the token
 
-## Optional claims
+### `role`
 
-These claims may be present depending on the authentication context:
+* == Postgres role
+* == user's role | system
+* uses
+  * | Postgres RLS checks
+
+### `session_id`
+
+* can be correlated -- with the -- `auth.sessions` table's primary key
+
+## OPTIONAL claims
+
+* they appear -- depending on -- the authentication context
 
 | Field           | Type     | Description                                                                | Example                                             |
 | --------------- | -------- | -------------------------------------------------------------------------- | --------------------------------------------------- |
@@ -154,7 +171,8 @@ These claims may be present depending on the authentication context:
 
 ### Rust
 
-In Rust, the `ref` field is a reserved keyword. When deserializing JWTs, you'll need to handle this:
+In Rust, the `ref` field is a reserved keyword
+* When deserializing JWTs, you'll need to handle this:
 
 ```rust
 use serde::{Deserialize, Serialize};

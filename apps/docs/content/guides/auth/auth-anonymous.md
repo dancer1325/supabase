@@ -4,16 +4,37 @@ title: 'Anonymous Sign-Ins'
 subtitle: 'Create and use anonymous users to authenticate with Supabase'
 ---
 
-[Enable Anonymous Sign-Ins](/dashboard/project/_/auth/providers) to build apps which provide users an authenticated experience without requiring users to enter an email address, password, use an OAuth provider or provide any other PII (Personally Identifiable Information). Later, when ready, the user can link an authentication method to their account.
+[Enable Anonymous Sign-Ins](/dashboard/project/_/auth/providers) to build apps which provide users an authenticated experience 
+without requiring users to enter an email address, password, 
+use an OAuth provider or provide any other PII (Personally Identifiable Information)
+* Later, when ready, the user can link an authentication method to their account.
+
+* ❌are NOT tied -- to -- ANY identities❌
+  * -> you can NOT sign back -- as -- same user
+* have
+  * user ID
+  * personalized Access Token
+* use cases
+  * | e-commerce applications,
+    * BEFORE checkout, to create shopping carts
+  * FULL-feature demos / NO collect personal information
+  * Temporary or throw-away accounts
 
 <Admonition type="note" title="Anonymous user vs the anon key">
 
-Calling `signInAnonymously()` creates an anonymous user. It behaves like a permanent user, except the user can't access their account if they sign out, clear browsing data, or use another device.
+Calling `signInAnonymously()` creates an anonymous user
+* It behaves like a permanent user, except the user can't access their account if they sign out, clear browsing data, or use another device.
 
-Like permanent users, the `authenticated` Postgres role will be used when using the Data APIs to access your project. JWTs for these users will have an `is_anonymous` claim which you can use to distinguish in RLS policies.
+Like permanent users, the `authenticated` Postgres role will be used when using the Data APIs to access your project
+* JWTs for these users will have an `is_anonymous` claim which you can use to distinguish in RLS policies.
 
-This is different from the `anon` API key which does not create a user and can be used to implement public access to your database as it uses the `anonymous` Postgres role.
+This is different from the `anon` API key which does not create a user and can be used to implement public access
+to your database as it uses the `anonymous` Postgres role.
 
+Like permanent users, anonymous users use the **authenticated** role for database access.
+
+The **anon** role is for those who aren't signed in at all and are not tied to any user ID
+* We refer to these as unauthenticated or public users.
 </Admonition>
 
 Anonymous sign-ins can be used to build:
@@ -24,7 +45,9 @@ Anonymous sign-ins can be used to build:
 
 <Admonition type="caution">
 
-Review your existing RLS policies before enabling anonymous sign-ins. Anonymous users use the `authenticated` role. To distinguish between anonymous users and permanent users, your policies need to check the `is_anonymous` field of the user's JWT.
+Review your existing RLS policies before enabling anonymous sign-ins
+* Anonymous users use the `authenticated` role
+* To distinguish between anonymous users and permanent users, your policies need to check the `is_anonymous` field of the user's JWT.
 
 See the [Access control section](#access-control) for more details.
 
@@ -32,13 +55,15 @@ See the [Access control section](#access-control) for more details.
 
 <Admonition type="caution" title="Use Dynamic Rendering with Next.js">
 
-The Supabase team has received reports of user metadata being cached across unique anonymous users as a result of Next.js static page rendering. For the best user experience, use dynamic page rendering.
+The Supabase team has received reports of user metadata being cached across unique anonymous users as a result of Next.js static page rendering
+* For the best user experience, use dynamic page rendering.
 
 </Admonition>
 
 <Admonition type="note" title="Self hosting and local development">
 
-For self-hosting, you can update your project configuration using the files and environment variables provided. See the [local development docs](/docs/guides/cli/config) for more details.
+For self-hosting, you can update your project configuration using the files and environment variables provided
+* See the [local development docs](/docs/guides/cli/config) for more details.
 
 </Admonition>
 
@@ -113,7 +138,8 @@ response = supabase.auth.sign_in_anonymously()
 
 ## Convert an anonymous user to a permanent user
 
-Converting an anonymous user to a permanent user requires [linking an identity](/docs/guides/auth/auth-identity-linking#manual-linking-beta) to the user. This requires you to [enable manual linking](/dashboard/project/_/auth/providers) in your Supabase project.
+Converting an anonymous user to a permanent user requires [linking an identity](/docs/guides/auth/auth-identity-linking#manual-linking-beta) to the user
+* This requires you to [enable manual linking](/dashboard/project/_/auth/providers) in your Supabase project.
 
 ### Link an email / phone identity
 
@@ -126,7 +152,8 @@ Converting an anonymous user to a permanent user requires [linking an identity](
 >
 <TabPanel id="js" label="JavaScript">
 
-You can use the [`updateUser()`](/docs/reference/javascript/auth-updateuser) method to link an email or phone identity to the anonymous user. To add a password for the anonymous user, the user's email or phone number needs to be verified first.
+You can use the [`updateUser()`](/docs/reference/javascript/auth-updateuser) method to link an email or phone identity to the anonymous user
+* To add a password for the anonymous user, the user's email or phone number needs to be verified first.
 
 ```js
 import { createClient } from '@supabase/supabase-js'
@@ -188,7 +215,8 @@ supabase.auth.updateUser {
 <$Show if="sdk:python">
 <TabPanel id="python" label="Python">
 
-You can use the [`update_user()`](/docs/reference/python/auth-updateuser) method to link an email or phone identity to the anonymous user. To add a password for the anonymous user, the user's email or phone number needs to be verified first.
+You can use the [`update_user()`](/docs/reference/python/auth-updateuser) method to link an email or phone identity to the anonymous user
+* To add a password for the anonymous user, the user's email or phone number needs to be verified first.
 
 ```python
 response = supabase.auth.update_user({
@@ -279,7 +307,8 @@ response = supabase.auth.link_identity({'provider': 'google'})
 
 ## Access control
 
-An anonymous user assumes the `authenticated` role like a permanent user. You can use row-level security (RLS) policies to differentiate between an anonymous user and a permanent user by checking for the `is_anonymous` claim in the JWT returned by `auth.jwt()`:
+An anonymous user assumes the `authenticated` role like a permanent user
+* You can use row-level security (RLS) policies to differentiate between an anonymous user and a permanent user by checking for the `is_anonymous` claim in the JWT returned by `auth.jwt()`:
 
 ```sql
 create policy "Only permanent users can post to the news feed"
@@ -295,7 +324,8 @@ using ( true );
 
 <Admonition type="note" title="Use restrictive policies">
 
-RLS policies are permissive by default, which means that they are combined using an "OR" operator when multiple policies are applied. It is important to construct restrictive policies to ensure that the checks for an anonymous user are always enforced when combined with other policies.
+RLS policies are permissive by default, which means that they are combined using an "OR" operator when multiple policies are applied
+* It is important to construct restrictive policies to ensure that the checks for an anonymous user are always enforced when combined with other policies.
 Be aware that a single 'restrictive' RLS policy alone will fail unless combined with another policy that returns true, ensuring the combined condition is met.
 
 </Admonition>

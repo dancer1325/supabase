@@ -2,43 +2,53 @@
 title: Agent Skills
 ---
 
-Agent Skills are folders of instructions, scripts, and resources that agents can discover and use to do things more accurately and efficiently. Agents are increasingly capable, but often don't have the context they need to do real work reliably. Skills solve this by giving agents access to procedural knowledge and company-, team-, and user-specific context they can load on demand. Agents with access to a set of skills can extend their capabilities based on the task they're working on.
+* Agent Skills
+  * == folders of 
+    * instructions
+    * scripts
+  * allows
+    * agents can discover & use to do things 
+      * MORE accurately
+      * MORE efficiently
+  * uses
+    * extend agents' capabilities
 
-## Installing skills
+## how to install skills?
 
-Install all Supabase skills using the skills CLI:
+* -- through -- [skills npm package](https://github.com/vercel-labs/skills)
 
 ```bash
+# install ALL Supabase skills | your project
 npx skills add supabase/agent-skills
-```
 
-To install a specific skill from the repository:
-
-```bash
+# install a specific skill | your project
 npx skills add supabase/agent-skills --skill SKILL_NAME
+
+# install ALL Supabase skills | ALL your Supabase projects
+npx skills add supabase/agent-skills --global
+
+# install ALL Supabase skills | ALL detected agents
+npx skills add supabase/agent-skills --all
+
+# MORE options
+## https://github.com/vercel-labs/skills
 ```
 
-Skills are installed at project scope by default, placing them in your repository so contributors and cloud agents all share the same setup. Pass `--global` to install across all your projects instead.
-
-Add skills for all detected agents at the same time by passing `--all`. See the [skills package](https://github.com/vercel-labs/skills) for more options.
-
-You can also install the agent skills together with the Supabase MCP server using the [Supabase Plugin for AI Coding Agents](/docs/guides/getting-started/plugins) for a combined one-step setup.
+* if you want to install the agent skills + Supabase MCP server -> use the [Supabase Plugin -- for -- AI Coding Agents](plugins)
 
 ## Available skills
 
-<AiSkillsIndex />
+* [here](https://github.com/supabase/agent-skills/tree/main/skills)
 
-## Finding more skills
+## how to find MORE skills?
 
-Browse the [skills.sh directory](https://skills.sh) to discover skills from the community. You can also search for skills using the CLI:
+* ways
+  * check | https://skills.sh
+  * `npx skills find QUERY`
 
-```bash
-npx skills find QUERY
-```
+## MORE
 
-## Learn more
-
-- [Agent Skills Repository](https://github.com/supabase/agent-skills)
-- [Agent Skills Documentation](https://agentskills.io/home)
-- [Agent Skills Overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
-- [skills npm package](https://github.com/vercel-labs/skills)
+* [Supabase Agent Skills Repository](https://github.com/supabase/agent-skills)
+* [Agent Skills Documentation](https://agentskills.io/home)
+* [Agent Skills Overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
+* [skills npm package](https://github.com/vercel-labs/skills)

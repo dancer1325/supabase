@@ -6,63 +6,49 @@ breadcrumb: 'Framework Quickstarts'
 
 * [set up db](../../../_partials/quickstart_db_setup.md)
 
-## 3. Create an Expo app
-
-TODO: 
-Create a minimal Expo app using the `create-expo-app` command with the blank TypeScript template.
+## 3. create a minimal Expo app
 
 ```bash
 npx create-expo-app my-app --template blank-typescript
 ```
 
-## 4. Install Agent Skills (optional)
+## 4. install Supabase's Agent Skills -- OPTIONAL --
 
-Supabase's [Agent Skills](/docs/guides/ai-tools/ai-skills) is a curated set of instructions that give your AI agent procedural knowledge about working with Supabase.
+* [here](../../ai-tools/ai-skills)
 
-To install, run the following command in the root of your project:
+## 5. install the Supabase client library -- "@supabase/supabase-js" --
 
-```bash
-npx skills add supabase/agent-skills
-```
-
-## 5. Install the Supabase client library
-
-The fastest way to get started is to use the `@supabase/supabase-js` client library which provides a convenient interface for working with Supabase from a React Native app.
-
-Navigate to the Expo app and install `supabase-js` along with the required dependencies for session storage and URL handling.
-
-```bash
-cd my-app && npx expo install @supabase/supabase-js react-native-url-polyfill expo-sqlite
-```
+* steps
+  * | your project path
+    ```bash
+    # react-native-url-polyfill
+    #   allows
+    #     URL handling
+    # expo-sqlite
+    #   allows
+    #     session storage
+    npx expo install @supabase/supabase-js react-native-url-polyfill expo-sqlite
+    ```
 
 ## 6. Declare Supabase environment variables
 
-Create a `.env` file in the root of your project and populate it with your Supabase connection variables that you can get from the helper below, or [from the project **Connect** panel](/dashboard/project/_?showConnect=true).
+* steps
+  * Supabase Dashboard > | "Get connected" panel, click in "Framework" > Framework = Expo React Native
+    * copy them
+  * | your project's root path
 
-<Button variant="primary" asChild>
-  <a href="/dashboard/project/_?showConnect=true">Open Connect panel</a>
-</Button>
-
-Expo requires environment variables to be prefixed with `EXPO_PUBLIC_` to be accessible in your app code.
-
-```text name=.env
-EXPO_PUBLIC_SUPABASE_URL=<SUBSTITUTE_SUPABASE_URL>
-EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<SUBSTITUTE_SUPABASE_PUBLISHABLE_KEY>
-```
-
-<$Partial path="api_settings.mdx" variables={{ "framework": "", "tab": "" }} />
+    ```.env
+    EXPO_PUBLIC_SUPABASE_URL=<SUBSTITUTE_SUPABASE_URL>
+    EXPO_PUBLIC_SUPABASE_KEY=<SUBSTITUTE_SUPABASE_PUBLISHABLE_KEY>
+    ```
+  * [get API details](../../../_partials/api_settings.md)
 
 ## 7. Initialize the Supabase client
 
-Create a helper file at `lib/supabase.ts` to initialize the Supabase client using the environment variables.
-
-The code below uses Expo's localStorage polyfill to persist authentication sessions.
-
 ```ts name=lib/supabase.ts
+// persist authentication sessions
 import 'react-native-url-polyfill/auto'
-
 import { createClient } from '@supabase/supabase-js'
-
 import 'expo-sqlite/localStorage/install'
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
@@ -78,11 +64,7 @@ export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
 })
 ```
 
-## 8. Query data from the app
-
-Replace the contents of `App.tsx` with the following code to fetch and display the instruments from your database.
-
-Use `useEffect` to fetch the data when the component mounts and display the query result using React Native components.
+## 8. | your app, query data
 
 ```tsx name=App.tsx
 import { useEffect, useState } from 'react'
@@ -130,14 +112,12 @@ const styles = StyleSheet.create({
 
 ## 9. Start the app
 
-Run the development server and scan the QR code with the Expo Go app on your phone, or press `i` for iOS simulator or `a` for Android emulator.
-
-```bash
-npx expo start
-```
+* steps
+  * `npx expo start`
+  * choose an option
 
 ## Next steps
 
-- Set up [Auth](/docs/guides/auth) for your app
-- [Insert more data](/docs/guides/database/import-data) into your database
-- Upload and serve static files using [Storage](/docs/guides/storage)
+* [set up Auth](../../auth)
+* [insert MORE data | your database](../../database/import-data)
+* upload & serve static files -- via -- [Storage](../../storage)

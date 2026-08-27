@@ -63,3 +63,5 @@ end;
 $$;
 
 select * from add_planet('Jakku');
+
+\dp;

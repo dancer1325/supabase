@@ -31,3 +31,6 @@ $$;
 create trigger on_auth_user_created
     after insert on auth.users
     for each row execute procedure public.handle_new_user();
+
+-- 3. Adding & retrieving user metadata
+SELECT raw_user_meta_data FROM auth.users;

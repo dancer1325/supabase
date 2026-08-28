@@ -1,5 +1,6 @@
-<Price price="0.00002919" /> per GB-Hr (<Price price="0.0213" /> per GB per month). You are only
-charged for usage exceeding your subscription plan's quota.
+<Price price="0.00002919" /> per GB-Hr (<Price price="0.0213" /> per GB per month)
+
+* ⚠️if you exceed your subscription plan's quota -> you are charged for usage⚠️ 
 
 | Plan       | Quota in GB | Over-Usage per GB        | Quota in GB-Hrs | Over-Usage per GB-Hr         |
 | ---------- | ----------- | ------------------------ | --------------- | ---------------------------- |

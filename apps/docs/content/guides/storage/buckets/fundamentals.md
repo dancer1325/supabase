@@ -5,36 +5,47 @@ description: 'Learn how Supabase Storage Buckets works.'
 sidebar_label: 'Buckets'
 ---
 
-Buckets allow you to keep your files organized and determines the [Access Model](#access-model) for your assets. [Upload restrictions](/docs/guides/storage/buckets/creating-buckets#restricting-uploads) like max file size and allowed content types are also defined at the bucket level.
+* Buckets
+  * allow you to
+    * keep your files organized
+    * determine the [access Model](#access-model) -- for -- your assets
+  * [upload restrictions](creating-buckets#restricting-uploads)
 
 ## Access model
 
-There are 2 access models for buckets, **public** and **private** buckets.
-
 ### Private buckets
 
-When a bucket is set to **Private** all operations are subject to access control via [RLS policies](/docs/guides/storage/security/access-control). This also applies when downloading assets. Buckets are private by default.
+* ⚠️default one⚠️
+* -> ALL operations (EVEN download assets) are subject -- , via [RLS policies](../security/access-control), to -- access control
 
-The only ways to download assets within a private bucket is to:
+* ways to download assets | private bucket
+  * use the `download()` method | JS,
+    * by providing an authorization header containing your user's JWT
+    * The RLS policy you create on the `storage.objects` table will use this user to determine if they have access.
+  * create a signed URL -- via -- `createSignedUrl` method
+    * can be accessed | limited time
 
-- Use the [download method](/docs/reference/javascript/storage-from-download) by providing an authorization header containing your user's JWT. The RLS policy you create on the `storage.objects` table will use this user to determine if they have access.
-- Create a signed URL with the [`createSignedUrl` method](/docs/reference/javascript/storage-from-createsignedurl) that can be accessed for a limited time.
-
-#### Example use cases:
-
-- Uploading users' sensitive documents
-- Securing private assets by using RLS to set up fine-grain access controls
+* _Example of use cases:_
+  - Uploading users' sensitive documents
+  - Securing private assets -- by -- using RLS
+    - == set up fine-grain access controls
 
 ### Public buckets
 
-When a bucket is designated as 'Public,' it effectively bypasses access controls for both retrieving and serving files within the bucket. This means that anyone who possesses the asset URL can readily access the file.
+* allows
+  * retrieving & serving files | the bucket
+    * -> ⚠️ANYONE / possesses the asset URL -> can readily access the file⚠️
+    * ❌NOT enable
+      * upload
+      * delete
+      * moving
+      * copying❌
 
-Access control is still enforced for other types of operations including uploading, deleting, moving, and copying.
+* _Example of use cases:_
+  - User profile pictures
+  - User public media
+  - Blog post content
 
-#### Example use cases:
-
-- User profile pictures
-- User public media
-- Blog post content
-
-Public buckets are more performant than private buckets since they are [cached differently](/docs/guides/storage/cdn/fundamentals#public-vs-private-buckets).
+* vs private buckets
+  * MORE performant
+    * Reason:🧠[cached differently](../cdn/fundamentals#public-vs-private-buckets)🧠

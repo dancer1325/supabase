@@ -16,6 +16,9 @@ For how authorization headers and the `verify_jwt` platform check work under the
 | `'publishable'` | A publishable key on `apikey`              |
 | `'none'`        | Any caller, no check (for signed webhooks) |
 
+The function accepts a signed-in user's JWT or a secret key, so it can be triggered from your app
+(via `supabase.functions.invoke`) or from a database function
+
 ## Authenticated user calls
 
 Functions called by signed-in users — typically through `supabase.functions.invoke` from the client — send the user's session JWT on the `Authorization` header. Keep `verify_jwt = true` (the default) so the platform validates the JWT before your handler runs, then use `auth: 'user'` to get `ctx.supabase` already scoped to the caller's RLS policies.

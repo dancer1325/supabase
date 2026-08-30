@@ -1,0 +1,21 @@
+### 1. Get your access token from https://supabase.com/dashboard/account/tokens
+# TODO:
+
+### 2. Configure custom SMTP
+PATCH https://api.supabase.com/v1/projects/$PROJECT_REF/config/auth
+Authorization: Bearer $SUPABASE_ACCESS_TOKEN
+Content-Type: application/json
+
+{
+  "external_email_enabled": true,
+  "mailer_secure_email_change_enabled": true,
+  "mailer_autoconfirm": false,
+  "smtp_admin_email": "no-reply@example.com",
+  "smtp_host": "smtp.example.com",
+  "smtp_port": 587,
+  "smtp_user": "your-smtp-user",
+  "smtp_pass": "your-smtp-password",
+  "smtp_sender_name": "Your App Name"
+}
+
+###

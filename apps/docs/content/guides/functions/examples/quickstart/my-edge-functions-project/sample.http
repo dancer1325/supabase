@@ -1,0 +1,21 @@
+### 1. test locally your edge functions
+###     1.1 's input "Functions"
+POST http://127.0.0.1:54321/functions/v1/hello-world
+apiKey: {{SUPABASE_PUBLISHABLE_KEY}}
+Content-Type: application/json
+
+{"name":"Functions"}
+
+###     1.2. 's input "World"
+POST http://127.0.0.1:54321/functions/v1/hello-world
+apiKey: {{SUPABASE_PUBLISHABLE_KEY}}
+Content-Type: application/json
+
+{"name":"World"}
+
+### 2. test your deployed edge functions
+POST https://{{YOUR_PROJECT_ID}}.supabase.co/functions/v1/hello-world
+apiKey: {{SUPABASE_REMOTE_PUBLISHABLE_KEY}}
+Content-Type: application/json
+
+{"name":"World"}

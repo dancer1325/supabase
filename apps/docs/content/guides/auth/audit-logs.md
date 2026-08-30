@@ -5,63 +5,49 @@ description: 'Monitor and track authentication events with audit logging.'
 subtitle: 'Monitor and track authentication events with audit logging.'
 ---
 
-Auth audit logs provide comprehensive tracking of authentication events in your Supabase project. Audit logs are automatically captured for all authentication events and help you monitor user authentication activities, detect suspicious behavior, and maintain compliance with security requirements.
+* Auth audit logs
+  * ' scope
+    * your Supabase project
+  * allows
+    * track of authentication events
+      * Reason:🧠AUTOMATICALLY capture ALL authentication events🧠
+      * _Examples:_ 
+        * User signups and logins
+        * Password changes and resets
+        * Email verification events
+        * Token refresh and logout events
+  * uses
+    * monitor user authentication activities
+    * detect suspicious behavior
+    * maintain compliance -- with -- security requirements
+  * ' [storing](#storage)
 
-## What gets logged
+## Storage
 
-Supabase auth audit logs automatically capture all authentication events including:
+* default places | audit logs are stored
+  1. your project's Postgres database's `auth.audit_log_entries` table
+     * if you want to reduce database storage costs -> disable it
+  2. External log storage
+     * == cost-efficient storage / accessible -- through -- the Supabase Dashboard 
 
-- User signups and logins
-- Password changes and resets
-- Email verification events
-- Token refresh and logout events
+### how to configure ?
 
-## Storage options
-
-By default, audit logs are stored in two places:
-
-1. **Your project's Postgres database** - Stored in the `auth.audit_log_entries` table, searchable via SQL but uses database storage
-2. **External log storage** - Cost-efficient storage accessible through the dashboard
-
-You can disable Postgres storage to reduce database storage costs while keeping the external log storage.
-
-### Configuring audit log storage
-
-1. Navigate to your project’s dashboard
-2. Go to **Authentication**
-3. Find the **Audit Logs** under **Configuration** section
-4. Toggle on "Disable writing auth audit logs to project database" to disable database storage
-
-<Admonition type="tip">
-
-Disabling Postgres storage reduces your database storage costs. Audit logs will still be available through the dashboard.
-
-</Admonition>
+* steps
+  * Supabase Dashboard > choose your project > Authentication > Audit Logs
+    * if you want to disable database storage -> toggle on "Disable writing auth audit logs to project database"
 
 ## Log format
 
-Audit logs contain detailed information about each authentication event:
-
-```json
-{
-  "timestamp": "2025-08-01T10:30:00Z",
-  "user_id": "uuid",
-  "action": "user_signedup",
-  "ip_address": "192.168.1.1",
-  "user_agent": "Mozilla/5.0...",
-  "metadata": {
-    "provider": "email"
-  }
-}
-```
+* [here](https://github.com/supabase/auth/blob/master/internal/models/audit_log_entry.go#L100)
 
 ### Log actions reference
 
+* [source code](https://github.com/supabase/auth/blob/master/internal/models/audit_log_entry.go#L23-L48)
+  * TODO: add next table to source code
+
+
 | Action                          | Description                             |
 | ------------------------------- | --------------------------------------- |
-| `login`                         | User login attempt                      |
-| `logout`                        | User logout                             |
-| `invite_accepted`               | Team invitation accepted                |
 | `user_signedup`                 | New user registration                   |
 | `user_invited`                  | User invitation sent                    |
 | `user_deleted`                  | User account deleted                    |
@@ -86,5 +72,6 @@ Audit logs contain detailed information about each authentication event:
 
 ## Limitations
 
-- There may be a short delay before logs appear
-- Query capabilities are limited to the dashboard interface
+* short delay BETWEEN: triggered event -- appear logs
+* query capabilities
+  * == dashboard interface

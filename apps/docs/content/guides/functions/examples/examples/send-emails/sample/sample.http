@@ -1,0 +1,5 @@
+### test -- via -- secret key
+POST http://localhost:54321/functions/v1/resend
+apikey: <SUPABASE_SECRET_KEY>
+
+###

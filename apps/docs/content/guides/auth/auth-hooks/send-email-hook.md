@@ -4,398 +4,60 @@ title: 'Send Email Hook'
 subtitle: 'Use your own email service to send authentication emails.'
 ---
 
-The Send Email Hook replaces Supabase's built-in email sending. You can use this hook to:
+* Send Email Hook
+  * == replacement of Supabase's built-in email sending
+  * allows
+    * Send emails -- via -- your OWN email provider
+    * Add internationalization OR custom logic
+    * set up MULTIPLE email providers
+      * if primary one fails -> fall back to ANOTHER provider 
+  * 's [input schema](https://github.com/supabase/auth/blob/master/internal/hooks/v0hooks/v0hooks.go#L244)
+    
+    | Field   | Type                                | Description                                    |
+    | ------- |-------------------------------------| ---------------------------------------------- |
+    | `user`  | [`User`](../users.md#user-object)   | The user account taking the action             |
+    | `email` | `object`                            | Metadata specific to the email sending process |
 
-- Send emails using your own email provider
-- Add internationalization or custom logic
-- Fall back to another provider if your primary one fails
-
-**Inputs**
-
-| Field   | Type                                              | Description                                    |
-| ------- | ------------------------------------------------- | ---------------------------------------------- |
-| `user`  | [`User`](/docs/guides/auth/users#the-user-object) | The user account taking the action             |
-| `email` | `object`                                          | Metadata specific to the email sending process |
-
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
->
-<TabPanel id="send-email-json" label="JSON">
-
-```json
-{
-  "user": {
-    "id": "8484b834-f29e-4af2-bf42-80644d154f76",
-    "aud": "authenticated",
-    "role": "authenticated",
-    "email": "valid.email@supabase.io",
-    "phone": "",
-    "app_metadata": {
-      "provider": "email",
-      "providers": ["email"]
-    },
-    "user_metadata": {
-      "email": "valid.email@supabase.io",
-      "email_verified": false,
-      "phone_verified": false,
-      "sub": "8484b834-f29e-4af2-bf42-80644d154f76"
-    },
-    "identities": [
-      {
-        "identity_id": "bc26d70b-517d-4826-bce4-413a5ff257e7",
-        "id": "8484b834-f29e-4af2-bf42-80644d154f76",
-        "user_id": "8484b834-f29e-4af2-bf42-80644d154f76",
-        "identity_data": {
-          "email": "valid.email@supabase.io",
-          "email_verified": false,
-          "phone_verified": false,
-          "sub": "8484b834-f29e-4af2-bf42-80644d154f76"
-        },
-        "provider": "email",
-        "last_sign_in_at": "2024-05-14T12:56:33.824231484Z",
-        "created_at": "2024-05-14T12:56:33.824261Z",
-        "updated_at": "2024-05-14T12:56:33.824261Z",
-        "email": "valid.email@supabase.io"
-      }
-    ],
-    "created_at": "2024-05-14T12:56:33.821567Z",
-    "updated_at": "2024-05-14T12:56:33.825595Z",
-    "is_anonymous": false
-  },
-  "email_data": {
-    "token": "305805",
-    "token_hash": "7d5b7b1964cf5d388340a7f04f1dbb5eeb6c7b52ef8270e1737a58d0",
-    "redirect_to": "http://localhost:3000/",
-    "email_action_type": "signup",
-    "site_url": "http://localhost:9999",
-    "token_new": "",
-    "token_hash_new": "",
-    "old_email": "",
-    "old_phone": "",
-    "provider": "",
-    "factor_type": ""
-  }
-}
-```
-
-</TabPanel>
-<TabPanel id="send-email-json-schema" label="JSON Schema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "user": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "x-faker": "random.uuid"
-        },
-        "aud": {
-          "type": "string",
-          "enum": ["authenticated"]
-        },
-        "role": {
-          "type": "string",
-          "enum": ["anon", "authenticated"]
-        },
-        "email": {
-          "type": "string",
-          "x-faker": "internet.email"
-        },
-        "phone": {
-          "type": "string",
-          "x-faker": {
-            "fake": "{{phone.phoneNumber('+1##########')}}"
-          }
-        },
-        "app_metadata": {
-          "type": "object",
-          "properties": {
-            "provider": {
-              "type": "string",
-              "enum": ["email"]
-            },
-            "providers": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["email"]
-              },
-              "minItems": 1,
-              "maxItems": 1
-            }
-          }
-        },
-        "user_metadata": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "x-faker": "internet.email"
-            },
-            "email_verified": {
-              "type": "boolean",
-              "x-faker": "random.boolean"
-            },
-            "phone_verified": {
-              "type": "boolean",
-              "x-faker": "random.boolean"
-            },
-            "sub": {
-              "type": "string",
-              "x-faker": "random.uuid"
-            }
-          }
-        },
-        "identities": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "identity_id": {
-                "type": "string",
-                "x-faker": "random.uuid"
-              },
-              "id": {
-                "type": "string",
-                "x-faker": "random.uuid"
-              },
-              "user_id": {
-                "type": "string",
-                "x-faker": "random.uuid"
-              },
-              "identity_data": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "x-faker": "internet.email"
-                  },
-                  "email_verified": {
-                    "type": "boolean",
-                    "x-faker": "random.boolean"
-                  },
-                  "phone_verified": {
-                    "type": "boolean",
-                    "x-faker": "random.boolean"
-                  },
-                  "sub": {
-                    "type": "string",
-                    "x-faker": "random.uuid"
-                  }
-                }
-              },
-              "provider": {
-                "type": "string",
-                "enum": ["email"]
-              },
-              "last_sign_in_at": {
-                "type": "string",
-                "format": "date-time",
-                "x-faker": "date.recent"
-              },
-              "created_at": {
-                "type": "string",
-                "format": "date-time",
-                "x-faker": "date.recent"
-              },
-              "updated_at": {
-                "type": "string",
-                "format": "date-time",
-                "x-faker": "date.recent"
-              },
-              "email": {
-                "type": "string",
-                "x-faker": "internet.email"
-              }
-            },
-            "required": [
-              "identity_id",
-              "id",
-              "user_id",
-              "identity_data",
-              "provider",
-              "last_sign_in_at",
-              "created_at",
-              "updated_at",
-              "email"
-            ]
-          }
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time",
-          "x-faker": "date.recent"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time",
-          "x-faker": "date.recent"
-        },
-        "is_anonymous": {
-          "type": "boolean",
-          "x-faker": "random.boolean"
-        }
-      },
-      "required": [
-        "id",
-        "aud",
-        "role",
-        "email",
-        "phone",
-        "app_metadata",
-        "user_metadata",
-        "identities",
-        "created_at",
-        "updated_at",
-        "is_anonymous"
-      ]
-    },
-    "email_data": {
-      "type": "object",
-      "properties": {
-        "token": {
-          "type": "string",
-          "pattern": "^[0-9]{6}$",
-          "x-faker": {
-            "fake": "{{helpers.replaceSymbols('######')}}"
-          }
-        },
-        "token_hash": {
-          "type": "string",
-          "minLength": 16,
-          "maxLength": 30,
-          "x-faker": {
-            "fake": "{{random.alphaNumeric(30)}}"
-          }
-        },
-        "redirect_to": {
-          "type": "string",
-          "x-faker": "internet.url"
-        },
-        "email_action_type": {
-          "type": "string",
-          "enum": [
-            "signup",
-            "invite",
-            "magiclink",
-            "recovery",
-            "email_change",
-            "email",
-            "reauthentication",
-            "password_changed_notification",
-            "email_changed_notification",
-            "phone_changed_notification",
-            "identity_linked_notification",
-            "identity_unlinked_notification",
-            "mfa_factor_enrolled_notification",
-            "mfa_factor_unenrolled_notification"
-          ]
-        },
-        "site_url": {
-          "type": "string",
-          "x-faker": "internet.url"
-        },
-        "token_new": {
-          "type": "string",
-          "minLength": 16,
-          "maxLength": 30,
-          "x-faker": {
-            "fake": "{{random.alphaNumeric(30)}}"
-          }
-        },
-        "token_hash_new": {
-          "type": "string",
-          "minLength": 16,
-          "maxLength": 30,
-          "x-faker": {
-            "fake": "{{random.alphaNumeric(30)}}"
-          }
-        },
-        "old_email": {
-          "type": "string",
-          "x-faker": "internet.email"
-        },
-        "old_phone": {
-          "type": "string",
-          "x-faker": {
-            "fake": "{{phone.phoneNumber('+1##########')}}"
-          }
-        },
-        "provider": {
-          "type": "string",
-          "enum": ["email"]
-        },
-        "factor_type": {
-          "type": "string",
-          "enum": ["totp"]
-        }
-      },
-      "required": [
-        "token",
-        "token_hash",
-        "redirect_to",
-        "email_action_type",
-        "site_url",
-        "token_new",
-        "token_hash_new"
-      ]
-    }
-  },
-  "required": ["user", "email_data"]
-}
-```
-
-</TabPanel>
-</Tabs>
-
-**Outputs**
-
-- No outputs are required. An empty response with a status code of 200 is taken as a successful response.
+  * 's outputs
+    * ❌NO required❌
 
 ## Email sending behavior
 
-Email sending depends on two settings: Email Provider and Auth Hook status.
+* Email sending behavior
+  * -- depends on -- 
+    * Email Provider
+    * Auth Hook status
 
-| Email Provider | Auth Hook | Result                                                               |
-| -------------- | --------- | -------------------------------------------------------------------- |
-| Enabled        | Enabled   | Auth Hook handles email sending (SMTP not used)                      |
-| Enabled        | Disabled  | SMTP handles email sending (custom if configured, default otherwise) |
-| Disabled       | Enabled   | Email signups disabled                                               |
-| Disabled       | Disabled  | Email signups disabled                                               |
+| Email Provider | Auth Hook | Email sending behavior                                                |
+| -------------- | --------- |-----------------------------------------------------------------------|
+| Enabled        | Enabled   | Auth Hook handles email sending (SMTP not used)                       |
+| Enabled        | Disabled  | SMTP handles email sending (custom if configured, default otherwise)  |
+| Disabled       | Enabled   | Email signups disabled                                                |
+| Disabled       | Disabled  | Email signups disabled                                                |
 
-## Email change behavior and token hash mapping
+## Email change behavior & token hash mapping
 
-When `email_action_type` is `email_change`, the hook payload can include one or two OTPs and their hashes. This depends on your [Secure Email Change](/dashboard/project/_/auth/providers?provider=Email) setting.
+* if `email_data.email_action_type: email_change` -> hook payload 
+  * can include 
+    * 1 OR 2 OTPs (EVEN their hashes) -- depending on -- Secure Email Change
 
-- Secure Email Change enabled: two OTPs are generated, one for the current email (`user.email`) and one for the new email (`user.new_email`). You must send two emails.
-- Secure Email Change disabled: only one OTP is generated for the new email. You send a single email.
-
-<Admonition type="caution" title="Counterintuitive field naming">
-
-The token hash field names are reversed due to backward compatibility. Pay careful attention to which token/hash pair goes with which email address:
-
-- `token_hash_new` → use with the **current** email address (`user.email`) and `token`
-- `token_hash` → use with the **new** email address (`user.new_email`) and `token_new`
-
-Do not assume the `_new` suffix refers to the new email address.
-
-</Admonition>
+* Secure Email Change
+  * Supabasa Dashboard > Authentication > Providers
+  * if Secure Email Change is 
+    * enabled -> 
+      * generate 2 OTPs
+        * 1 OTP / CURRENT email (== `user.email`)
+          * `user.email` -- associated with -- `email_data.token` & `email_data.token_hash_new`
+        * 1 OTP / NEW email (== `user.new_email`)
+          * `user.new_email` -- associated with -- `email_data.token_new` & `email_data.token_hash`
+      * you MUST send 2 emails
+    * disabled ->
+      * generate 1 OTP / NEW email (== `user.new_email`)
+        * `user.new_email` -- associated with -- `email_data.token` & `email_data.token_hash`
+          * ❌!= enabled association❌
+      * you MUST send 1! email
 
 ### What to send
-
-When Secure Email Change is enabled (both token/hash pairs present):
-
-- Send to **current** email address (`user.email`): use `token` with `token_hash_new`
-- Send to **new** email address (`user.new_email`): use `token_new` with `token_hash`
-
-When Secure Email Change is **disabled** (only one token/hash pair present):
-
-- Send a single email to the **new** email address. Use `token` with `token_hash` or `token_new` with `token_hash`, depending on which fields are present in the payload.
 
 <Tabs
   scrollable
@@ -412,7 +74,9 @@ When Secure Email Change is **disabled** (only one token/hash pair present):
   defaultActiveId="sql-queue-email-messages"
 >
 <TabPanel id="sql-queue-email-messages" label="Queue Email Messages">
-Your company uses a worker to manage all emails related jobs. For performance reasons, the messaging system sends emails in batches via a job queue. Instead of sending a message immediately, messages are queued and sent in periodic intervals via `pg_cron`.
+Your company uses a worker to manage all emails related jobs
+* For performance reasons, the messaging system sends emails in batches via a job queue
+* Instead of sending a message immediately, messages are queued and sent in periodic intervals via `pg_cron`.
 
 Create a table to store jobs
 
@@ -515,7 +179,9 @@ revoke execute
   from authenticated, anon;
 ```
 
-Configure `pg_cron` to run the job on an interval. You can use a tool like [crontab.guru](https://crontab.guru/) to check that your job is running on an appropriate schedule. Ensure that `pg_cron` is enabled under `Database > Extensions`
+Configure `pg_cron` to run the job on an interval
+* You can use a tool like [crontab.guru](https://crontab.guru/) to check that your job is running on an appropriate schedule
+* Ensure that `pg_cron` is enabled under `Database > Extensions`
 
 ```sql
 select
@@ -536,7 +202,9 @@ select
   defaultActiveId="http-send-email-with-resend"
 >
 <TabPanel id="http-send-email-with-resend" label="Use Resend as an email provider">
-You can configure [Resend](https://resend.com/) as the custom email provider through the "Send Email" hook. This allows you to take advantage of Resend's developer-friendly APIs to send emails and leverage [React Email](https://react.email/) for managing your email templates. For a more advanced React Email tutorial, refer to [this guide](/docs/guides/functions/examples/auth-send-email-hook-react-email-resend).
+You can configure [Resend](https://resend.com/) as the custom email provider through the "Send Email" hook
+* This allows you to take advantage of Resend's developer-friendly APIs to send emails and leverage [React Email](https://react.email/) for managing your email templates
+* For a more advanced React Email tutorial, refer to [this guide](/docs/guides/functions/examples/auth-send-email-hook-react-email-resend).
 
 If you want to send emails through the Supabase Resend integration, which uses Resend's SMTP server, check out [this integration](/partners/integrations/resend) instead.
 
@@ -639,7 +307,9 @@ supabase functions deploy send-email --no-verify-jwt
 
 </TabPanel>
 <TabPanel id="http-internationalization-for-emails" label="Add Internationalization for Email Templates">
-Your company is expanding to France and Spain. As part of expansion efforts, the company would like to deliver internationalized email templates to best support local users in their native language. Ensure that you have configured `POSTMARK_SERVER_TOKEN` and `SEND_EMAIL_HOOK_SECRET` in your `.env` file.
+Your company is expanding to France and Spain
+* As part of expansion efforts, the company would like to deliver internationalized email templates to best support local users in their native language
+* Ensure that you have configured `POSTMARK_SERVER_TOKEN` and `SEND_EMAIL_HOOK_SECRET` in your `.env` file.
 
 ```javascript
 import { readAll } from 'https://deno.land/std/io/read_all.ts'

@@ -7,30 +7,50 @@ subtitle: 'Manage sensitive data securely across environments.'
 
 ## Default secrets
 
-Edge Functions have access to these secrets by default:
+* secrets / Edge Functions have access 
+  * by default
+    - `SUPABASE_URL`
+      - == Supabase project's API gateway 
+    - `SUPABASE_DB_URL`
+      - your Postgres database's URL
+    - `SUPABASE_PUBLISHABLE_KEYS`
+      - your Supabase API's `publishable` keys 
+      - if you have enabled RLS -> safe to use | a browser
+    - `SUPABASE_SECRET_KEYS`
+      - your Supabase API's `secret` keys /
+        - bypass RLS 
+      - use cases
+        - | Edge Functions
+      - ❌NOT use cases❌
+        - | browser
+    - `SUPABASE_JWKS`
+      - uses
+        - verify user JWTs
+      - == https://<project-ref>.supabase.co/auth/v1/.well-known/jwks.json
 
-- `SUPABASE_URL`: The API gateway for your Supabase project
-- `SUPABASE_DB_URL`: The URL for your Postgres database. You can use this to connect directly to your database
-- `SUPABASE_PUBLISHABLE_KEYS`: The `publishable` keys JSON dictionary for your Supabase API. This is safe to use in a browser when you have Row Level Security enabled
-- `SUPABASE_SECRET_KEYS`: The `secret` keys JSON dictionary for your Supabase API. This is safe to use in Edge Functions, but it should NEVER be used in a browser. This key will bypass Row Level Security
-- `SUPABASE_JWKS`: The JSON Web Key Set used to verify user JWTs. Same value served at `https://<project-ref>.supabase.co/auth/v1/.well-known/jwks.json`
+* legacy keys / Edge Functions have access
+  - `SUPABASE_ANON_KEY`
+    - The `anon` key for your Supabase API
+    - This is safe to use in a browser when you have Row Level Security enabled
+  - `SUPABASE_SERVICE_ROLE_KEY`
+    - The `service_role` key for your Supabase API
+    - This is safe to use in Edge Functions, but it should NEVER be used in a browser
+    - This key will bypass Row Level Security
 
-Legacy keys:
-
-- `SUPABASE_ANON_KEY`: The `anon` key for your Supabase API. This is safe to use in a browser when you have Row Level Security enabled
-- `SUPABASE_SERVICE_ROLE_KEY`: The `service_role` key for your Supabase API. This is safe to use in Edge Functions, but it should NEVER be used in a browser. This key will bypass Row Level Security
-
-In a hosted environment, functions have access to the following environment variables:
-
-- `SB_REGION`: The region function was invoked
-- `SB_EXECUTION_ID`: A UUID of function instance ([isolate](/docs/guides/functions/architecture#4-execution-mechanics-fast-and-isolated))
-- `DENO_DEPLOYMENT_ID`: Version of the function code (`{project_ref}_{function_id}_{version}`)
-
----
+* environment variables / Edge Functions have access
+  * | hosted environment,
+    - `SB_REGION`
+      - == region function / was invoked
+    - `SB_EXECUTION_ID`
+      - == [function instance's UUID](../functions/architecture.md#4-execution-mechanics-fast-and-isolated)
+    - `DENO_DEPLOYMENT_ID`
+      - == function code's version
+        - (`{project_ref}_{function_id}_{version}`)
 
 ## Accessing environment variables
 
-You can access environment variables using Deno's built-in handler, and passing it the name of the environment variable you’d like to access.
+You can access environment variables using Deno's built-in handler, and 
+passing it the name of the environment variable you’d like to access.
 
 ```js
 Deno.env.get('NAME_OF_SECRET')

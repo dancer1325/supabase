@@ -5,219 +5,159 @@ description: 'Get started with Supabase Edge Functions.'
 subtitle: 'Learn how to create, test, and deploy your first Edge Function using the Supabase CLI.'
 ---
 
-This guide walks you through creating, testing locally, deploying, and invoking a Supabase Edge Function using the CLI. By the end, you'll have a working function running on Supabase's global edge network.
-
-You can also create and deploy functions directly from the Supabase Dashboard. Read [the Dashboard Quickstart guide](/docs/guides/functions/quickstart-dashboard) for more information.
-
-<Admonition type="tip">
-
-Supabase Edge Functions **only** supports creating functions in TypeScript with [the Deno runtime](https://deno.com/). This is because Deno was designed with extensibility in mind and its Rust codebase offers a modern developer experience, memory safety, and other features ideal for running edge functions.
-
-</Admonition>
+* goal
+  * via Supabase CLI, about Supabase Edge Function, how to
+    * create
+    * test locally
+    * deploy
+    * invoke
 
 ## Prerequisites
 
-- Make sure you have the Supabase CLI installed and configured. Read [the CLI installation guide](/docs/guides/cli) for installation methods and troubleshooting.
-- Running and testing Supabase Edge Functions locally requires [Docker](https://www.docker.com/) or a Docker-compatible runtime.
+* [Supabase CLI](../cli.md) 
+  * installed 
+  * configured
+* Docker-compatible runtime
 
 ## Step 1: Create or configure your project
 
-If you don't have a project yet, initialize a new Supabase project in your current directory.
-
-```bash
-mkdir my-edge-functions-project
-cd my-edge-functions-project
-supabase init
-```
-
-If you already have a project locally, navigate to your project directory. If you haven't configured the project for Supabase yet, make sure to run the `supabase init` command.
-
-```bash
-cd your-existing-project
-supabase init # Initialize Supabase, if you haven't already
-```
-
-<Admonition type="note">
-
-After this step, you should have a project directory with a `supabase` folder containing a `config.toml` file.
-
-</Admonition>
+* | your project,
+  * `supabase init`
 
 ## Step 2: Create your first function
 
-Within your project, generate a new Edge Function with a basic template:
+* | your project,
+  * `supabase functions new <EDGE_FUNCTION_NAME>` -> create
+    * "supabase/functions/<EDGE_FUNCTION_NAME>/index.ts"
+
+      ```tsx
+      export default {
+        fetch: withSupabase({ auth: ['publishable', 'secret'] }, async (req, ctx) => {
+          const { name } = await req.json()
+      
+          return Response.json({
+            message: `Hello ${name}!`,
+          })
+        }),
+      }
+      ```
+      * `publishable`
+        * use cases
+          * client-side
+      * `secret`
+        * use cases
+          * server-side
+      * if you want to change this behavior -> pass `--auth` flag
+        * == `supabase functions new <EDGE_FUNCTION_NAME> --auth <AUTH_MODE>`
+    * OPTIONALLY
+      * Deno configuration
+
+* Supabase Edge Functions' URL
+  * can be -- , via [Supabase Auth](../auth), -- secured
+
+## Step 3: Test your function LOCALLY
 
 ```bash
-supabase functions new hello-world
+# Start ALL Supabase services
+supabase start
+  
+# serve ALL functions | http://localhost:54321/functions/v1/<EDGE_FUNCTION_NAME>
+supabase functions serve
 ```
 
-{/* TODO: Link to parameter documentation */}
+* Hot reloading
+  * if you change the function code -> AUTOMATICALLY the server is reloaded
+  * requirements
+    * ⚠️keep the terminal window open⚠️
 
-<Admonition type="tip" title="Secure your function with Supabase Auth">
-
-When an HTTP request is sent to Edge Functions, you can use Supabase Auth to secure endpoints. By default, the `supabase functions new` command adds handling a valid publishable or secret key to the basic template. However, you can change this behavior with the `--auth` flag when creating a new function.
-
-</Admonition>
-
-This creates a new function at `supabase/functions/hello-world/index.ts` with this starter code:
-
-```tsx
-export default {
-  fetch: withSupabase({ auth: ['publishable', 'secret'] }, async (req, ctx) => {
-    const { name } = await req.json()
-
-    return Response.json({
-      message: `Hello ${name}!`,
-    })
-  }),
-}
-```
-
-This function accepts a JSON payload with a `name` field and returns a greeting message.
-
-<Admonition type="note">
-
-The `supabase functions new` command also optionally creates Deno configuration for VSCode.
-
-</Admonition>
-
-## Step 3: Test your function locally
-
-After starting Docker, start the local development server to test your function:
-
-```bash
-supabase start  # Start all Supabase services
-supabase functions serve hello-world
-```
-
-On first use, the `supabase start` command downloads Docker images, and starts all Supabase services locally, which can take a few minutes.
-
-Your function is now running at [`http://localhost:54321/functions/v1/hello-world`](http://localhost:54321/functions/v1/hello-world). Hot reloading is enabled, which means that the server automatically reloads when you save changes to your function code. Keep this terminal window open.
-
-### Function not starting locally?
-
-- Make sure Docker is running
-- Run `supabase stop` then `supabase start` to restart services
-
-### Port already in use?
-
-- Check what's running with `supabase status`
-- Stop other Supabase instances with `supabase stop`
+* Problems
+  * Problem1: edge function is running
+    * Attempt1: port ALREADY used
+      * `supabase status`
+        * if there is SOME UNNECESSARY Supabase service / block edge function's port -> `supabase stop`
 
 ## Step 4: Send a test request
 
-Open a new terminal and test your function with curl. You can find your local Publishable key, by running `supabase status`, or you can find the complete `curl` command already in `functions/hello-world/index.ts`.
-
 ```bash
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/hello-world' \
-    --header 'apiKey: <SUPABASE_PUBLISHABLE_KEY>' \
-    --data '{"name":"Functions"}'
+# if you want to find <SUPABASE_PUBLISHABLE_KEY> -> `supabase status`
+## 1. 's input "Functions"
+curl -i --location --request POST 'http://<HOST>:<PORT>/functions/v1/<EDGE_FUNCTION_NAME>' \
+  --header 'apiKey: <SUPABASE_PUBLISHABLE_KEY>' \
+  --data '{"name":"Functions"}'
+
+## 2. 's input "World"
+curl -i --location --request POST 'http://<HOST>:<PORT>/functions/v1/<EDGE_FUNCTION_NAME>' \
+  --header 'apiKey: <SUPABASE_PUBLISHABLE_KEY>' \
+  --data '{"name":"World"}'
 ```
 
-After running this curl command, you should see:
+* 's return
+  * edge function's `fetch()`'s output
 
-```json
-{ "message": "Hello Functions!" }
-```
+## Step 5: Connect your local project -- to -- your Supabase project
 
-You can also try different inputs. Change `"Functions"` to `"World"` in the curl command and run it again to see the response change.
+* enable
+  * [deploy your function globally](#step-6-deploy-edge-function--production)
 
-<Admonition type="note">
+* steps
+  * `supabase login` 
+    * authenticate
+  * `supabase projects list`
+    * find your project ID
+  * `supabase link --project-ref [YOUR_PROJECT_ID]`
+    * connect your local project -- to -- your remote Supabase project
+  * `supabase status`
+    * verify your local project authenticated is linked -- to -- your remote Supabase project
 
-After this step, you should have successfully tested your Edge Function locally and received a JSON response with your greeting message.
+## Step 6: Deploy edge function | production
 
-</Admonition>
-
-## Step 5: Connect to your Supabase project
-
-To deploy your function globally, you need to connect your local project to a Supabase project.
-
-<Admonition type="tip" title="Need to create a new Supabase project?">
-
-Create one at [database.new](https://database.new/).
-
-</Admonition>
-
-First, login to the CLI if you haven't already, and authenticate with Supabase. This opens your browser to authenticate with Supabase; complete the login process in your browser.
+* deploy edge function | production
+  * AVAILABLE | "https://[YOUR_PROJECT_ID].supabase.co/functions/v1/<EDGE_FUNCTION_NAME>"
+  * == 💡deploy your function | Supabase's global edge network💡
 
 ```bash
-supabase login
-```
+# 1. deploy <EDGE_FUNCTION_NAME> function
+supabase functions deploy <EDGE_FUNCTION_NAME>
 
-Next, list your Supabase projects to find your project ID:
-
-```bash
-supabase projects list
-```
-
-Next, copy your project ID from the output, then connect your local project to your remote Supabase project. Replace `YOUR_PROJECT_ID` with the ID from the previous step.
-
-```bash
-supabase link --project-ref [YOUR_PROJECT_ID]
-```
-
-<Admonition type="note">
-
-After this step, you should have your local project authenticated and linked to your remote Supabase project. You can verify this by running `supabase status`.
-
-</Admonition>
-
-## Step 6: Deploy to production
-
-Deploy your function to Supabase's global edge network:
-
-```bash
-supabase functions deploy hello-world
-```
-
-If you want to deploy all functions, run the `deploy` command without specifying a function name:
-
-```bash
+# 2. deploy ALL edge functions
 supabase functions deploy
 ```
 
-<Admonition type="note" title="Docker not required">
+* ⚠️if Docker is NOT available -> `supabase` AUTOMATICALLY falls back -- to -- API-based deployment⚠️
+  * if you want to EXPLICITLY use API deployment -> pass `--use-api` flag
 
-The CLI automatically falls back to API-based deployment if Docker isn't available. You can also explicitly use API deployment with the `--use-api` flag:
+    ```bash
+    supabase functions deploy <EDGE_FUNCTION_NAME> --use-api
+    ```
 
-```bash
-supabase functions deploy hello-world --use-api
-```
+## Step 7: Test your deployed edge function
 
-</Admonition>
+* steps
+  * Supabase Dashboard > project > Settings > API Keys
+  * hit it
 
-When the deployment is successful, your function is automatically distributed to edge locations worldwide.
-
-<Admonition type="note">
-
-Now, you should have your Edge Function deployed and running globally at `https://[YOUR_PROJECT_ID].supabase.co/functions/v1/hello-world`.
-
-</Admonition>
-
-## Step 7: Test your live function
-
-🎉 Your function is now live! Test it with your project's publishable key that you can find in the **Settings > API Keys** section of the [Dashboard](/dashboard/project/_/settings/api-keys):
-
-```bash
-curl --request POST 'https://[YOUR_PROJECT_ID].supabase.co/functions/v1/hello-world' \
-  --header 'apikey: <SUPABASE_PUBLISHABLE_KEY>' \
-  --header 'Content-Type: application/json' \
-  --data '{"name":"Production"}'
-```
-
-**Expected response:**
-
-```json
-{ "message": "Hello Production!" }
-```
+    ```bash
+    curl --request POST 'https://[YOUR_PROJECT_ID].supabase.co/functions/v1/hello-world' \
+      --header 'apikey: <SUPABASE_PUBLISHABLE_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{"name":"Production"}'
+    ```
 
 ## Usage
 
-Now that your function is deployed, you can invoke it from within an app:
+* == | an app,
+  * invoke the edge function 
 
-<Admonition type="note" label="Calling from the browser?">
+* steps
+  * guarantee that the function can handle [CORS](cors) requests
 
-Make sure your function can handle [CORS](/docs/guides/functions/cors) (Cross-Origin Resource Sharing) requests by configuring its headers correctly.
+
+TODO:
+
+  * <Admonition type="note" label="Calling from the browser?">
+
+ 
+
 
 </Admonition>
 

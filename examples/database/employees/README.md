@@ -1,17 +1,14 @@
 # Database Migrations
 
-This example uses Supabase CLI as a migration tool to manage your database schema changes.
+* == [database migrations' example](../../../apps/docs/content/guides/deployment/database-migrations.md)
 
-## Local development
+* steps
+  * `npx supabase db start`
+    * local development
+  * push | remote project
 
-```bash
-npx supabase db start
-```
-
-## Push to remote project
-
-```bash
-npx supabase login
-npx supabase link
-npx supabase db push
-```
+    ```bash
+    npx supabase login
+    npx supabase link
+    npx supabase db push
+    ```

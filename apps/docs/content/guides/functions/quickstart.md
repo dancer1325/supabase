@@ -143,7 +143,7 @@ supabase functions deploy
       --data '{"name":"Production"}'
     ```
 
-## Usage
+## how to use?
 
 * == | an app,
   * invoke the edge function 

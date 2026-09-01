@@ -36,22 +36,11 @@ subtitle: 'Secure your data using Postgres Row Level Security.'
     * == | browser, you can access the data
       * conveniently
       * securely
+  * if you want to 
+    * enable it -> `alter table "table_name" enable row level security;`
+    * [auto-enable it | NEW tables](#-new-tables-auto-enable-rls)
 
-## Policies
-
-* [Policies](https://www.postgresql.org/docs/current/sql-createpolicy.html) 
-  * == Postgres's rule engine
-    * are attached -- to -- a table
-    * executed / EACH access to a table
-  * == add a `WHERE` clause / EACH query
-
-## Enabling Row Level Security
-
-```sql
-alter table "table_name" enable row level security;
-``` 
-
-## | NEW tables, auto-enable RLS 
+### | NEW tables, auto-enable RLS
 
 * steps
   * create an [event trigger](event-triggers.md) / runs AFTER table creation
@@ -67,46 +56,18 @@ alter table "table_name" enable row level security;
     * Reason:🧠
       * avoid confusion
       * make your intention clear
-      * OTHERWISE, `USING (auth.uid() = user_id)` 
+      * OTHERWISE, `USING (auth.uid() = user_id)`
         * requirest WITHOUT authenticated user -> auth.uid() = null -> fail🧠
 
-## Authenticated & unauthenticated roles
+## Policies
 
-* Supabase
-  * maps EACH request -- to -- the roles
-    * [`anon`](roles.md#anon)
-    * [`authenticated`](roles.md#authenticated)
-
-* if you want to use [Supabase roles](roles.md) | your Policies -> use the `TO` clause
-
-  ```sql
-  create policy "Profiles are viewable by everyone"
-  on profiles for select
-  to authenticated, anon
-  using ( true );
-  
-  -- OR
-  
-  create policy "Public profiles are viewable only by authenticated users"
-  on profiles for select
-  to authenticated
-  using ( true );
-  ```
-
-TODO: 
-
-<Admonition type="note" title="Anonymous user vs the anon key">
-
-* An anonymous user assumes the `authenticated` role to access the database and
-can be differentiated
-from a permanent user by checking the `is_anonymous` claim in the JWT.
-
-</Admonition>
-
-## Creating policies
-
-Policies are SQL logic that you attach to a Postgres table
-* You can attach as many policies as you want to each table.
+* [Policies](https://www.postgresql.org/docs/current/sql-createpolicy.html) 
+  * == Postgres's rule engine
+    * are attached -- to -- a table
+    * executed / EACH access to a table
+  * == add a `WHERE` clause / EACH query
+  * == TODO: SQL logic / attached -- to -- a Postgres table
+    * You can attach as many policies as you want to each table.
 
 Supabase provides some [helpers](#helper-functions) that simplify RLS if you're using Supabase Auth
 * We'll use these helpers to illustrate some basic policies:
@@ -204,12 +165,8 @@ with check ( (select auth.uid()) = user_id ); -- checks if the new row complies 
 If no `with check` expression is defined, then the `using` expression will be used both to determine 
 which rows are visible (normal USING case) and which new rows will be allowed to be added (WITH CHECK case).
 
-<Admonition type="caution">
-
-To perform an `UPDATE` operation, a corresponding [`SELECT` policy](#select-policies) is required
-* Without a `SELECT` policy, the `UPDATE` operation will not work as expected.
-
-</Admonition>
+> ⚠️ To perform an `UPDATE` operation, a corresponding [SELECT policy](#select-policies) is required
+> * Without a `SELECT` policy, the `UPDATE` operation will not work as expected.
 
 ### DELETE policies
 
@@ -249,6 +206,31 @@ as select <QUERY>
 ```
 
 In older versions of Postgres, protect your views by revoking access from the `anon` and `authenticated` roles, or by putting them in an unexposed schema.
+
+## Authenticated & unauthenticated roles
+
+* Supabase
+  * maps EACH request -- to -- the roles
+    * [`anon`](roles.md#anon)
+    * [`authenticated`](roles.md#authenticated)
+
+* if you want to use [Supabase roles](roles.md) | your Policies -> use the `TO` clause
+
+  ```sql
+  create policy "Profiles are viewable by everyone"
+  on profiles for select
+  to authenticated, anon
+  using ( true );
+  
+  -- OR
+  
+  create policy "Public profiles are viewable only by authenticated users"
+  on profiles for select
+  to authenticated
+  using ( true );
+  ```
+
+* [anonymous user is distinguished -- , via JWT's `is_anonymous` claim, by -- `authenticated` user](../../auth/auth-anonymous.md)
 
 ## Helper functions
 

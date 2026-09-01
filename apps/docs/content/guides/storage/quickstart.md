@@ -39,7 +39,7 @@ tocVideo: 'J9mTPY8rIXE'
   * == INDEPENDENT containers  
     * of files & folders
   * uses
-    * create DISTINCT buckets / DIFFERENT Security &  Access Rules
+    * create DISTINCT buckets / DIFFERENT Security & Access Rules
   * ⚠️['s naming restrictions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html)⚠️
 
 ## Create a bucket

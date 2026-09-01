@@ -33,10 +33,11 @@ subtitle: 'Create and use anonymous users to authenticate with Supabase'
     * call `signInAnonymously()`
   * vs [authenticated user](../database/postgres/roles.md#authenticated)
     * ❌if the anonymous user sign out OR clear browsing data OR use ANOTHER device -> anonymous user can NOT access their account❌
-  * 's JWT's 
+  * 's JWT
     * `.is_anonymous` claim
       * allows
-        * | RLS policies, distinguish anonymous users vs authenticated users
+        * 👀| RLS policies, distinguish anonymous users vs authenticated users👀
+    * 👀== `auth.jwt()`'s return👀
   * access -- , via [`authenticated` role](../database/postgres/roles.md#authenticated), to -- the database 
   * PROBLEMS
     * PROBLEM1: | frameworks / use static page rendering -> user metada is cached | UNIQUE anonymous users
@@ -75,22 +76,6 @@ For self-hosting, you can update your project configuration using the files and 
 ## Access control
 
 TODO:
-
-An anonymous user assumes the `authenticated` role like a permanent user
-* You can use row-level security (RLS) policies to differentiate between an anonymous user and
-a permanent user by checking for the `is_anonymous` claim in the JWT returned by `auth.jwt()`:
-
-```sql
-create policy "Only permanent users can post to the news feed"
-on news_feed as restrictive for insert
-to authenticated
-with check ((select (auth.jwt()->>'is_anonymous')::boolean) is false );
-
-create policy "Anonymous and permanent users can view the news feed"
-on news_feed for select
-to authenticated
-using ( true );
-```
 
 <Admonition type="note" title="Use restrictive policies">
 

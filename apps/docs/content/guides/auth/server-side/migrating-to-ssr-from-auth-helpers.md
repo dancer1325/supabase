@@ -4,47 +4,37 @@ description: 'Step-by-step guide to migrating your app to the new SSR package'
 sidebar_label: 'Migrating to SSR from Auth Helpers'
 ---
 
-The new `ssr` package takes the core concepts of the Auth Helpers and makes them available to any server language or framework. This page will guide you through migrating from the Auth Helpers package to `ssr`.
+* goal
+  * migrate from `auth-helpers` packages -- to -- `@supabase/ssr` package
+    * steps
+      * [replace Supabase packages](#replacing-supabase-packages)
+      * [create a client](#creating-a-client)
+
+* [`auth-helpers` packages](https://github.com/supabase/auth-helpers)
+  * ⚠️NOW, deprecated⚠️
+
+* [`@supabase/ssr` package](https://github.com/supabase/ssr)
+  * allows
+    * Auth Helpers are AVAILABLE | any server language OR framework
 
 ## Replacing Supabase packages
 
-<Tabs scrollable size="small" type="underlined" defaultActiveId="nextjs" queryGroup="framework">
-
-<TabPanel id="nextjs" label="Next.js">
-
-```bash
-npm uninstall @supabase/auth-helpers-nextjs
-```
-
-</TabPanel>
-<TabPanel id="sveltekit" label="SvelteKit">
-
-```bash
-npm uninstall @supabase/auth-helpers-sveltekit
-```
-
-</TabPanel>
-<TabPanel id="remix" label="Remix">
-
-```bash
-npm uninstall @supabase/auth-helpers-remix
-```
-
-</TabPanel>
-</Tabs>
-
-```bash
-npm install @supabase/ssr
-```
+* steps
+  * `npm uninstall @supabase/auth-helpers-<SSR_FRAMEWORK>`
+    * _Examples:_
+      * `npm uninstall @supabase/auth-helpers-nextjs`
+      * `npm uninstall @supabase/auth-helpers-sveltekit`
+      * `npm uninstall @supabase/auth-helpers-remix`
+  * `npm install @supabase/ssr`
 
 ## Creating a client
 
-The new `ssr` package exports two functions for creating a Supabase client. The `createBrowserClient` function is used in the client, and the `createServerClient` function is used in the server.
-
-Read the [Creating a client](/docs/guides/auth/server-side/creating-a-client) page for examples of creating a client in your framework [and our migration guide](/docs/guides/troubleshooting/how-to-migrate-from-supabase-auth-helpers-to-ssr-package-5NRunM).
+* | `@supabase/ssr`,
+  * ways to create a Supabase client
+    * [`createBrowserClient()` | client](creating-a-client.md)
+    * `createServerClient` | server
 
 ## Next steps
 
-- Implement [Authentication using Email and Password](/docs/guides/auth/passwords)
-- Implement [Authentication using OAuth](/docs/guides/auth/social-login)
-- [Learn more about SSR](/docs/guides/auth/server-side/advanced-guide)
+* [MORE](advanced-guide)
+* [MORE](../../../troubleshooting/how-to-migrate-from-supabase-auth-helpers-to-ssr-package-5NRunM) 

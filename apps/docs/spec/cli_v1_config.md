@@ -5,9 +5,7 @@
     * `supabase stop`
     * `supabase start`
 
-TODO: 
-
-parameters:
+# parameters
   - id: 'project_id' # {string} A unique identifier for this param.
     title: 'project_id' # {string} Any name.
     tags: ['general'] # {string[]} These tags are useful for grouping parameters
@@ -570,1199 +568,1172 @@ parameters:
       - name: 'Storage server configuration'
         link: 'https://supabase.com/docs/guides/self-hosting/storage/config'
 
-  - id: 'storage.buckets.bucket_name.public'
-    title: 'storage.buckets.<bucket_name>.public'
-    tags: ['storage']
-    required: false
-    default: 'false'
-    description: |
-      Enable public access to the bucket.
-    links:
-      - name: 'Storage server configuration'
-        link: 'https://supabase.com/docs/guides/self-hosting/storage/config'
-
-  - id: 'storage.buckets.bucket_name.file_size_limit'
-    title: 'storage.buckets.<bucket_name>.file_size_limit'
-    tags: ['storage']
-    required: false
-    description: |
-      The maximum file size allowed (e.g. "5MB", "500KB").
-    links:
-      - name: 'Storage server configuration'
-        link: 'https://supabase.com/docs/guides/self-hosting/storage/config'
-
-  - id: 'storage.buckets.bucket_name.allowed_mime_types'
-    title: 'storage.buckets.<bucket_name>.allowed_mime_types'
-    tags: ['storage']
-    required: false
-    description: |
-      The list of allowed MIME types for objects in the bucket.
-    links:
-      - name: 'Storage server configuration'
-        link: 'https://supabase.com/docs/guides/self-hosting/storage/config'
-
-  - id: 'storage.buckets.bucket_name.objects_path'
-    title: 'storage.buckets.<bucket_name>.objects_path'
-    tags: ['storage']
-    required: false
-    description: |
-      The local directory to upload objects to the bucket.
-    links:
-      - name: 'Storage server configuration'
-        link: 'https://supabase.com/docs/guides/self-hosting/storage/config'
-
-  - id: 'auth.enabled'
-    title: 'auth.enabled'
-    tags: ['auth']
-    required: false
-    default: 'true'
-    description: |
-      Enable the local GoTrue service.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.site_url'
-    title: 'auth.site_url'
-    tags: ['auth']
-    required: false
-    default: '"http://localhost:3000"'
-    description: |
-      The base URL of your website. Used as an allow-list for redirects and for constructing URLs used in emails.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.additional_redirect_urls'
-    title: 'auth.additional_redirect_urls'
-    tags: ['auth']
-    required: false
-    default: '["https://localhost:3000"]'
-    description: |
-      A list of _exact_ URLs that auth providers are permitted to redirect to post authentication.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.jwt_expiry'
-    title: 'auth.jwt_expiry'
-    tags: ['auth']
-    required: false
-    default: '3600'
-    description: |
-      How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 seconds (one week).
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.enable_manual_linking'
-    title: 'auth.enable_manual_linking'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Allow testing manual linking of accounts
-    links:
-      - name: 'Anonymous Sign Ins (Manual Linking)'
-        link: 'https://supabase.com/docs/guides/auth/auth-anonymous?queryGroups=language&language=python#convert-an-anonymous-user-to-a-permanent-user'
-
-  - id: 'auth.enable_refresh_token_rotation'
-    title: 'auth.enable_refresh_token_rotation'
-    tags: ['auth']
-    required: false
-    default: 'true'
-    description: |
-      If disabled, the refresh token will never expire.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.refresh_token_reuse_interval'
-    title: 'auth.refresh_token_reuse_interval'
-    tags: ['auth']
-    required: false
-    default: '10'
-    description: |
-      Allows refresh tokens to be reused after expiry, up to the specified interval in seconds. Requires enable_refresh_token_rotation = true.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.rate_limit.email_sent'
-    title: 'auth.rate_limit.email_sent'
-    tags: ['auth']
-    required: false
-    default: '2'
-    description: |
-      Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.rate_limit.sms_sent'
-    title: 'auth.rate_limit.sms_sent'
-    tags: ['auth']
-    required: false
-    default: '30'
-    description: |
-      Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.rate_limit.anonymous_users'
-    title: 'auth.rate_limit.anonymous_users'
-    tags: ['auth']
-    required: false
-    default: '30'
-    description: |
-      Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.rate_limit.token_refresh'
-    title: 'auth.rate_limit.token_refresh'
-    tags: ['auth']
-    required: false
-    default: '150'
-    description: |
-      Number of sessions that can be refreshed in a 5 minute interval per IP address.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.rate_limit.sign_in_sign_ups'
-    title: 'auth.rate_limit.sign_in_sign_ups'
-    tags: ['auth']
-    required: false
-    default: '30'
-    description: |
-      Number of sign up and sign-in requests that can be made in a 5 minute interval per IP address (excludes anonymous users).
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.rate_limit.token_verifications'
-    title: 'auth.rate_limit.token_verifications'
-    tags: ['auth']
-    required: false
-    default: '30'
-    description: |
-      Number of OTP / Magic link verifications that can be made in a 5 minute interval per IP address.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.enable_signup'
-    title: 'auth.enable_signup'
-    tags: ['auth']
-    required: false
-    default: 'true'
-    description: |
-      Allow/disallow new user signups to your project.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.enable_anonymous_sign_ins'
-    title: 'auth.enable_anonymous_sign_ins'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Allow/disallow anonymous sign-ins to your project.
-    links:
-      - name: 'Anonymous Sign Ins'
-        link: 'https://supabase.com/docs/guides/auth/auth-anonymous'
-
-  - id: 'auth.email.enable_signup'
-    title: 'auth.email.enable_signup'
-    tags: ['auth']
-    required: false
-    default: 'true'
-    description: |
-      Allow/disallow new user signups via email to your project.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.double_confirm_changes'
-    title: 'auth.email.double_confirm_changes'
-    tags: ['auth']
-    required: false
-    default: 'true'
-    description: |
-      If enabled, a user will be required to confirm any email change on both the old, and new email addresses. If disabled, only the new email is required to confirm.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.enable_confirmations'
-    title: 'auth.email.enable_confirmations'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      If enabled, users need to confirm their email address before signing in.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.secure_password_change'
-    title: 'auth.email.secure_password_change'
-    tags: ['auth']
-    required: false
-    type: 'bool'
-    default: false
-    description: |
-      If enabled, requires the user's current password to be provided when changing to a new password.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.max_frequency'
-    title: 'auth.email.max_frequency'
-    tags: ['auth']
-    required: false
-    type: 'duration'
-    default: '1m'
-    description: |
-      The minimum amount of time that must pass between email requests.
-      Helps prevent email spam by limiting how frequently emails can be sent.
-      Example values: "1m", "1h", "24h"
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.otp_length'
-    title: 'auth.email.otp_length'
-    tags: ['auth']
-    required: false
-    default: '6'
-    description: |
-      The length of the OTP code to be sent in emails.
-      Must be between 6 and 10 digits.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.otp_expiry'
-    title: 'auth.email.otp_expiry'
-    tags: ['auth']
-    required: false
-    default: '3600'
-    description: |
-      The expiry time for an OTP code in seconds.
-      Default is 3600 seconds (1 hour).
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.smtp.host'
-    title: 'auth.email.smtp.host'
-    tags: ['auth']
-    required: false
-    default: 'inbucket'
-    description: |
-      Hostname or IP address of the SMTP server.
-
-  - id: 'auth.email.smtp.port'
-    title: 'auth.email.smtp.port'
-    tags: ['auth']
-    required: false
-    default: 2500
-    description: |
-      Port number of the SMTP server.
-
-  - id: 'auth.email.smtp.user'
-    title: 'auth.email.smtp.user'
-    tags: ['auth']
-    required: false
-    description: |
-      Username for authenticating with the SMTP server.
-
-  - id: 'auth.email.smtp.pass'
-    title: 'auth.email.smtp.pass'
-    tags: ['auth']
-    required: false
-    description: |
-      Password for authenticating with the SMTP server.
-
-  - id: 'auth.email.smtp.admin_email'
-    title: 'auth.email.smtp.admin_email'
-    tags: ['auth']
-    required: false
-    default: 'admin@email.com'
-    description: |
-      Email used as the sender for emails sent from the application.
-
-  - id: 'auth.email.smtp.sender_name'
-    title: 'auth.email.smtp.sender_name'
-    tags: ['auth']
-    required: false
-    description: |
-      Display name used as the sender for emails sent from the application.
-
-  - id: 'auth.email.template.type.subject'
-    title: 'auth.email.template.<type>.subject'
-    tags: ['auth']
-    required: false
-    description: |
-      The full list of email template types are:
-
-      - `invite`
-      - `confirmation`
-      - `recovery`
-      - `magic_link`
-      - `email_change`
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.template.type.content_path'
-    title: 'auth.email.template.<type>.content_path'
-    tags: ['auth']
-    required: false
-    description: |
-      The full list of email template types are:
-
-      - `invite`
-      - `confirmation`
-      - `recovery`
-      - `magic_link`
-      - `email_change`
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.notification.type.enabled'
-    title: 'auth.email.notification.<type>.enabled'
-    tags: ['auth']
-    required: false
-    description: |
-      Determines whether or not to send email notifications for the given type.
-
-      The full list of email notification types are:
-
-      - `password_changed`
-      - `email_changed`
-      - `phone_changed`
-      - `mfa_factor_enrolled`
-      - `mfa_factor_unenrolled`
-      - `identity_linked`
-      - `identity_unlinked`
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.notification.type.subject'
-    title: 'auth.email.notification.<type>.subject'
-    tags: ['auth']
-    required: false
-    description: |
-      The subject for the given email notification type.
-
-      The full list of email notification types are:
-
-      - `password_changed`
-      - `email_changed`
-      - `phone_changed`
-      - `mfa_factor_enrolled`
-      - `mfa_factor_unenrolled`
-      - `identity_linked`
-      - `identity_unlinked`
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.email.notification.type.content_path'
-    title: 'auth.email.notification.<type>.content_path'
-    tags: ['auth']
-    required: false
-    description: |
-      The relative path to the content template for the given email notification type.
-
-      The full list of email notification types are:
-
-      - `password_changed`
-      - `email_changed`
-      - `phone_changed`
-      - `mfa_factor_enrolled`
-      - `mfa_factor_unenrolled`
-      - `identity_linked`
-      - `identity_unlinked`
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.enable_signup'
-    title: 'auth.sms.enable_signup'
-    tags: ['auth']
-    required: false
-    default: 'true'
-    description: |
-      Allow/disallow new user signups via SMS to your project.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.enable_confirmations'
-    title: 'auth.sms.enable_confirmations'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      If enabled, users need to confirm their phone number before signing in.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.test_otp'
-    title: 'auth.sms.test_otp'
-    tags: ['auth']
-    required: false
-    description: |
-      Use pre-defined map of phone number to OTP for testing.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-    usage: |
-      [auth.sms.test_otp]
-      4152127777 = "123456"
-
-  - id: 'auth.sms.provider.enabled'
-    title: 'auth.sms.<provider>.enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Use an external SMS provider. The full list of providers are:
-
-      - `twilio`
-      - `twilio_verify`
-      - `messagebird`
-      - `textlocal`
-      - `vonage`
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.twilio.account_sid'
-    title: 'auth.sms.<twilio|twilio_verify>.account_sid'
-    tags: ['auth']
-    required: true
-    description: |
-      Twilio Account SID
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.twilio.message_service_sid'
-    title: 'auth.sms.<twilio|twilio_verify>.message_service_sid'
-    tags: ['auth']
-    required: true
-    description: |
-      Twilio Message Service SID
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.twilio.auth_token'
-    title: 'auth.sms.<twilio|twilio_verify>.auth_token'
-    tags: ['auth']
-    required: true
-    default: 'env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)'
-    description: |
-      Twilio Auth Token
-
-      DO NOT commit your Twilio auth token to git. Use environment variable substitution instead.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.messagebird.originator'
-    title: 'auth.sms.messagebird.originator'
-    tags: ['auth']
-    required: true
-    description: |
-      MessageBird Originator
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.messagebird.access_key'
-    title: 'auth.sms.messagebird.access_key'
-    tags: ['auth']
-    required: true
-    default: 'env(SUPABASE_AUTH_SMS_MESSAGEBIRD_ACCESS_KEY)'
-    description: |
-      MessageBird Access Key
-
-      DO NOT commit your MessageBird access key to git. Use environment variable substitution instead.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.textlocal.sender'
-    title: 'auth.sms.textlocal.sender'
-    tags: ['auth']
-    required: true
-    description: |
-      TextLocal Sender
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.textlocal.api_key'
-    title: 'auth.sms.textlocal.api_key'
-    tags: ['auth']
-    required: true
-    default: 'env(SUPABASE_AUTH_SMS_TEXTLOCAL_API_KEY)'
-    description: |
-      TextLocal API Key
-
-      DO NOT commit your TextLocal API key to git. Use environment variable substitution instead.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.vonage.from'
-    title: 'auth.sms.vonage.from'
-    tags: ['auth']
-    required: true
-    description: |
-      Vonage From
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.vonage.api_key'
-    title: 'auth.sms.vonage.api_key'
-    tags: ['auth']
-    required: true
-    description: |
-      Vonage API Key
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.sms.vonage.api_secret'
-    title: 'auth.sms.vonage.api_secret'
-    tags: ['auth']
-    required: true
-    default: 'env(SUPABASE_AUTH_SMS_VONAGE_API_SECRET)'
-    description: |
-      Vonage API Secret
-
-      DO NOT commit your Vonage API secret to git. Use environment variable substitution instead.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.external.provider.enabled'
-    title: 'auth.external.<provider>.enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Use an external OAuth provider. The full list of providers are:
-
-      - `apple`
-      - `azure`
-      - `bitbucket`
-      - `discord`
-      - `facebook`
-      - `github`
-      - `gitlab`
-      - `google`
-      - `kakao`
-      - `keycloak`
-      - `linkedin_oidc`
-      - `notion`
-      - `twitch`
-      - `twitter`
-      - `slack_oidc`
-      - `spotify`
-      - `workos`
-      - `zoom`
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.external.provider.client_id'
-    title: 'auth.external.<provider>.client_id'
-    tags: ['auth']
-    required: true
-    description: |
-      Client ID for the external OAuth provider.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.external.provider.secret'
-    title: 'auth.external.<provider>.secret'
-    tags: ['auth']
-    required: true
-    default: 'env(SUPABASE_AUTH_EXTERNAL_<PROVIDER>_SECRET)'
-    description: |
-      Client secret for the external OAuth provider.
-
-      DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.external.provider.url'
-    title: 'auth.external.<provider>.url'
-    tags: ['auth']
-    required: false
-    description: |
-      The base URL used for constructing the URLs to request authorization and
-      access tokens. Used by gitlab and keycloak. For gitlab it defaults to
-      https://gitlab.com. For keycloak you need to set this to your instance,
-      for example: https://keycloak.example.com/realms/myrealm .
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.external.provider.redirect_uri'
-    title: 'auth.external.<provider>.redirect_uri'
-    tags: ['auth']
-    required: false
-    description: |
-      The URI a OAuth2 provider will redirect to with the code and state values.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.external.provider.skip_nonce_check'
-    title: 'auth.external.<provider>.skip_nonce_check'
-    tags: ['auth']
-    required: false
-    description: |
-      Disables nonce validation during OIDC authentication flow for the specified provider. Enable only when client libraries cannot properly handle nonce verification. Be aware that this reduces security by allowing potential replay attacks with stolen ID tokens.
-    links:
-      - name: 'Auth Server configuration'
-        link: 'https://supabase.com/docs/reference/auth'
-
-  - id: 'auth.hook.<hook_name>.enabled'
-    title: 'auth.hook.<hook_name>.enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable Auth Hook. Possible values for `hook_name` are: `custom_access_token`, `send_sms`, `send_email`, `mfa_verification_attempt`, and `password_verification_attempt`.
-    links:
-      - name: 'Auth Hooks'
-        link: 'https://supabase.com/docs/guides/auth/auth-hooks'
-
-  - id: 'auth.hook.<hook_name>.uri'
-    title: 'auth.hook.<hook_name>.uri'
-    tags: ['auth']
-    required: false
-    default: ''
-    description: |
-      URI of hook to invoke. Should be a http or https function or Postgres function taking the form: `pg-functions://<database>/<schema>/<function-name>`. For example, `pg-functions://postgres/auth/custom-access-token-hook`.
-    links:
-      - name: 'Auth Hooks'
-        link: 'https://supabase.com/docs/guides/auth/auth-hooks'
-
-  - id: 'auth.hook.<hook_name>.secrets'
-    title: 'auth.hook.<hook_name>.secrets'
-    tags: ['auth']
-    required: false
-    default: ''
-    description: |
-      Configure when using a HTTP Hooks. Takes a list of base64 comma separated values to allow for secret rotation. Currently, Supabase Auth uses only the first value in the list.
-    links:
-      - name: 'Auth Hooks'
-        link: 'https://supabase.com/docs/guides/auth/auth-hooks?queryGroups=language&language=http'
-
-  - id: 'auth.mfa.totp.enroll_enabled'
-    title: 'auth.mfa.totp.enroll_enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable TOTP enrollment for multi-factor authentication.
-    links:
-      - name: 'Auth Multi-Factor Authentication (TOTP)'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
-
-  - id: 'auth.mfa.totp.verify_enabled'
-    title: 'auth.mfa.totp.verify_enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable TOTP verification for multi-factor authentication.
-    links:
-      - name: 'Auth Multi-Factor Authentication (TOTP)'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
-
-  - id: 'auth.mfa.max_enrolled_factors'
-    title: 'auth.mfa.max_enrolled_factors'
-    tags: ['auth']
-    required: false
-    default: '10'
-    description: |
-      Control how many MFA factors can be enrolled at once per user.
-    links:
-      - name: 'Auth Multi-Factor Authentication (TOTP)'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
-
-  - id: 'auth.mfa.phone.enroll_enabled'
-    title: 'auth.mfa.phone.enroll_enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable Phone enrollment for multi-factor authentication.
-    links:
-      - name: 'Auth Multi-Factor Authentication (Phone)'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-  - id: 'auth.mfa.phone.otp_length'
-    title: 'auth.mfa.phone.otp_length'
-    tags: ['auth']
-    required: false
-    default: '6'
-    description: |
-      Length of OTP code sent when using phone multi-factor authentication
-    links:
-      - name: 'Auth Multi-Factor Authentication (Phone)'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-  - id: 'auth.mfa.phone.max_frequency'
-    title: 'auth.mfa.phone.max_frequency'
-    tags: ['auth']
-    required: false
-    default: '10s'
-    description: |
-      The minimum amount of time that must pass between phone requests.
-      Helps prevent spam by limiting how frequently messages can be sent.
-      Example values: "10s", "20s", "1m"
-    links:
-      - name: 'Auth Multi-Factor Authentication (Phone)'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-  - id: 'auth.mfa.phone.otp_length'
-    title: 'auth.mfa.phone.otp_length'
-    tags: ['auth']
-    required: false
-    default: '6'
-    description: |
-      Length of OTP sent when using phone multi-factor authentication
-    links:
-      - name: 'Auth Multi-Factor Authentication (Phone)'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-  - id: 'auth.mfa.phone.verify_enabled'
-    title: 'auth.mfa.phone.verify_enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable Phone verification for multi-factor authentication.
-    links:
-      - name: 'Auth Multi-Factor Authentication (Phone)'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-  - id: 'auth.mfa.web_authn.enroll_enabled'
-    title: 'auth.mfa.web_authn.enroll_enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable WebAuthn enrollment for multi-factor authentication.
-    links:
-      - name: 'Auth Multi-Factor Authentication'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa'
-
-  - id: 'auth.mfa.web_authn.verify_enabled'
-    title: 'auth.mfa.web_authn.verify_enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable WebAuthn verification for multi-factor authentication.
-    links:
-      - name: 'Auth Multi-Factor Authentication'
-        link: 'https://supabase.com/docs/guides/auth/auth-mfa'
-
-  - id: 'auth.passkey.enabled'
-    title: 'auth.passkey.enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable passkey sign-in and registration. Requires `auth.webauthn` to be configured.
-    links:
-      - name: 'Sign in with Passkey'
-        link: 'https://supabase.com/docs/guides/auth/passkeys'
-
-  - id: 'auth.webauthn.rp_display_name'
-    title: 'auth.webauthn.rp_display_name'
-    tags: ['auth']
-    required: false
-    default: ''
-    description: |
-      Human-readable name for the WebAuthn relying party shown to users during the passkey ceremony. Required when `auth.passkey.enabled` is `true`.
-    links:
-      - name: 'Sign in with Passkey'
-        link: 'https://supabase.com/docs/guides/auth/passkeys'
-
-  - id: 'auth.webauthn.rp_id'
-    title: 'auth.webauthn.rp_id'
-    tags: ['auth']
-    required: false
-    default: ''
-    description: |
-      WebAuthn relying party identifier. Must be a registrable suffix of every origin in `auth.webauthn.rp_origins` (for example `example.com` for `https://app.example.com`). Required when `auth.passkey.enabled` is `true`.
-    links:
-      - name: 'Sign in with Passkey'
-        link: 'https://supabase.com/docs/guides/auth/passkeys'
-
-  - id: 'auth.webauthn.rp_origins'
-    title: 'auth.webauthn.rp_origins'
-    tags: ['auth']
-    required: false
-    default: '[]'
-    description: |
-      List of origins your app is served from. The browser refuses the WebAuthn ceremony if the page origin is not in this list. Required when `auth.passkey.enabled` is `true`.
-    links:
-      - name: 'Sign in with Passkey'
-        link: 'https://supabase.com/docs/guides/auth/passkeys'
-
-  - id: 'auth.sessions.timebox'
-    title: 'auth.sessions.timebox'
-    tags: ['auth']
-    required: false
-    default: ''
-    description: |
-      Force log out after the specified duration. Sample values include: '50m', '20h'.
-    links:
-      - name: 'Auth Sessions'
-        link: 'https://supabase.com/docs/guides/auth/sessions'
-
-  - id: 'auth.sessions.inactivity_timeout'
-    title: 'auth.sessions.inactivity_timeout'
-    tags: ['auth']
-    required: false
-    default: ''
-    description: |
-      Force log out if the user has been inactive longer than the specified duration. Sample values include: '50m', '20h'.
-    links:
-      - name: 'Auth Sessions'
-        link: 'https://supabase.com/docs/guides/auth/sessions'
-
-  - id: 'auth.third_party.aws_cognito.enabled'
-    title: 'auth.third_party.aws_cognito.enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable third party auth with AWS Cognito (Amplify)
-    links:
-      - name: 'Third Party Auth (Cognito)'
-        link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
-
-  - id: 'auth.third_party.aws_cognito.user_pool_id'
-    title: 'auth.third_party.aws_cognito.user_pool_id'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      User Pool ID for AWS Cognito (Amplify) that you are integrating with
-    links:
-      - name: 'Third Party Auth (Cognito)'
-        link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
-
-  - id: 'auth.third_party.aws_cognito.user_pool_region'
-    title: 'auth.third_party.aws_cognito.user_pool_region'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      User Pool region for AWS Cognito (Amplify) that you are integrating with. Example values: 'ap-southeast-1', 'us-east-1'
-    links:
-      - name: 'Third Party Auth (Cognito)'
-        link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
-
-  - id: 'auth.third_party.auth0.enabled'
-    title: 'auth.third_party.auth0.enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable third party auth with Auth0
-    links:
-      - name: 'Third Party Auth (Auth0)'
-        link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
-
-  - id: 'auth.third_party.auth0.tenant'
-    title: 'auth.third_party.auth0.tenant'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Tenant Identifier for Auth0 instance that you are integrating with
-    links:
-      - name: 'Third Party Auth (Auth0)'
-        link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
-
-  - id: 'auth.third_party.auth0.tenant_region'
-    title: 'auth.third_party.tenant_region'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Tenant region for Auth0 instance that you are integrating with
-    links:
-      - name: 'Third Party Auth (Auth0)'
-        link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
-
-  - id: 'auth.third_party.firebase.enabled'
-    title: 'auth.third_party.firebase.enabled'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Enable third party auth with Firebase
-    links:
-      - name: 'Third Party Auth (Firebase)'
-        link: 'https://supabase.com/docs/guides/auth/third-party/firebase-auth'
-
-  - id: 'auth.third_party.firebase.project_id'
-    title: 'auth.third_party.firebase.project_id'
-    tags: ['auth']
-    required: false
-    default: 'false'
-    description: |
-      Project ID for Firebase instance that you are integrating with
-    links:
-      - name: 'Third Party Auth (Firebase)'
-        link: 'https://supabase.com/docs/guides/auth/third-party/firebase-auth'
-
-  - id: 'edge_runtime.enabled'
-    title: 'edge_runtime.enabled'
-    tags: ['edge-functions']
-    required: false
-    default: 'true'
-    description: |
-      Enable the local Edge Runtime service for Edge Functions.
-    links: []
-
-  - id: 'edge_runtime.policy'
-    title: 'edge_runtime.policy'
-    tags: ['edge-functions']
-    required: false
-    default: '"oneshot"'
-    description: |
-      Configure the request handling policy for Edge Functions. Available options:
-      - `oneshot`: Recommended for development with hot reload support
-      - `per_worker`: Recommended for load testing scenarios
-    links: []
-
-  - id: 'edge_runtime.inspector_port'
-    title: 'edge_runtime.inspector_port'
-    tags: ['edge-functions']
-    required: false
-    default: '8083'
-    description: |
-      Port to attach the Chrome inspector for debugging Edge Functions.
-    links: []
-
-  - id: 'functions.function_name.enabled'
-    title: 'functions.<function_name>.enabled'
-    tags: ['edge-functions']
-    required: false
-    default: 'true'
-    description: |
-      Controls whether a function is deployed or served. When set to false,
-      the function will be skipped during deployment and won't be served locally.
-      This is useful for disabling demo functions or temporarily disabling a function
-      without removing its code.
-    links:
-      - name: '`supabase functions` CLI subcommands'
-        link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-
-  - id: 'functions.function_name.verify_jwt'
-    title: 'functions.<function_name>.verify_jwt'
-    tags: ['edge-functions']
-    required: false
-    default: 'true'
-    description: |
-      By default, when you deploy your Edge Functions or serve them locally, it
-      will reject requests without a valid JWT in the Authorization header.
-      Setting this configuration changes the default behavior.
-
-      Note that the `--no-verify-jwt` flag overrides this configuration.
-    links:
-      - name: '`supabase functions` CLI subcommands'
-        link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-
-  - id: 'functions.function_name.import_map'
-    title: 'functions.<function_name>.import_map'
-    tags: ['edge-functions']
-    required: false
-    description: |
-      Specify the Deno import map file to use for the Function.
-      When not specified, defaults to `supabase/functions/<function_name>/deno.json`.
-
-      Note that the `--import-map` flag overrides this configuration.
-    links:
-      - name: '`supabase functions` CLI subcommands'
-        link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-
-  - id: 'functions.function_name.entrypoint'
-    title: 'functions.<function_name>.entrypoint'
-    tags: ['edge-functions']
-    required: false
-    description: |
-      Specify a custom entrypoint path for the function relative to the project root.
-      When not specified, defaults to `supabase/functions/<function_name>/index.ts`.
-    links:
-      - name: '`supabase functions` CLI subcommands'
-        link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-    usage: |
-      [functions.my_function]
-      entrypoint = "path/to/custom/function.ts"
-
-  - id: 'functions.function_name.static_files'
-    title: 'functions.<function_name>.static_files'
-    tags: ['edge-functions']
-    required: false
-    description: |
-      Specify an array of static files to be bundled with the function. Supports glob patterns.
-
-      NOTE: only file paths within `functions` directory are supported at the moment.
-    links:
-      - name: '`supabase functions` CLI subcommands'
-        link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-    usage: |
-      [functions.my_function]
-      static_files = [ "./functions/MY_FUNCTION_NAME/*.html", "./functions/MY_FUNCTION_NAME/custom.wasm" ]
-
-  - id: 'analytics.enabled'
-    title: 'analytics.enabled'
-    tags: ['analytics']
-    required: false
-    default: 'false'
-    description: |
-      Enable the local Logflare service.
-    links:
-      - name: Self-hosted Logflare Configuration
-        link: https://supabase.com/docs/reference/self-hosting-analytics/list-endpoints#getting-started
-
-  - id: 'analytics.port'
-    title: 'analytics.port'
-    tags: ['analytics']
-    required: false
-    default: '54327'
-    description: |
-      Port to the local Logflare service.
-    links: []
-
-  - id: 'analytics.vector_port'
-    title: 'analytics.vector_port'
-    tags: ['analytics']
-    required: false
-    default: '54328'
-    description: |
-      Port to the local syslog ingest service.
-    links: []
-
-  - id: 'analytics.backend'
-    title: 'analytics.backend'
-    tags: ['analytics']
-    required: false
-    default: '"postgres"'
-    description: |
-      Configure one of the supported backends:
-
-      - `postgres`
-      - `bigquery`
-    links:
-      - name: Self-hosted Logflare Configuration
-        link: https://supabase.com/docs/reference/self-hosting-analytics/list-endpoints#getting-started
-
-  - id: 'experimental.webhooks.enabled'
-    title: 'experimental.webhooks.enabled'
-    tags: ['experimental']
-    required: false
-    default: 'false'
-    description: |
-      Automatically enable webhook features on each new created branch
-      Note: This is an experimental feature and may change in future releases.
-    links: []
-
-  - id: 'experimental.orioledb_version'
-    title: 'experimental.orioledb_version'
-    tags: ['experimental']
-    required: false
-    description: |
-      Configures Postgres storage engine to use OrioleDB with S3 support.
-      Note: This is an experimental feature and may change in future releases.
-    links: []
-
-  - id: 'experimental.s3_host'
-    title: 'experimental.s3_host'
-    tags: ['experimental']
-    required: false
-    default: 'env(S3_HOST)'
-    description: |
-      Configures S3 bucket URL for OrioleDB storage.
-      Format example: <bucket_name>.s3-<region>.amazonaws.com
-      Note: This is an experimental feature and may change in future releases.
-    links: []
-
-  - id: 'experimental.s3_region'
-    title: 'experimental.s3_region'
-    tags: ['experimental']
-    required: false
-    default: 'env(S3_REGION)'
-    description: |
-      Configures S3 bucket region for OrioleDB storage.
-      Example: us-east-1
-      Note: This is an experimental feature and may change in future releases.
-    links: []
-
-  - id: 'experimental.s3_access_key'
-    title: 'experimental.s3_access_key'
-    tags: ['experimental']
-    required: false
-    default: 'env(S3_ACCESS_KEY)'
-    description: |
-      Configures AWS_ACCESS_KEY_ID for S3 bucket access.
-      DO NOT commit your AWS access key to git. Use environment variable substitution instead.
-      Note: This is an experimental feature and may change in future releases.
-    links: []
-
-  - id: 'experimental.s3_secret_key'
-    title: 'experimental.s3_secret_key'
-    tags: ['experimental']
-    required: false
-    default: 'env(S3_SECRET_KEY)'
-    description: |
-      Configures AWS_SECRET_ACCESS_KEY for S3 bucket access.
-      DO NOT commit your AWS secret key to git. Use environment variable substitution instead.
-      Note: This is an experimental feature and may change in future releases.
-    links: []
-
-  - id: 'remotes.branch_name.project_id'
-    title: 'remotes.<branch_name>.project_id'
-    tags: ['branching']
-    required: true
-    description: |
-      The project reference ID for a specific persistent Supabase branch.
-      This ID is used to configure branch-specific settings in your config.toml file for branches deployments.
-      All other configuration options available in the root config are also supported in the remotes block.
-      For example, you can specify branch-specific database settings like so:
-    usage: |
-      [remotes.<branch_name>]
-      project_id = "your-project-ref"
-
-      [remotes.<branch_name>.db.seed]
-      sql_paths = ["./seeds/staging.sql"]
+## `storage.buckets.bucket_name.public`
+* enable
+  * public access -- to -- the bucket
+
+## `storage.buckets.bucket_name.file_size_limit`
+* == MAXIMUM file size ALLOWED
+
+## `storage.buckets.bucket_name.allowed_mime_types`
+* == bucket's objects' ALLOWED MIME types 
+
+## `storage.buckets.bucket_name.objects_path`
+* == local directory | upload objects | bucket
+
+
+    - id: 'auth.enabled'
+      title: 'auth.enabled'
+      tags: ['auth']
+      required: false
+      default: 'true'
+      description: |
+        Enable the local GoTrue service.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.site_url'
+      title: 'auth.site_url'
+      tags: ['auth']
+      required: false
+      default: '"http://localhost:3000"'
+      description: |
+        The base URL of your website. Used as an allow-list for redirects and for constructing URLs used in emails.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.additional_redirect_urls'
+      title: 'auth.additional_redirect_urls'
+      tags: ['auth']
+      required: false
+      default: '["https://localhost:3000"]'
+      description: |
+        A list of _exact_ URLs that auth providers are permitted to redirect to post authentication.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.jwt_expiry'
+      title: 'auth.jwt_expiry'
+      tags: ['auth']
+      required: false
+      default: '3600'
+      description: |
+        How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 seconds (one week).
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.enable_manual_linking'
+      title: 'auth.enable_manual_linking'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Allow testing manual linking of accounts
+      links:
+        - name: 'Anonymous Sign Ins (Manual Linking)'
+          link: 'https://supabase.com/docs/guides/auth/auth-anonymous?queryGroups=language&language=python#convert-an-anonymous-user-to-a-permanent-user'
+
+    - id: 'auth.enable_refresh_token_rotation'
+      title: 'auth.enable_refresh_token_rotation'
+      tags: ['auth']
+      required: false
+      default: 'true'
+      description: |
+        If disabled, the refresh token will never expire.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.refresh_token_reuse_interval'
+      title: 'auth.refresh_token_reuse_interval'
+      tags: ['auth']
+      required: false
+      default: '10'
+      description: |
+        Allows refresh tokens to be reused after expiry, up to the specified interval in seconds. Requires enable_refresh_token_rotation = true.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.rate_limit.email_sent'
+      title: 'auth.rate_limit.email_sent'
+      tags: ['auth']
+      required: false
+      default: '2'
+      description: |
+        Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.rate_limit.sms_sent'
+      title: 'auth.rate_limit.sms_sent'
+      tags: ['auth']
+      required: false
+      default: '30'
+      description: |
+        Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.rate_limit.anonymous_users'
+      title: 'auth.rate_limit.anonymous_users'
+      tags: ['auth']
+      required: false
+      default: '30'
+      description: |
+        Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.rate_limit.token_refresh'
+      title: 'auth.rate_limit.token_refresh'
+      tags: ['auth']
+      required: false
+      default: '150'
+      description: |
+        Number of sessions that can be refreshed in a 5 minute interval per IP address.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.rate_limit.sign_in_sign_ups'
+      title: 'auth.rate_limit.sign_in_sign_ups'
+      tags: ['auth']
+      required: false
+      default: '30'
+      description: |
+        Number of sign up and sign-in requests that can be made in a 5 minute interval per IP address (excludes anonymous users).
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.rate_limit.token_verifications'
+      title: 'auth.rate_limit.token_verifications'
+      tags: ['auth']
+      required: false
+      default: '30'
+      description: |
+        Number of OTP / Magic link verifications that can be made in a 5 minute interval per IP address.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.enable_signup'
+      title: 'auth.enable_signup'
+      tags: ['auth']
+      required: false
+      default: 'true'
+      description: |
+        Allow/disallow new user signups to your project.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.enable_anonymous_sign_ins'
+      title: 'auth.enable_anonymous_sign_ins'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Allow/disallow anonymous sign-ins to your project.
+      links:
+        - name: 'Anonymous Sign Ins'
+          link: 'https://supabase.com/docs/guides/auth/auth-anonymous'
+
+    - id: 'auth.email.enable_signup'
+      title: 'auth.email.enable_signup'
+      tags: ['auth']
+      required: false
+      default: 'true'
+      description: |
+        Allow/disallow new user signups via email to your project.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.double_confirm_changes'
+      title: 'auth.email.double_confirm_changes'
+      tags: ['auth']
+      required: false
+      default: 'true'
+      description: |
+        If enabled, a user will be required to confirm any email change on both the old, and new email addresses. If disabled, only the new email is required to confirm.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.enable_confirmations'
+      title: 'auth.email.enable_confirmations'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        If enabled, users need to confirm their email address before signing in.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.secure_password_change'
+      title: 'auth.email.secure_password_change'
+      tags: ['auth']
+      required: false
+      type: 'bool'
+      default: false
+      description: |
+        If enabled, requires the user's current password to be provided when changing to a new password.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.max_frequency'
+      title: 'auth.email.max_frequency'
+      tags: ['auth']
+      required: false
+      type: 'duration'
+      default: '1m'
+      description: |
+        The minimum amount of time that must pass between email requests.
+        Helps prevent email spam by limiting how frequently emails can be sent.
+        Example values: "1m", "1h", "24h"
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.otp_length'
+      title: 'auth.email.otp_length'
+      tags: ['auth']
+      required: false
+      default: '6'
+      description: |
+        The length of the OTP code to be sent in emails.
+        Must be between 6 and 10 digits.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.otp_expiry'
+      title: 'auth.email.otp_expiry'
+      tags: ['auth']
+      required: false
+      default: '3600'
+      description: |
+        The expiry time for an OTP code in seconds.
+        Default is 3600 seconds (1 hour).
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.smtp.host'
+      title: 'auth.email.smtp.host'
+      tags: ['auth']
+      required: false
+      default: 'inbucket'
+      description: |
+        Hostname or IP address of the SMTP server.
+
+    - id: 'auth.email.smtp.port'
+      title: 'auth.email.smtp.port'
+      tags: ['auth']
+      required: false
+      default: 2500
+      description: |
+        Port number of the SMTP server.
+
+    - id: 'auth.email.smtp.user'
+      title: 'auth.email.smtp.user'
+      tags: ['auth']
+      required: false
+      description: |
+        Username for authenticating with the SMTP server.
+
+    - id: 'auth.email.smtp.pass'
+      title: 'auth.email.smtp.pass'
+      tags: ['auth']
+      required: false
+      description: |
+        Password for authenticating with the SMTP server.
+
+    - id: 'auth.email.smtp.admin_email'
+      title: 'auth.email.smtp.admin_email'
+      tags: ['auth']
+      required: false
+      default: 'admin@email.com'
+      description: |
+        Email used as the sender for emails sent from the application.
+
+    - id: 'auth.email.smtp.sender_name'
+      title: 'auth.email.smtp.sender_name'
+      tags: ['auth']
+      required: false
+      description: |
+        Display name used as the sender for emails sent from the application.
+
+    - id: 'auth.email.template.type.subject'
+      title: 'auth.email.template.<type>.subject'
+      tags: ['auth']
+      required: false
+      description: |
+        The full list of email template types are:
+
+        - `invite`
+        - `confirmation`
+        - `recovery`
+        - `magic_link`
+        - `email_change`
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.template.type.content_path'
+      title: 'auth.email.template.<type>.content_path'
+      tags: ['auth']
+      required: false
+      description: |
+        The full list of email template types are:
+
+        - `invite`
+        - `confirmation`
+        - `recovery`
+        - `magic_link`
+        - `email_change`
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.notification.type.enabled'
+      title: 'auth.email.notification.<type>.enabled'
+      tags: ['auth']
+      required: false
+      description: |
+        Determines whether or not to send email notifications for the given type.
+
+        The full list of email notification types are:
+
+        - `password_changed`
+        - `email_changed`
+        - `phone_changed`
+        - `mfa_factor_enrolled`
+        - `mfa_factor_unenrolled`
+        - `identity_linked`
+        - `identity_unlinked`
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.notification.type.subject'
+      title: 'auth.email.notification.<type>.subject'
+      tags: ['auth']
+      required: false
+      description: |
+        The subject for the given email notification type.
+
+        The full list of email notification types are:
+
+        - `password_changed`
+        - `email_changed`
+        - `phone_changed`
+        - `mfa_factor_enrolled`
+        - `mfa_factor_unenrolled`
+        - `identity_linked`
+        - `identity_unlinked`
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.email.notification.type.content_path'
+      title: 'auth.email.notification.<type>.content_path'
+      tags: ['auth']
+      required: false
+      description: |
+        The relative path to the content template for the given email notification type.
+
+        The full list of email notification types are:
+
+        - `password_changed`
+        - `email_changed`
+        - `phone_changed`
+        - `mfa_factor_enrolled`
+        - `mfa_factor_unenrolled`
+        - `identity_linked`
+        - `identity_unlinked`
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.enable_signup'
+      title: 'auth.sms.enable_signup'
+      tags: ['auth']
+      required: false
+      default: 'true'
+      description: |
+        Allow/disallow new user signups via SMS to your project.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.enable_confirmations'
+      title: 'auth.sms.enable_confirmations'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        If enabled, users need to confirm their phone number before signing in.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.test_otp'
+      title: 'auth.sms.test_otp'
+      tags: ['auth']
+      required: false
+      description: |
+        Use pre-defined map of phone number to OTP for testing.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+      usage: |
+        [auth.sms.test_otp]
+        4152127777 = "123456"
+
+    - id: 'auth.sms.provider.enabled'
+      title: 'auth.sms.<provider>.enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Use an external SMS provider. The full list of providers are:
+
+        - `twilio`
+        - `twilio_verify`
+        - `messagebird`
+        - `textlocal`
+        - `vonage`
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.twilio.account_sid'
+      title: 'auth.sms.<twilio|twilio_verify>.account_sid'
+      tags: ['auth']
+      required: true
+      description: |
+        Twilio Account SID
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.twilio.message_service_sid'
+      title: 'auth.sms.<twilio|twilio_verify>.message_service_sid'
+      tags: ['auth']
+      required: true
+      description: |
+        Twilio Message Service SID
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.twilio.auth_token'
+      title: 'auth.sms.<twilio|twilio_verify>.auth_token'
+      tags: ['auth']
+      required: true
+      default: 'env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)'
+      description: |
+        Twilio Auth Token
+
+        DO NOT commit your Twilio auth token to git. Use environment variable substitution instead.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.messagebird.originator'
+      title: 'auth.sms.messagebird.originator'
+      tags: ['auth']
+      required: true
+      description: |
+        MessageBird Originator
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.messagebird.access_key'
+      title: 'auth.sms.messagebird.access_key'
+      tags: ['auth']
+      required: true
+      default: 'env(SUPABASE_AUTH_SMS_MESSAGEBIRD_ACCESS_KEY)'
+      description: |
+        MessageBird Access Key
+
+        DO NOT commit your MessageBird access key to git. Use environment variable substitution instead.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.textlocal.sender'
+      title: 'auth.sms.textlocal.sender'
+      tags: ['auth']
+      required: true
+      description: |
+        TextLocal Sender
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.textlocal.api_key'
+      title: 'auth.sms.textlocal.api_key'
+      tags: ['auth']
+      required: true
+      default: 'env(SUPABASE_AUTH_SMS_TEXTLOCAL_API_KEY)'
+      description: |
+        TextLocal API Key
+
+        DO NOT commit your TextLocal API key to git. Use environment variable substitution instead.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.vonage.from'
+      title: 'auth.sms.vonage.from'
+      tags: ['auth']
+      required: true
+      description: |
+        Vonage From
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.vonage.api_key'
+      title: 'auth.sms.vonage.api_key'
+      tags: ['auth']
+      required: true
+      description: |
+        Vonage API Key
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.sms.vonage.api_secret'
+      title: 'auth.sms.vonage.api_secret'
+      tags: ['auth']
+      required: true
+      default: 'env(SUPABASE_AUTH_SMS_VONAGE_API_SECRET)'
+      description: |
+        Vonage API Secret
+
+        DO NOT commit your Vonage API secret to git. Use environment variable substitution instead.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.external.provider.enabled'
+      title: 'auth.external.<provider>.enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Use an external OAuth provider. The full list of providers are:
+
+        - `apple`
+        - `azure`
+        - `bitbucket`
+        - `discord`
+        - `facebook`
+        - `github`
+        - `gitlab`
+        - `google`
+        - `kakao`
+        - `keycloak`
+        - `linkedin_oidc`
+        - `notion`
+        - `twitch`
+        - `twitter`
+        - `slack_oidc`
+        - `spotify`
+        - `workos`
+        - `zoom`
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.external.provider.client_id'
+      title: 'auth.external.<provider>.client_id'
+      tags: ['auth']
+      required: true
+      description: |
+        Client ID for the external OAuth provider.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.external.provider.secret'
+      title: 'auth.external.<provider>.secret'
+      tags: ['auth']
+      required: true
+      default: 'env(SUPABASE_AUTH_EXTERNAL_<PROVIDER>_SECRET)'
+      description: |
+        Client secret for the external OAuth provider.
+
+        DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.external.provider.url'
+      title: 'auth.external.<provider>.url'
+      tags: ['auth']
+      required: false
+      description: |
+        The base URL used for constructing the URLs to request authorization and
+        access tokens. Used by gitlab and keycloak. For gitlab it defaults to
+        https://gitlab.com. For keycloak you need to set this to your instance,
+        for example: https://keycloak.example.com/realms/myrealm .
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.external.provider.redirect_uri'
+      title: 'auth.external.<provider>.redirect_uri'
+      tags: ['auth']
+      required: false
+      description: |
+        The URI a OAuth2 provider will redirect to with the code and state values.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.external.provider.skip_nonce_check'
+      title: 'auth.external.<provider>.skip_nonce_check'
+      tags: ['auth']
+      required: false
+      description: |
+        Disables nonce validation during OIDC authentication flow for the specified provider. Enable only when client libraries cannot properly handle nonce verification. Be aware that this reduces security by allowing potential replay attacks with stolen ID tokens.
+      links:
+        - name: 'Auth Server configuration'
+          link: 'https://supabase.com/docs/reference/auth'
+
+    - id: 'auth.hook.<hook_name>.enabled'
+      title: 'auth.hook.<hook_name>.enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable Auth Hook. Possible values for `hook_name` are: `custom_access_token`, `send_sms`, `send_email`, `mfa_verification_attempt`, and `password_verification_attempt`.
+      links:
+        - name: 'Auth Hooks'
+          link: 'https://supabase.com/docs/guides/auth/auth-hooks'
+
+    - id: 'auth.hook.<hook_name>.uri'
+      title: 'auth.hook.<hook_name>.uri'
+      tags: ['auth']
+      required: false
+      default: ''
+      description: |
+        URI of hook to invoke. Should be a http or https function or Postgres function taking the form: `pg-functions://<database>/<schema>/<function-name>`. For example, `pg-functions://postgres/auth/custom-access-token-hook`.
+      links:
+        - name: 'Auth Hooks'
+          link: 'https://supabase.com/docs/guides/auth/auth-hooks'
+
+    - id: 'auth.hook.<hook_name>.secrets'
+      title: 'auth.hook.<hook_name>.secrets'
+      tags: ['auth']
+      required: false
+      default: ''
+      description: |
+        Configure when using a HTTP Hooks. Takes a list of base64 comma separated values to allow for secret rotation. Currently, Supabase Auth uses only the first value in the list.
+      links:
+        - name: 'Auth Hooks'
+          link: 'https://supabase.com/docs/guides/auth/auth-hooks?queryGroups=language&language=http'
+
+    - id: 'auth.mfa.totp.enroll_enabled'
+      title: 'auth.mfa.totp.enroll_enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable TOTP enrollment for multi-factor authentication.
+      links:
+        - name: 'Auth Multi-Factor Authentication (TOTP)'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
+
+    - id: 'auth.mfa.totp.verify_enabled'
+      title: 'auth.mfa.totp.verify_enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable TOTP verification for multi-factor authentication.
+      links:
+        - name: 'Auth Multi-Factor Authentication (TOTP)'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
+
+    - id: 'auth.mfa.max_enrolled_factors'
+      title: 'auth.mfa.max_enrolled_factors'
+      tags: ['auth']
+      required: false
+      default: '10'
+      description: |
+        Control how many MFA factors can be enrolled at once per user.
+      links:
+        - name: 'Auth Multi-Factor Authentication (TOTP)'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
+
+    - id: 'auth.mfa.phone.enroll_enabled'
+      title: 'auth.mfa.phone.enroll_enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable Phone enrollment for multi-factor authentication.
+      links:
+        - name: 'Auth Multi-Factor Authentication (Phone)'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
+
+    - id: 'auth.mfa.phone.otp_length'
+      title: 'auth.mfa.phone.otp_length'
+      tags: ['auth']
+      required: false
+      default: '6'
+      description: |
+        Length of OTP code sent when using phone multi-factor authentication
+      links:
+        - name: 'Auth Multi-Factor Authentication (Phone)'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
+
+    - id: 'auth.mfa.phone.max_frequency'
+      title: 'auth.mfa.phone.max_frequency'
+      tags: ['auth']
+      required: false
+      default: '10s'
+      description: |
+        The minimum amount of time that must pass between phone requests.
+        Helps prevent spam by limiting how frequently messages can be sent.
+        Example values: "10s", "20s", "1m"
+      links:
+        - name: 'Auth Multi-Factor Authentication (Phone)'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
+
+    - id: 'auth.mfa.phone.otp_length'
+      title: 'auth.mfa.phone.otp_length'
+      tags: ['auth']
+      required: false
+      default: '6'
+      description: |
+        Length of OTP sent when using phone multi-factor authentication
+      links:
+        - name: 'Auth Multi-Factor Authentication (Phone)'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
+
+    - id: 'auth.mfa.phone.verify_enabled'
+      title: 'auth.mfa.phone.verify_enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable Phone verification for multi-factor authentication.
+      links:
+        - name: 'Auth Multi-Factor Authentication (Phone)'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
+
+    - id: 'auth.mfa.web_authn.enroll_enabled'
+      title: 'auth.mfa.web_authn.enroll_enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable WebAuthn enrollment for multi-factor authentication.
+      links:
+        - name: 'Auth Multi-Factor Authentication'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa'
+
+    - id: 'auth.mfa.web_authn.verify_enabled'
+      title: 'auth.mfa.web_authn.verify_enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable WebAuthn verification for multi-factor authentication.
+      links:
+        - name: 'Auth Multi-Factor Authentication'
+          link: 'https://supabase.com/docs/guides/auth/auth-mfa'
+
+    - id: 'auth.passkey.enabled'
+      title: 'auth.passkey.enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable passkey sign-in and registration. Requires `auth.webauthn` to be configured.
+      links:
+        - name: 'Sign in with Passkey'
+          link: 'https://supabase.com/docs/guides/auth/passkeys'
+
+    - id: 'auth.webauthn.rp_display_name'
+      title: 'auth.webauthn.rp_display_name'
+      tags: ['auth']
+      required: false
+      default: ''
+      description: |
+        Human-readable name for the WebAuthn relying party shown to users during the passkey ceremony. Required when `auth.passkey.enabled` is `true`.
+      links:
+        - name: 'Sign in with Passkey'
+          link: 'https://supabase.com/docs/guides/auth/passkeys'
+
+    - id: 'auth.webauthn.rp_id'
+      title: 'auth.webauthn.rp_id'
+      tags: ['auth']
+      required: false
+      default: ''
+      description: |
+        WebAuthn relying party identifier. Must be a registrable suffix of every origin in `auth.webauthn.rp_origins` (for example `example.com` for `https://app.example.com`). Required when `auth.passkey.enabled` is `true`.
+      links:
+        - name: 'Sign in with Passkey'
+          link: 'https://supabase.com/docs/guides/auth/passkeys'
+
+    - id: 'auth.webauthn.rp_origins'
+      title: 'auth.webauthn.rp_origins'
+      tags: ['auth']
+      required: false
+      default: '[]'
+      description: |
+        List of origins your app is served from. The browser refuses the WebAuthn ceremony if the page origin is not in this list. Required when `auth.passkey.enabled` is `true`.
+      links:
+        - name: 'Sign in with Passkey'
+          link: 'https://supabase.com/docs/guides/auth/passkeys'
+
+    - id: 'auth.sessions.timebox'
+      title: 'auth.sessions.timebox'
+      tags: ['auth']
+      required: false
+      default: ''
+      description: |
+        Force log out after the specified duration. Sample values include: '50m', '20h'.
+      links:
+        - name: 'Auth Sessions'
+          link: 'https://supabase.com/docs/guides/auth/sessions'
+
+    - id: 'auth.sessions.inactivity_timeout'
+      title: 'auth.sessions.inactivity_timeout'
+      tags: ['auth']
+      required: false
+      default: ''
+      description: |
+        Force log out if the user has been inactive longer than the specified duration. Sample values include: '50m', '20h'.
+      links:
+        - name: 'Auth Sessions'
+          link: 'https://supabase.com/docs/guides/auth/sessions'
+
+    - id: 'auth.third_party.aws_cognito.enabled'
+      title: 'auth.third_party.aws_cognito.enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable third party auth with AWS Cognito (Amplify)
+      links:
+        - name: 'Third Party Auth (Cognito)'
+          link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
+
+    - id: 'auth.third_party.aws_cognito.user_pool_id'
+      title: 'auth.third_party.aws_cognito.user_pool_id'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        User Pool ID for AWS Cognito (Amplify) that you are integrating with
+      links:
+        - name: 'Third Party Auth (Cognito)'
+          link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
+
+    - id: 'auth.third_party.aws_cognito.user_pool_region'
+      title: 'auth.third_party.aws_cognito.user_pool_region'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        User Pool region for AWS Cognito (Amplify) that you are integrating with. Example values: 'ap-southeast-1', 'us-east-1'
+      links:
+        - name: 'Third Party Auth (Cognito)'
+          link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
+
+    - id: 'auth.third_party.auth0.enabled'
+      title: 'auth.third_party.auth0.enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable third party auth with Auth0
+      links:
+        - name: 'Third Party Auth (Auth0)'
+          link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
+
+    - id: 'auth.third_party.auth0.tenant'
+      title: 'auth.third_party.auth0.tenant'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Tenant Identifier for Auth0 instance that you are integrating with
+      links:
+        - name: 'Third Party Auth (Auth0)'
+          link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
+
+    - id: 'auth.third_party.auth0.tenant_region'
+      title: 'auth.third_party.tenant_region'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Tenant region for Auth0 instance that you are integrating with
+      links:
+        - name: 'Third Party Auth (Auth0)'
+          link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
+
+    - id: 'auth.third_party.firebase.enabled'
+      title: 'auth.third_party.firebase.enabled'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Enable third party auth with Firebase
+      links:
+        - name: 'Third Party Auth (Firebase)'
+          link: 'https://supabase.com/docs/guides/auth/third-party/firebase-auth'
+
+    - id: 'auth.third_party.firebase.project_id'
+      title: 'auth.third_party.firebase.project_id'
+      tags: ['auth']
+      required: false
+      default: 'false'
+      description: |
+        Project ID for Firebase instance that you are integrating with
+      links:
+        - name: 'Third Party Auth (Firebase)'
+          link: 'https://supabase.com/docs/guides/auth/third-party/firebase-auth'
+
+    - id: 'edge_runtime.enabled'
+      title: 'edge_runtime.enabled'
+      tags: ['edge-functions']
+      required: false
+      default: 'true'
+      description: |
+        Enable the local Edge Runtime service for Edge Functions.
+      links: []
+
+    - id: 'edge_runtime.policy'
+      title: 'edge_runtime.policy'
+      tags: ['edge-functions']
+      required: false
+      default: '"oneshot"'
+      description: |
+        Configure the request handling policy for Edge Functions. Available options:
+        - `oneshot`: Recommended for development with hot reload support
+        - `per_worker`: Recommended for load testing scenarios
+      links: []
+
+    - id: 'edge_runtime.inspector_port'
+      title: 'edge_runtime.inspector_port'
+      tags: ['edge-functions']
+      required: false
+      default: '8083'
+      description: |
+        Port to attach the Chrome inspector for debugging Edge Functions.
+      links: []
+
+    - id: 'functions.function_name.enabled'
+      title: 'functions.<function_name>.enabled'
+      tags: ['edge-functions']
+      required: false
+      default: 'true'
+      description: |
+        Controls whether a function is deployed or served. When set to false,
+        the function will be skipped during deployment and won't be served locally.
+        This is useful for disabling demo functions or temporarily disabling a function
+        without removing its code.
+      links:
+        - name: '`supabase functions` CLI subcommands'
+          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
+
+    - id: 'functions.function_name.verify_jwt'
+      title: 'functions.<function_name>.verify_jwt'
+      tags: ['edge-functions']
+      required: false
+      default: 'true'
+      description: |
+        By default, when you deploy your Edge Functions or serve them locally, it
+        will reject requests without a valid JWT in the Authorization header.
+        Setting this configuration changes the default behavior.
+
+        Note that the `--no-verify-jwt` flag overrides this configuration.
+      links:
+        - name: '`supabase functions` CLI subcommands'
+          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
+
+    - id: 'functions.function_name.import_map'
+      title: 'functions.<function_name>.import_map'
+      tags: ['edge-functions']
+      required: false
+      description: |
+        Specify the Deno import map file to use for the Function.
+        When not specified, defaults to `supabase/functions/<function_name>/deno.json`.
+
+        Note that the `--import-map` flag overrides this configuration.
+      links:
+        - name: '`supabase functions` CLI subcommands'
+          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
+
+    - id: 'functions.function_name.entrypoint'
+      title: 'functions.<function_name>.entrypoint'
+      tags: ['edge-functions']
+      required: false
+      description: |
+        Specify a custom entrypoint path for the function relative to the project root.
+        When not specified, defaults to `supabase/functions/<function_name>/index.ts`.
+      links:
+        - name: '`supabase functions` CLI subcommands'
+          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
+      usage: |
+        [functions.my_function]
+        entrypoint = "path/to/custom/function.ts"
+
+    - id: 'functions.function_name.static_files'
+      title: 'functions.<function_name>.static_files'
+      tags: ['edge-functions']
+      required: false
+      description: |
+        Specify an array of static files to be bundled with the function. Supports glob patterns.
+
+        NOTE: only file paths within `functions` directory are supported at the moment.
+      links:
+        - name: '`supabase functions` CLI subcommands'
+          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
+      usage: |
+        [functions.my_function]
+        static_files = [ "./functions/MY_FUNCTION_NAME/*.html", "./functions/MY_FUNCTION_NAME/custom.wasm" ]
+
+    - id: 'analytics.enabled'
+      title: 'analytics.enabled'
+      tags: ['analytics']
+      required: false
+      default: 'false'
+      description: |
+        Enable the local Logflare service.
+      links:
+        - name: Self-hosted Logflare Configuration
+          link: https://supabase.com/docs/reference/self-hosting-analytics/list-endpoints#getting-started
+
+    - id: 'analytics.port'
+      title: 'analytics.port'
+      tags: ['analytics']
+      required: false
+      default: '54327'
+      description: |
+        Port to the local Logflare service.
+      links: []
+
+    - id: 'analytics.vector_port'
+      title: 'analytics.vector_port'
+      tags: ['analytics']
+      required: false
+      default: '54328'
+      description: |
+        Port to the local syslog ingest service.
+      links: []
+
+    - id: 'analytics.backend'
+      title: 'analytics.backend'
+      tags: ['analytics']
+      required: false
+      default: '"postgres"'
+      description: |
+        Configure one of the supported backends:
+
+        - `postgres`
+        - `bigquery`
+      links:
+        - name: Self-hosted Logflare Configuration
+          link: https://supabase.com/docs/reference/self-hosting-analytics/list-endpoints#getting-started
+
+    - id: 'experimental.webhooks.enabled'
+      title: 'experimental.webhooks.enabled'
+      tags: ['experimental']
+      required: false
+      default: 'false'
+      description: |
+        Automatically enable webhook features on each new created branch
+        Note: This is an experimental feature and may change in future releases.
+      links: []
+
+    - id: 'experimental.orioledb_version'
+      title: 'experimental.orioledb_version'
+      tags: ['experimental']
+      required: false
+      description: |
+        Configures Postgres storage engine to use OrioleDB with S3 support.
+        Note: This is an experimental feature and may change in future releases.
+      links: []
+
+    - id: 'experimental.s3_host'
+      title: 'experimental.s3_host'
+      tags: ['experimental']
+      required: false
+      default: 'env(S3_HOST)'
+      description: |
+        Configures S3 bucket URL for OrioleDB storage.
+        Format example: <bucket_name>.s3-<region>.amazonaws.com
+        Note: This is an experimental feature and may change in future releases.
+      links: []
+
+    - id: 'experimental.s3_region'
+      title: 'experimental.s3_region'
+      tags: ['experimental']
+      required: false
+      default: 'env(S3_REGION)'
+      description: |
+        Configures S3 bucket region for OrioleDB storage.
+        Example: us-east-1
+        Note: This is an experimental feature and may change in future releases.
+      links: []
+
+    - id: 'experimental.s3_access_key'
+      title: 'experimental.s3_access_key'
+      tags: ['experimental']
+      required: false
+      default: 'env(S3_ACCESS_KEY)'
+      description: |
+        Configures AWS_ACCESS_KEY_ID for S3 bucket access.
+        DO NOT commit your AWS access key to git. Use environment variable substitution instead.
+        Note: This is an experimental feature and may change in future releases.
+      links: []
+
+    - id: 'experimental.s3_secret_key'
+      title: 'experimental.s3_secret_key'
+      tags: ['experimental']
+      required: false
+      default: 'env(S3_SECRET_KEY)'
+      description: |
+        Configures AWS_SECRET_ACCESS_KEY for S3 bucket access.
+        DO NOT commit your AWS secret key to git. Use environment variable substitution instead.
+        Note: This is an experimental feature and may change in future releases.
+      links: []
+
+    - id: 'remotes.branch_name.project_id'
+      title: 'remotes.<branch_name>.project_id'
+      tags: ['branching']
+      required: true
+      description: |
+        The project reference ID for a specific persistent Supabase branch.
+        This ID is used to configure branch-specific settings in your config.toml file for branches deployments.
+        All other configuration options available in the root config are also supported in the remotes block.
+        For example, you can specify branch-specific database settings like so:
+      usage: |
+        [remotes.<branch_name>]
+        project_id = "your-project-ref"
+
+        [remotes.<branch_name>.db.seed]
+        sql_paths = ["./seeds/staging.sql"]

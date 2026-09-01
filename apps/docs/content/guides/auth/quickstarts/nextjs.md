@@ -5,93 +5,51 @@ breadcrumb: 'Auth Quickstarts'
 hideToc: true
 ---
 
-<StepHikeCompact>
+* goal
+  * how to configure Supabase Auth -- for -- Next.JS App Router?
 
-  <StepHikeCompact.Step step={1}>
-    <StepHikeCompact.Details title="Create a new Supabase project">
+### 1. Create a new Supabase project
 
-    Head over to [database.new](https://database.new) and create a new Supabase project.
+Head over to [database.new](https://database.new) and create a new Supabase project.
 
-    Your new database has a table for storing your users. You can see that this table is currently empty by running some SQL in the [SQL Editor](/dashboard/project/_/sql/new).
+Your new database has a table for storing your users
+* You can see that this table is currently empty by running some SQL in the [SQL Editor](/dashboard/project/_/sql/new).
 
-    </StepHikeCompact.Details>
+```sql
+select * from auth.users;
+```
 
-    <StepHikeCompact.Code>
+### 2. Create a Next.js app
 
-     ```sql name=SQL_EDITOR
-      select * from auth.users;
-      ````
+Use the `create-next-app` command and the `with-supabase` template, to create a Next.js app pre-configured with:
+- [Cookie-based Auth](/docs/guides/auth/server-side/creating-a-client?queryGroups=package-manager&package-manager=npm&queryGroups=framework&framework=nextjs&queryGroups=environment&environment=server)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
 
-    </StepHikeCompact.Code>
+```bash
+npx create-next-app -e with-supabase
+```
 
-  </StepHikeCompact.Step>
+### 3. Declare Supabase Environment Variables
 
-  <StepHikeCompact.Step step={2}>
+* 
+Rename `.env.example` to `.env.local` and populate with your Supabase connection variables:
 
-    <StepHikeCompact.Details title="Create a Next.js app">
+```text
+# .env.local
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_... key
+```
 
-    Use the `create-next-app` command and the `with-supabase` template, to create a Next.js app pre-configured with:
-    - [Cookie-based Auth](/docs/guides/auth/server-side/creating-a-client?queryGroups=package-manager&package-manager=npm&queryGroups=framework&framework=nextjs&queryGroups=environment&environment=server)
-    - [TypeScript](https://www.typescriptlang.org/)
-    - [Tailwind CSS](https://tailwindcss.com/)
+### 4. Start the app
 
-    <$Partial path="uiLibCta.mdx" />
+Start the development server, go to http://localhost:3000 in a browser, and you should see the contents of `app/page.tsx`.
 
-    </StepHikeCompact.Details>
+To sign up a new user, navigate to http://localhost:3000/auth/sign-up, and click `Sign up`.
 
-    <StepHikeCompact.Code>
-
-      ```bash name=Terminal
-      npx create-next-app -e with-supabase
-      ```
-
-    </StepHikeCompact.Code>
-
-  </StepHikeCompact.Step>
-
-  <StepHikeCompact.Step step={3}>
-    <StepHikeCompact.Details title="Declare Supabase Environment Variables">
-
-        Rename `.env.example` to `.env.local` and populate with your Supabase connection variables:
-
-        <ProjectConfigVariables variable="url" />
-        <ProjectConfigVariables variable="publishable" />
-
-
-    </StepHikeCompact.Details>
-
-    <StepHikeCompact.Code>
-
-      ```text name=.env.local
-      NEXT_PUBLIC_SUPABASE_URL=your-project-url
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_... key
-      ```
-
-      <$Partial path="api_settings.mdx" variables={{ "framework": "nextjs", "tab": "frameworks" }} />
-
-    </StepHikeCompact.Code>
-
-  </StepHikeCompact.Step>
-
-  <StepHikeCompact.Step step={4}>
-    <StepHikeCompact.Details title="Start the app">
-
-    Start the development server, go to http://localhost:3000 in a browser, and you should see the contents of `app/page.tsx`.
-
-    To sign up a new user, navigate to http://localhost:3000/auth/sign-up, and click `Sign up`.
-
-    </StepHikeCompact.Details>
-
-    <StepHikeCompact.Code>
-
-      ```bash name=Terminal
-      npm run dev
-      ```
-
-    </StepHikeCompact.Code>
-
-  </StepHikeCompact.Step>
-</StepHikeCompact>
+```bash
+npm run dev
+```
 
 ## Learn more
 

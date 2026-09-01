@@ -7,134 +7,12 @@ keywords = [ "migration", "auth", "ssr", "package" ]
 database_id = "273b79ad-b8ff-4669-8544-b99920e2d3c8"
 ---
 
-The `auth-helpers` packages are deprecated and replaced with the `@supabase/ssr` package. We recommend migrating to the `@supabase/ssr` package as future bug fixes and feature releases are focused on the `@supabase/ssr` package.
+* goal
+  * migrate from `auth-helpers` packages -- to -- `@supabase/ssr` package
 
-Here are the steps for you to migrate your application from the `auth-helpers` package to `@supabase/ssr` package.
+* [here](../server-side/migrating-to-ssr-from-auth-helpers.md)
 
-Depending on your implementation, you may ignore some parts of this documentation and use your own implementation (i.e. using API routes vs. Server Actions). What's important is you replace the clients provided by `auth-helpers` with the utility functions created using clients provided by `@supabase/ssr`.
-
-### 1. Uninstall Supabase Auth helpers and install the Supabase SSR package
-
-It's important that you don't use both `auth-helpers-nextjs` and `@supabase/ssr` packages in the same application to avoid running into authentication issues.
-
-```
-npm uninstall @supabase/auth-helpers-nextjs @supabase/supabase-js
-npm install @supabase/ssr @supabase/supabase-js
-```
-
-### 2. Create the library functions to create Supabase clients
-
-```
-// lib/supabase/client.ts
-
-import { createBrowserClient } from '@supabase/ssr';
-
-export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-  );
-}
-
-// lib/supabase/server.ts
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-
-export async function createClient() {
-  const cookieStore = await cookies()
-
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet, _headers) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
-          } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
-        },
-      },
-    }
-  )
-}
-
-// lib/supabase/proxy.ts
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
-
-export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
-
-  // With Fluid compute, don't put this client in a global environment
-  // variable. Always create a new one on each request.
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet, headers) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
-          Object.entries(headers).forEach(([key, value]) =>
-            supabaseResponse.headers.set(key, value)
-          )
-        },
-      },
-    }
-  )
-
-  // Do not run code between createServerClient and
-  // supabase.auth.getClaims(). A basic mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-
-  // IMPORTANT: If you remove getClaims() and you use server-side rendering
-  // with the Supabase client, your users may be randomly logged out.
-  const { data } = await supabase.auth.getClaims()
-
-  const user = data?.claims
-
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
-  }
-
-  // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
-  // creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  //    const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  //    the cookies!
-  // 4. Finally:
-  //    return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
-
-  return supabaseResponse
-}
-```
+TODO: what to do with rest of files?
 
 ### 3. Replace your proxy.ts file
 
@@ -305,7 +183,8 @@ export async function POST(request: Request) {
 }
 ```
 
-Likewise, you can replace the clients created with `@supabase/auth-helpers-nextjs` with utility functions you created with `@supabase/ssr`.
+Likewise, you can replace the clients created with `@supabase/auth-helpers-nextjs`
+with utility functions you created with `@supabase/ssr`.
 
 `createMiddlewareClient` → `createServerClient`
 `createClientComponentClient` → `createBrowserClient`
@@ -314,6 +193,7 @@ Likewise, you can replace the clients created with `@supabase/auth-helpers-nextj
 
 You can find more clear and concise examples of creating clients [in our SSR documentation](/docs/guides/auth/server-side/creating-a-client?queryGroups=framework&framework=nextjs&queryGroups=environment&environment=route-handler#creating-a-client).
 
-If you have any feedback about this guide, provide them as a comment below. If you find any issues or have feedback for the `@supabase/ssr` client, post them as an issue in `@supabase/ssr` repo.
+If you have any feedback about this guide, provide them as a comment below
+* If you find any issues or have feedback for the `@supabase/ssr` client, post them as an issue in `@supabase/ssr` repo.
 
 As always, our GitHub community and Discord channel are open for technical discussions and resolving your issues.

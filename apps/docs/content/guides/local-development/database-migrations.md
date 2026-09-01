@@ -133,25 +133,23 @@ supabase functions deploy <function_name>
 
 * if you want to pull locally your RLS policies | storage buckets -> `supabase db pull --schema storage`
 
-TODO: 
-The buckets and objects themselves are rows in the storage tables so they won't appear in your schema
-* You can instead define them via `supabase/config.toml` file
-* For example,
+* buckets & objects 
+  * storage == rows | storage tables
+    * == `storage.buckets` & `storage.objects`
+  * ways to define it
+    * -- via -- Supabase Storage API
+    * | "supabase/config.toml" file,
+      * [`[storage.buckets.bucket_name.*]`](../../../spec/cli_v1_config.yaml)
+        * uses
+          * locally
+  * ❌NO ways to define it❌
+    * -- via -- SQL
+      * Reason: 🧠NOT appear | your schema🧠
 
-```toml
-# supabase/config.toml
-[storage.buckets.images]
-public = false
-file_size_limit = "50MiB"
-allowed_mime_types = ["image/png", "image/jpeg"]
-objects_path = "./images"
-```
-
-This will upload files from `supabase/images` directory to a bucket named `images` in your project with one command.
-
-```bash
-supabase seed buckets
-```
+* steps to sync locally
+  * | "supabase/config.toml" file, configure `[storage.buckets.bucket_name.*]`
+  * place your files | "supabase/<bucket_name>"
+  * `supabase seed buckets`
 
 ### Sync any schema with `--schema`
 

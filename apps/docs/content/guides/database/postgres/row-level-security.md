@@ -58,63 +58,47 @@ alter table "table_name" enable row level security;
     * ❌NOT affect | EXISTING tables❌
       * == ⚠️you need to enable MANUALLY RLS⚠️
 
-TODO:
+* recommendations
+  * 👀EXPLICITLY checking for authentication👀
 
-<Admonition type="caution" title="`auth.uid()` Returns `null` When Unauthenticated">
+    ```sql
+    USING (auth.uid() IS NOT NULL AND auth.uid() = user_id)
+    ```
+    * Reason:🧠
+      * avoid confusion
+      * make your intention clear
+      * OTHERWISE, `USING (auth.uid() = user_id)` 
+        * requirest WITHOUT authenticated user -> auth.uid() = null -> fail🧠
 
-When a request is made without an authenticated user 
-(e.g., no access token is provided or the session has expired), `auth.uid()` returns `null`.
+## Authenticated & unauthenticated roles
 
-This means that a policy like:
+* Supabase
+  * maps EACH request -- to -- the roles
+    * [`anon`](roles.md#anon)
+    * [`authenticated`](roles.md#authenticated)
 
-```sql
-USING (auth.uid() = user_id)
-```
+* if you want to use [Supabase roles](roles.md) | your Policies -> use the `TO` clause
 
-will silently fail for unauthenticated users, because:
+  ```sql
+  create policy "Profiles are viewable by everyone"
+  on profiles for select
+  to authenticated, anon
+  using ( true );
+  
+  -- OR
+  
+  create policy "Public profiles are viewable only by authenticated users"
+  on profiles for select
+  to authenticated
+  using ( true );
+  ```
 
-```sql
-null = user_id
-```
-
-is always false in SQL.
-
-To avoid confusion and make your intention clear, we recommend explicitly checking for authentication:
-
-```sql
-USING (auth.uid() IS NOT NULL AND auth.uid() = user_id)
-```
-
-</Admonition>
-
-## Authenticated and unauthenticated roles
-
-Supabase maps every request to one of the roles:
-
-- `anon`: an unauthenticated request (the user is not logged in)
-- `authenticated`: an authenticated request (the user is logged in)
-
-These are [Postgres Roles](/docs/guides/database/postgres/roles)
-* You can use these roles within your Policies using the `TO` clause:
-
-```sql
-create policy "Profiles are viewable by everyone"
-on profiles for select
-to authenticated, anon
-using ( true );
-
--- OR
-
-create policy "Public profiles are viewable only by authenticated users"
-on profiles for select
-to authenticated
-using ( true );
-```
+TODO: 
 
 <Admonition type="note" title="Anonymous user vs the anon key">
 
-Using the `anon` Postgres role is different from an [anonymous user](/docs/guides/auth/auth-anonymous) in Supabase Auth
-* An anonymous user assumes the `authenticated` role to access the database and can be differentiated
+* An anonymous user assumes the `authenticated` role to access the database and
+can be differentiated
 from a permanent user by checking the `is_anonymous` claim in the JWT.
 
 </Admonition>

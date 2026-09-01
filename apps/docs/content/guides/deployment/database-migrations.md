@@ -38,57 +38,16 @@ tocVideo: 'Kx5nHBmIxyQ'
 
 ### Seeding data / EACH reset of the database 
 
-* steps
-  * | "supabase/seed.sql",
-    * add SQL content
-  * `supabase db reset`
-    * allows
-      * reset your database
-      * reapply migrations
-      * populate -- with -- seed data
+* [here](../local-development/database-migrations.md)
 
 ### Diffing changes
 
-* ⚠️ALTERNATIVE TO⚠️
-  * Supabase Dashboard
-
-* allows
-  * generate -- , by diffing your schema changes vs EXISTING "supabase/migrations/" , -- "*.sql"
-
-* ⚠️| modify schema changes,
-  * choose 1 BETWEEN "supabase/migraitons/*.sql" & modify DIRECTLY | Supabase Dashboard > SQL editor OR Table Editor⚠️
-    * Reason:🧠OTHERWISE, break the migration history🧠
-
-* steps
-  * `supabase db diff -f <DIFF_CHANGE_NAME>`
-    * create a NEW migration file "supabase/migrations/<timestamp>_DIFF_CHANGE_NAME.sql"
-  * `supabase db reset`
-    * test your NEW migration file -- by -- resetting your LOCAL database
+* [here](../local-development/database-migrations.md)
 
 ## Deploy your project
 
-TOO: 
+* [here](../local-development/database-migrations.md#deploy-your-project)
 
-You've been developing your project locally, making changes to your tables via migrations
-* It's time to deploy your project to the Supabase Platform and start scaling up to millions of users!
-
-Head over to [Supabase](/dashboard) and create a new project to deploy to.
-
-### 1. Log in to the Supabase CLI
-
-[Login](/docs/reference/cli/supabase-login) to the Supabase CLI using an auto-generated Personal Access Token.
-
-```bash
-supabase login
-```
-
-### 2. Link your project
-
-[Link](/docs/reference/cli/supabase-link) to your remote project by selecting from the on-screen prompt.
-
-```bash
-supabase link
-```
 
 ### 3. Deploy database migrations
 

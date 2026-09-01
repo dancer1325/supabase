@@ -1,63 +1,12 @@
-# 2 MAIN sections:
-#   info:
-#     == tool's general information
-#   functions:
-#     == public functions / user can access
+* "supabase/config.toml"
+  * == 💡your locally running project's settings💡 /
+    * generated AFTER running `supabase init`
+  * how to make effective the modifications?
+    * `supabase stop`
+    * `supabase start`
 
-configspec: '001'
+TODO: 
 
-info:
-  id: 'cli' # {string} A unique ID for this tool.
-  version: '1.93.0' # {string} The current version number of the tool.
-  title: 'CLI' # {string} A readable name.
-  source: 'https://github.com/supabase/cli' # {string} Where developers can find the source code.
-  bugs: 'https://github.com/supabase/cli/issues' # {string} Where developers can file bugs.
-  spec: 'https://github.com/supabase/supabase/spec/cli_v1_config.yaml' # {string} Where developers can find this spec (to link directly in the docs).
-  description: |
-    A `supabase/config.toml` file is generated after running `supabase init`.
-
-    You can edit this file to change the settings for your locally running project. After you make changes, you will need to restart using `supabase stop` and then `supabase start` for the changes to take effect.
-  tags:
-    - id: general
-      title: General
-      description: General settings.
-    - id: auth
-      title: Auth
-      description: Auth settings.
-    - id: api
-      title: API
-      description: Auth settings.
-    - id: database
-      title: Database
-      description: Database settings.
-    - id: dashboard
-      title: Dashboard
-      description: Dashboard settings.
-    - id: realtime
-      title: Realtime
-      description: Dashboard settings.
-    - id: storage
-      title: Storage
-      description: Storage settings.
-    - id: edge-functions
-      title: Edge-Functions
-      description: Edge-Functions settings.
-    - id: analytics
-      title: Analytics
-      description: Analytics settings.
-    - id: experimental
-      title: Experimental
-      description: Settings in alpha testing, subject to changes or removal at any time.
-    - id: local
-      title: Local Development
-      description: Local Development settings.
-    - id: branching
-      title: Branching
-      description: Branching configurations settings.
-
-# == [] of public functions /
-#   use cases
-#     user could execute them
 parameters:
   - id: 'project_id' # {string} A unique identifier for this param.
     title: 'project_id' # {string} Any name.

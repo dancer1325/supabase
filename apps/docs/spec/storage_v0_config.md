@@ -1,29 +1,10 @@
-configspec: '001'
+* ".env"
+  * _Example:_ [here](https://github.com/supabase/storage/blob/master/.env.sample)
+  * uses
+    * configure your your Storage server's environment variables 
 
-# info
-#     == tool's general information
-info:
-  id: 'storage' # {string} A unique ID for this tool.
-  version: 'next' # {string} The current version number of the tool.
-  title: 'Storage' # {string} A readable name.
-  source: 'https://github.com/supabase/storage' # {string} Where developers can find the source code.
-  bugs: 'https://github.com/supabase/storage/issues' # {string} Where developers can file bugs.
-  spec: 'https://github.com/supabase/supabase/blob/master/spec/storage_v0_config.yml' # {string} Where developers can find this spec (to link directly in the docs).
-  description: |
-    A sample `.env` file is located in the [storage repository](https://github.com/supabase/storage-api/blob/master/.env.sample).
+TODO:
 
-    Use this file to configure your environment variables for your Storage server.
-  tags:
-    - id: general
-      title: General
-      description: General Settings
-    - id: multitenant
-      title: Multi-tenant
-      description: Configuration items for multi-tenant servers.
-
-# == [] of public functions /
-#   use cases
-#     user could execute them
 parameters:
   - id: 'ANON_KEY' # {string} A unique identifier for this param.
     title: 'ANON_KEY' # {string} Any name.

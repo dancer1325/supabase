@@ -5,46 +5,26 @@ subtitle: "Learn how to configure and deploy Supabase with Docker."
 tocVideo: "FqiQKRKsfZE"
 ---
 
-Docker is the easiest way to get started with self-hosted Supabase. It should take you less than 15 minutes to get up and running.
+* Docker 
+  * == the easiest way -- to -- self-hosted Supabase
 
-## Contents
+## requirements
 
-1. [Before you begin](#before-you-begin)
-2. [System requirements](#system-requirements)
-3. [Installing Supabase](#installing-supabase)
-   - [Quick start (Linux)](#quick-start-linux)
-   - [Manual installation](#manual-installation)
-4. [Configuring and securing Supabase](#configuring-and-securing-supabase)
-5. [Starting and stopping](#starting-and-stopping)
-6. [Accessing Supabase services](#accessing-supabase-studio-dashboard)
-7. [Updating](#updating)
-8. [Uninstalling](#uninstalling)
-9. [Advanced topics](#advanced-topics)
-
-## Before you begin
-
-This guide assumes you're comfortable with:
-
-- Linux server administration basics
-- Basic `git` usage
-- Docker and Docker Compose
-- Networking fundamentals (ports, DNS, firewalls)
-
-If you're new to these topics, consider starting with the managed [Supabase platform](/dashboard) for free.
-
-You need the following installed on your system:
-
-- [Git](https://git-scm.com/downloads)
-- [Docker](https://docs.docker.com/manuals/):
-  - **Linux server/VPS**: Install [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-  - **Linux desktop**: Install [Docker Desktop](https://docs.docker.com/desktop/setup/install/linux/)
-  - **macOS**: Install [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/)
-  - **Windows**: Install [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
-{/* supa-mdx-lint-disable-next-line Rule003Spelling */}
+* [Git](https://git-scm.com/downloads)
+* [Docker](https://docs.docker.com/manuals/)
+  * | **Linux server/VPS**,
+    * install [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+  * | **Linux desktop**,
+    * install [Docker Desktop](https://docs.docker.com/desktop/setup/install/linux/)
+  * | **macOS**,
+    * install [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/)
+  * | **Windows**
+    * install [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
 
 ## System requirements
 
-Minimum requirements for running all Supabase components, suitable for development and small to medium production workloads:
+Minimum requirements for running all Supabase components, suitable for development and 
+small to medium production workloads:
 
 | Resource | Minimum | Recommended |
 |----------|---------|-------------|
@@ -52,7 +32,8 @@ Minimum requirements for running all Supabase components, suitable for developme
 | CPU | 2 cores | 4 cores+ |
 | Disk | 40 GB SSD | 80 GB+ SSD |
 
-If you don't need specific services, such as Realtime, Storage, imgproxy, or Edge Runtime (`functions`), you can remove the corresponding sections and dependencies from `docker-compose.yml` to reduce resource requirements.
+If you don't need specific services, such as Realtime, Storage, imgproxy, or Edge Runtime (`functions`), 
+you can remove the corresponding sections and dependencies from `docker-compose.yml` to reduce resource requirements.
 
 <Admonition type="tip">
 
@@ -62,9 +43,11 @@ The default configuration does not include [Logs & Analytics](/features/logs-ana
 
 ## Installing Supabase
 
-The Docker configuration is distributed as part of the [Supabase repository](https://github.com/supabase/supabase/tree/master/docker). There are two paths to get it onto your machine:
+The Docker configuration is distributed as part of the [Supabase repository](https://github.com/supabase/supabase/tree/master/docker)
+* There are two paths to get it onto your machine:
 
-- **[Quick start (Linux)](#quick-start-linux)** - one command installs Docker, fetches the configuration, generates all secrets and keys, and prompts for your URLs. Fastest path if you're on a supported Linux distribution.
+- **[Quick start (Linux)](#quick-start-linux)** - one command installs Docker, fetches the configuration, generates all secrets and keys, and prompts for your URLs
+* Fastest path if you're on a supported Linux distribution.
 - **[Manual installation](#manual-installation)** - clone the repository yourself on any OS, then configure secrets and URLs as described below.
 
 ### Quick start (Linux)
@@ -84,7 +67,8 @@ The script supports Linux only (Debian/Ubuntu and RHEL/CentOS/Fedora) and will:
 - Generate all secrets, including a random `DASHBOARD_PASSWORD`, and the asymmetric JWT signing key pair (runs `generate-keys.sh` and `add-new-auth-keys.sh`, and enables the matching entries in `docker-compose.yml`)
 - Pull the Docker images
 
-The shortened link points to [setup.sh](https://raw.githubusercontent.com/supabase/supabase/refs/heads/master/docker/setup.sh) - you can inspect it before running. Use `-y` to run non-interactively with default values.
+The shortened link points to [setup.sh](https://raw.githubusercontent.com/supabase/supabase/refs/heads/master/docker/setup.sh) - you can inspect it before running
+* Use `-y` to run non-interactively with default values.
 
 After the script finishes, start the stack:
 
@@ -99,7 +83,8 @@ View the generated credentials any time via:
 sh run.sh secrets
 ```
 
-Next, see [Starting and stopping](#starting-and-stopping) for how to check service health and follow logs, then [Accessing Supabase Studio (Dashboard)](#accessing-supabase-studio-dashboard) and the other related sections. To customize the install further, browse [Configuring and securing Supabase](#configuring-and-securing-supabase) and [Advanced topics](#advanced-topics).
+Next, see [Starting and stopping](#starting-and-stopping) for how to check service health and follow logs, then [Accessing Supabase Studio (Dashboard)](#accessing-supabase-studio-dashboard) and the other related sections
+* To customize the install further, browse [Configuring and securing Supabase](#configuring-and-securing-supabase) and [Advanced topics](#advanced-topics).
 
 Not on Linux, or want to do it manually? See [Manual installation](#manual-installation) below.
 
@@ -117,7 +102,8 @@ defaultActiveId="gitclone"
 
 <TabPanel id="gitclone" label="GitHub clone">
 
-A shallow clone of the full Supabase repository. Works on any OS with `git` installed and is the simplest manual option.
+A shallow clone of the full Supabase repository
+* Works on any OS with `git` installed and is the simplest manual option.
 
 ```sh
 # Get the code
@@ -148,7 +134,8 @@ docker compose pull
 
 <TabPanel id="sparseclone" label="Sparse clone">
 
-Only downloads the `docker/` directory from the repository, saving bandwidth and disk space. Requires a few more steps than the shallow GitHub clone.
+Only downloads the `docker/` directory from the repository, saving bandwidth and disk space
+* Requires a few more steps than the shallow GitHub clone.
 
 ```sh
 # Get the code using git sparse checkout
@@ -186,7 +173,9 @@ docker compose pull
 
 <Admonition type="tip">
 
-  If you are using rootless Docker, edit `.env` and set `DOCKER_SOCKET_LOCATION` to your docker socket location. For example: `/run/user/1000/docker.sock`. Otherwise, you will see an error like `container supabase-vector exited (0)`.
+  If you are using rootless Docker, edit `.env` and set `DOCKER_SOCKET_LOCATION` to your docker socket location
+* For example: `/run/user/1000/docker.sock`
+* Otherwise, you will see an error like `container supabase-vector exited (0)`.
 
 </Admonition>
 
@@ -202,7 +191,8 @@ While we provided example placeholder passwords and keys in the `.env.example` f
 
 <Admonition type="note">
 
-  If you used [Quick start (Linux)](#quick-start-linux), these tasks were already done - `setup.sh` configured secrets, keys, URLs, and a random `DASHBOARD_PASSWORD`. You can skip ahead to [Starting and stopping](#starting-and-stopping), or read on to review what was set and how to change it.
+  If you used [Quick start (Linux)](#quick-start-linux), these tasks were already done - `setup.sh` configured secrets, keys, URLs, and a random `DASHBOARD_PASSWORD`
+* You can skip ahead to [Starting and stopping](#starting-and-stopping), or read on to review what was set and how to change it.
 
 </Admonition>
 
@@ -222,7 +212,8 @@ sh utils/add-new-auth-keys.sh
 
 Review the output of both scripts and check the `.env` file **before proceeding** to configure [Supabase URLs](#configure-supabase-urls).
 
-For a description of all secrets refer to the [related section](#configuring-secrets) in the "Advanced topics" below. If you'd like to learn more about how the new API keys and asymmetric JWT signing work in a self-hosted Supabase setup, make sure to read the detailed [how-to guide](/docs/guides/self-hosting/self-hosted-auth-keys).
+For a description of all secrets refer to the [related section](#configuring-secrets) in the "Advanced topics" below
+* If you'd like to learn more about how the new API keys and asymmetric JWT signing work in a self-hosted Supabase setup, make sure to read the detailed [how-to guide](/docs/guides/self-hosting/self-hosted-auth-keys).
 
 ### Configure Supabase URLs
 
@@ -243,11 +234,13 @@ Review and change URL configuration variables:
 
 ### Where to find your credentials
 
-The generated secrets and password are written to the `.env` file. The ones you are most likely to need when connecting your application to self-hosted Supabase are:
+The generated secrets and password are written to the `.env` file
+* The ones you are most likely to need when connecting your application to self-hosted Supabase are:
 
 - `POSTGRES_PASSWORD`: database password used in Postgres connection strings and by `psql`
 - `SUPABASE_PUBLISHABLE_KEY`: publishable API key for client-side use (e.g., in your frontend)
-- `SUPABASE_SECRET_KEY`: secret API key for server-side use. Never expose this in client code
+- `SUPABASE_SECRET_KEY`: secret API key for server-side use
+* Never expose this in client code
 - `SUPABASE_PUBLIC_URL`: base URL you pass as `supabaseUrl` to the client libraries
 
 You can view them at any time by opening `.env` directly, or by running:
@@ -262,7 +255,8 @@ Access to Studio (Dashboard) is protected with **HTTP basic authentication**.
 
 <Admonition type="danger">
 
-  A secure password MUST be set before starting Supabase. The password must include at least one letter - do not use numbers only or any special characters.
+  A secure password MUST be set before starting Supabase
+* The password must include at least one letter - do not use numbers only or any special characters.
 
 </Admonition>
 
@@ -284,7 +278,8 @@ Check the status of the services:
 docker compose ps
 ```
 
-After a minute or less, all services should have a status `Up [...] (healthy)`. If you see a status such as `created` but not `Up`, run the test script to determine what the problem might be:
+After a minute or less, all services should have a status `Up [...] (healthy)`
+* If you see a status such as `created` but not `Up`, run the test script to determine what the problem might be:
 
 ```sh
 sh tests/test-container-logs.sh
@@ -304,7 +299,9 @@ sh run.sh stop
 
 <Admonition type="caution" title="Windows: CRLF line endings">
 
-  If the API gateway (Kong) fails to start with an entrypoint error, your local files may have been checked out with CRLF line endings instead of LF. Re-clone the repository, or normalize everything in the `docker/` directory to LF, then restart Supabase. Fresh clones should already use LF because of `.gitattributes`.
+  If the API gateway (Kong) fails to start with an entrypoint error, your local files may have been checked out with CRLF line endings instead of LF
+* Re-clone the repository, or normalize everything in the `docker/` directory to LF, then restart Supabase
+* Fresh clones should already use LF because of `.gitattributes`.
 
 </Admonition>
 
@@ -314,13 +311,15 @@ By default, you can access the dashboard through the API gateway on port `8000`.
 
 For example: `http://<your-domain>:8000`, or `http://<your-ip>:8000` (or `localhost:8000` if you are running Docker Compose locally).
 
-You will be prompted for a username and password. See the [Studio authentication](#studio-authentication) section for details.
+You will be prompted for a username and password
+* See the [Studio authentication](#studio-authentication) section for details.
 
 ## Accessing Postgres
 
 The self-hosted Supabase stack provides the [Supavisor](https://supabase.github.io/supavisor/development/docs/) connection pooler for accessing Postgres and managing database connections.
 
-You can connect to the Postgres database via Supavisor using the methods described below. Use your domain name, your server IP, or `localhost` depending on whether you are running self-hosted Supabase on a VPS, or locally.
+You can connect to the Postgres database via Supavisor using the methods described below
+* Use your domain name, your server IP, or `localhost` depending on whether you are running self-hosted Supabase on a VPS, or locally.
 
 The default `POOLER_TENANT_ID` is `your-tenant-id` (can be later changed in `.env`), and the password is the value of `POSTGRES_PASSWORD` from the `.env` file.
 
@@ -344,7 +343,8 @@ To change the database password, read [Changing database password](#changing-dat
 
 ## Accessing Edge Functions
 
-Edge Functions live in `volumes/functions`. The default setup includes a `hello` function you can invoke with `curl`:
+Edge Functions live in `volumes/functions`
+* The default setup includes a `hello` function you can invoke with `curl`:
 
 ```sh
 curl http://<your-domain>:8000/functions/v1/hello
@@ -356,7 +356,8 @@ Add new functions at `volumes/functions/<FUNCTION_NAME>/index.ts`, then restart 
 sh run.sh restart functions
 ```
 
-The main worker loads each function from disk per request, so a restart is enough to pick up new or changed function code. Use `sh run.sh recreate functions` instead when you change environment variables or secrets (for example `.env.functions` or the service's `environment:` block), since those are only applied when the container is recreated.
+The main worker loads each function from disk per request, so a restart is enough to pick up new or changed function code
+* Use `sh run.sh recreate functions` instead when you change environment variables or secrets (for example `.env.functions` or the service's `environment:` block), since those are only applied when the container is recreated.
 
 See the [Self-hosted Edge Functions](/docs/guides/self-hosting/self-hosted-functions) guide for more details.
 
@@ -371,7 +372,8 @@ Each of the APIs is available through the same API gateway:
 
 ## Enabling analytics
 
-Logs & Analytics are not included in the default configuration to reduce the memory footprint. To enable them:
+Logs & Analytics are not included in the default configuration to reduce the memory footprint
+* To enable them:
 
 ```sh
 sh run.sh config add logs && \
@@ -383,11 +385,14 @@ This layers `docker-compose.logs.yml` on top of the base configuration and start
 - **Logflare** (Analytics) - log management and event analytics
 - **Vector** - collects logs from all running containers and forwards them to Logflare
 
-The Log Explorer in Studio is also enabled automatically. Note that these services increase resource requirements.
+The Log Explorer in Studio is also enabled automatically
+* Note that these services increase resource requirements.
 
 ## Configuring HTTPS
 
-By default, Supabase is accessible over HTTP. For production deployments, especially when using OAuth providers, you need HTTPS with a valid TLS certificate. The recommended approach is to place a reverse proxy (such as Caddy or Nginx) in front of the API gateway.
+By default, Supabase is accessible over HTTP
+* For production deployments, especially when using OAuth providers, you need HTTPS with a valid TLS certificate
+* The recommended approach is to place a reverse proxy (such as Caddy or Nginx) in front of the API gateway.
 
 See the [Configure HTTPS](/docs/guides/self-hosting/self-hosted-proxy-https) guide for detailed setup instructions.
 
@@ -395,7 +400,8 @@ See the [Configure HTTPS](/docs/guides/self-hosting/self-hosted-proxy-https) gui
 
 Two helper scripts - `run.sh` and `reset.sh` are available in your project directory and wrap common operations.
 
-**`run.sh`** manages the Docker Compose stack. Key commands:
+**`run.sh`** manages the Docker Compose stack
+* Key commands:
 
 | Command | Description |
 |---|---|
@@ -408,9 +414,12 @@ Two helper scripts - `run.sh` and `reset.sh` are available in your project direc
 | `sh run.sh printenv <service>` | Show environment variables inside the container |
 | `sh run.sh logs [service]` | Follow logs for all or a specific service |
 
-The `config add` / `config remove` commands manage the `COMPOSE_FILE` [variable](https://docs.docker.com/compose/how-tos/environment-variables/envvars/#compose_file) in your `.env`, which controls which override files are layered on top of `docker-compose.yml`. For example, `sh run.sh config add logs` appends `docker-compose.logs.yml` to `COMPOSE_FILE`, and `sh run.sh config remove logs` removes it. Run `sh run.sh help` for the full list of commands.
+The `config add` / `config remove` commands manage the `COMPOSE_FILE` [variable](https://docs.docker.com/compose/how-tos/environment-variables/envvars/#compose_file) in your `.env`, which controls which override files are layered on top of `docker-compose.yml`
+* For example, `sh run.sh config add logs` appends `docker-compose.logs.yml` to `COMPOSE_FILE`, and `sh run.sh config remove logs` removes it
+* Run `sh run.sh help` for the full list of commands.
 
-**`reset.sh`** tears down the stack completely, removes all data, and resets `.env` to defaults. See [Uninstalling](#uninstalling) for details.
+**`reset.sh`** tears down the stack completely, removes all data, and resets `.env` to defaults
+* See [Uninstalling](#uninstalling) for details.
 
 ## Updating
 

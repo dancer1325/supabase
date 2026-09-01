@@ -32,69 +32,37 @@ tocVideo: 'vyHyYpvjaks'
   * `supabase db reset`
     * 💡execute the "supabase/migrations/*.sql"💡
 
-### Add sample data
+* ⚠️check vs [deployment's database migrations' steps](../deployment/database-migrations.md) ⚠️
 
-Now that you are managing your database with migrations scripts,
-it would be great have some seed data to use every time you reset the database.
+### Seeding data / EACH reset of the database
 
-For this, you can create a seed script in `supabase/seed.sql`.
-
-#### 1. Populate your table
-
-Insert data into your `employees` table with your `supabase/seed.sql` file:
-
-```sql
--- supabase/seed.sql
-insert into public.employees
-  (name)
-values
-  ('Erlich Bachman'),
-  ('Richard Hendricks'),
-  ('Monica Hall');
-```
-
-#### 2. Reset your database
-
-Reset your database (apply current migrations), and populate with seed data:
-
-```bash
-supabase db reset
-```
-
-You should now see the `employees` table, along with your seed data in the Dashboard! 
-All of your database changes are captured in code, and 
-you can reset to a known state at any time, complete with seed data.
+* steps
+  * | "supabase/seed.sql",
+    * add SQL content
+  * `supabase db reset`
+    * allows
+      * reset your database
+      * reapply migrations
+      * populate -- with -- seed data
 
 ### Diffing changes
 
-This workflow is great if you know SQL and are comfortable creating tables and columns
-* If not, you can still use the Dashboard to create tables and columns, and 
-then use the CLI to diff your changes and create migrations.
+* use cases
+  * you create SQL | Supabase Dashboard
+    * -> ⚠️you need to create your migration files⚠️
 
-Create a new table called `cities`, with columns `id`, `name` and `population`
-* To see the corresponding SQL for this, you can use the `supabase db diff --schema public` command
-* This will show you the SQL that will be run to create the table and columns
-* The output of `supabase db diff` will look something like this:
+* allows
+  * generate -- , by diffing your CURRENT schema vs EXISTING "supabase/migrations/" , -- "*.sql"
 
-```
-Diffing schemas: public
-Finished supabase db diff on branch main.
+* ⚠️| modify schema changes,
+  * choose 1 BETWEEN "supabase/migraitons/*.sql" & modify DIRECTLY | Supabase Dashboard > SQL editor OR Table Editor⚠️
+    * Reason:🧠OTHERWISE, break the migration history🧠
 
-create table "public"."cities" (
-    "id" bigint primary key generated always as identity,
-    "name" text,
-    "population" bigint
-);
-```
-
-Alternately, you can view your table definitions directly from the Table Editor:
-
-![SQL Definition](/docs/img/guides/cli/sql-definitions.png)
-
-You can then copy this SQL into a new migration file, and run `supabase db reset`
-to apply the changes.
-
-The last step is deploying these changes to a live Supabase project.
+* steps
+  * `supabase db diff -f <DIFF_CHANGE_NAME>`
+    * create a NEW migration file "supabase/migrations/<timestamp>_DIFF_CHANGE_NAME.sql"
+  * `supabase db reset`
+    * test your NEW migration file -- by -- resetting your LOCAL database
 
 ## Deploy your project
 
@@ -104,93 +72,68 @@ The last step is deploying these changes to a live Supabase project.
 ### Log in | Supabase CLI
 
 ```bash
-# 1.
+# 1. -- via -- supabase CLI
 supabase login
 
-# 2. npx
+# 2. -- via -- npx
 npx supabase login
 ```
 
-### Link your project
+### link your local project -- with -- your remote project
 
-Associate your local project with your remote project using [`supabase link`](/docs/reference/cli/usage#supabase-link).
-
-```bash
-supabase link --project-ref <project-id>
-# You can get <project-id> from your project's dashboard URL: https://supabase.com/dashboard/project/<project-id>
-```
-
-> If your remote database already has schema changes that aren't in your local migrations (for example,
-> tables you created directly in the Dashboard), capture them before you push:
->
-> ```bash
-> supabase db pull
-> supabase db reset
-> ```
->
-> `db pull` writes those changes to a `<timestamp>_remote_schema.sql` migration so your local and
-> remote histories line up, and `db reset` re-applies your migrations locally to confirm they're consistent
-> * For a brand-new remote project with nothing in it yet, skip this step.
+* steps
+  * `supabase link --project-ref <project-id>`
+    * `<project-id>`
+      * found | Supabase Dashboard > choose the project > check URL
+  * `supabase db pull`
+    * pull remote `public` schema's database changes / are NOT | your local migrations
+      * == create "supabase/migration/<timestamp>_remote_schema.sql"
+    * 's goal
+      * align local database -- & -- remote database
+  * `supabase db reset`
 
 ### Deploy database changes
-
-Deploy any local database migrations using [`db push`](/docs/reference/cli/usage#supabase-db-push):
 
 ```bash
 supabase db push
 ```
 
-Visiting your live project on [Supabase](/dashboard), you'll see a new `employees` table,
-complete with the `department` column you added in the second migration above.
-
 ### Deploy Edge Functions
-
-If your project uses Edge Functions, you can deploy these using [`functions deploy`](/docs/reference/cli/usage#supabase-functions-deploy):
 
 ```bash
 supabase functions deploy <function_name>
 ```
 
-### Use Auth locally
+### Use Auth LOCALLY
 
-To use Auth locally, update your project's `supabase/config.toml` file that gets created after running `supabase init`
-* Add any providers you want, and set enabled to `true`.
+* steps
+  * | your project's "supabase/config.toml",
+    * configure your desired `[auth.external.*]`
 
-```toml
-# supabase/config.toml
-[auth.external.github]
-enabled = true
-client_id = "env(SUPABASE_AUTH_GITHUB_CLIENT_ID)"
-secret = "env(SUPABASE_AUTH_GITHUB_SECRET)"
-redirect_uri = "http://localhost:54321/auth/v1/callback"
-```
+      ```toml
+      # supabase/config.toml
+      [auth.external.github]
+      enabled = true
+      client_id = "env(SUPABASE_AUTH_GITHUB_CLIENT_ID)"
+      secret = "env(SUPABASE_AUTH_GITHUB_SECRET)"
+      redirect_uri = "http://localhost:54321/auth/v1/callback"
+      ```
+      * place secrets | ".env"
 
-As a best practice, any secret values should be loaded from environment variables
-* You can add them to `.env` file in your project's root directory for the CLI to automatically substitute them.
-
-```bash
-# .env
-SUPABASE_AUTH_GITHUB_CLIENT_ID="redacted"
-SUPABASE_AUTH_GITHUB_SECRET="redacted"
-```
-
-For these changes to take effect, you need to run `supabase stop` and `supabase start` again.
-
-If you have additional triggers or RLS policies defined on your `auth` schema, you can pull them as a migration file locally.
-
-```bash
-supabase db pull --schema auth
-```
+        ```bash
+        # .env
+        SUPABASE_AUTH_GITHUB_CLIENT_ID="redacted"
+        SUPABASE_AUTH_GITHUB_SECRET="redacted"
+        ```
+  * `supabase db pull --schema auth`
+  * `supabase stop` & `supabase start`
+    * Reason:🧠these changes take effect🧠
 
 ### Sync storage buckets
 
-Your RLS policies on storage buckets can be pulled locally by specifying `storage` schema
-* For example,
+* if you want to pull locally your RLS policies | storage buckets -> `supabase db pull --schema storage`
 
-```bash
-supabase db pull --schema storage
-```
-
+TODO: 
 The buckets and objects themselves are rows in the storage tables so they won't appear in your schema
 * You can instead define them via `supabase/config.toml` file
 * For example,

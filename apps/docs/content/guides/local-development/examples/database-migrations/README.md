@@ -22,6 +22,17 @@
   * `supabase db reset`
     * run [SQL](sample.sql)
 
+# Diffing changes
+
+* steps
+  * | Supabase Dashboard > Table editor > create "cities" table / 's columns: `id`, `name` and `population`
+  * `supabase db diff --schema public`
+    * 's output: SQL
+  * `touch supabase/migrations/citiesdiffing.sql`
+    * past PREVIOUS output content
+  * `supabase db reset`
+    * reset db -- from -- migration files
+
 # Deploy your project
 
 TODO:

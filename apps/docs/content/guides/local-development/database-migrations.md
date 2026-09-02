@@ -134,7 +134,7 @@ supabase functions deploy <function_name>
 * if you want to pull locally your RLS policies | storage buckets -> `supabase db pull --schema storage`
 
 * buckets & objects 
-  * storage == rows | storage tables
+  * [Supabase Storage](../storage.md) == rows | storage tables
     * == `storage.buckets` & `storage.objects`
   * ways to define it
     * -- via -- Supabase Storage API
@@ -151,29 +151,18 @@ supabase functions deploy <function_name>
   * place your files | "supabase/<bucket_name>"
   * `supabase seed buckets`
 
-### Sync any schema with `--schema`
+### Sync any schema -- with -- `--schema`
 
-You can synchronize your database with a specific schema using the `--schema` option as follows:
+* if you want to synchronize your database with a SPECIFIC schema -> use `--schema` option
 
-```bash
-supabase db pull --schema <schema_name>
-```
+  ```bash
+  supabase db pull --schema <schema_name>
+  ```
+  * PROBLEMS:
+    * PROBLEM1: if your local "supabase/migrations/" is empty ->  `supabase db pull` ignore the `--schema` parameter
+      * SOLUTION:
 
-> ⚠️ If the local `supabase/migrations` directory is empty, the `db pull` command will ignore the `--schema` parameter.
->
-> To fix this, you can pull twice:
->
-> ```bash
-> supabase db pull
-> supabase db pull --schema <schema_name>
-> ```
-
-## Limitations and considerations
-
-The local development environment is not as feature-complete as the Supabase Platform
-* Here are some of the differences:
-
-- You cannot update your project settings in the Dashboard
-* This must be done using the local config file.
-- The CLI version determines the local version of Studio used, so make sure you keep your local [Supabase CLI up to date](https://github.com/supabase/cli#getting-started)
-* We're constantly adding new features and bug fixes.
+        ```bash
+        supabase db pull
+        supabase db pull --schema <schema_name>
+        ```

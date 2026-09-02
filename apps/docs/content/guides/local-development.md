@@ -137,3 +137,13 @@ supabase stop
        * Reason:🧠sensitive data lives | your local machine🧠
     5. Safe testing
        * Reason:🧠you experiment with DIFFERENT configurations + features / WITHOUT affecting your production environment🧠
+
+### vs Supabase Platform
+
+* update your project settings
+  * | Supabase Dashboard,
+    * ❌NOT POSSIBLE ❌
+  * | local developlment
+    * -- via -- "config.toml"
+* CONSTANTLY NEW features & bug fixes
+  * | Supabase Platform

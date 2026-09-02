@@ -22,7 +22,7 @@
   * `supabase db reset`
     * run [SQL](sample.sql)
 
-# Diffing changes
+## Diffing changes
 
 * steps
   * | Supabase Dashboard > Table editor > create "cities" table / 's columns: `id`, `name` and `population`
@@ -34,5 +34,57 @@
     * reset db -- from -- migration files
 
 # Deploy your project
-
+## Log in | Supabase CLI
+TODO:
+## link your local project -- with -- your remote project
+TODO:
+### `supabase link --project-ref <project-id>`
+TODO:
+### `supabase db pull` - pull remote `public` schema's changes NOT in local migrations
+TODO:
+### `supabase db reset`
+TODO:
+## Deploy database changes
+TODO:
+## Deploy Edge Functions
+TODO:
+## Use Auth LOCALLY
+TODO:
+### configure `[auth.external.*]` | "supabase/config.toml"
+TODO:
+### place secrets | ".env"
+TODO:
+### `supabase db pull --schema auth`
+TODO:
+### `supabase stop` & `supabase start` -- to -- apply changes
+TODO:
+## Sync storage buckets
+TODO:
+### `supabase db pull --schema storage` - pull RLS policies | storage buckets
+TODO:
+### buckets & objects == rows | storage tables
+TODO:
+### ways to define buckets
+TODO:
+#### -- via -- Supabase Storage API
+TODO:
+#### | "supabase/config.toml" - `[storage.buckets.bucket_name.*]`
+TODO:
+#### ❌NOT via SQL❌
+TODO:
+### steps to sync locally
+TODO:
+#### configure `[storage.buckets.bucket_name.*]` | "supabase/config.toml"
+TODO:
+#### place your files | "supabase/<bucket_name>"
+TODO:
+#### `supabase seed buckets`
+TODO:
+## Sync any schema -- with -- `--schema`
+TODO:
+### `supabase db pull --schema <schema_name>`
+TODO:
+### PROBLEM: if "supabase/migrations/" is empty -> `--schema` is ignored
+TODO:
+#### SOLUTION: pull twice
 TODO:

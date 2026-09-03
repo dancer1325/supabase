@@ -14,8 +14,7 @@ sidebar_label: 'Buckets'
   * -- via -- SQL
   * -- via -- Supabase client libraries
 
-## Restricting uploads
+## how to restrict uploads?
 
-* restrictions
-  * by type -- `allowedMimeTypes` --
-  * by [files' size](../uploads/file-limits.md) -- `fileSizeLimit` --
+* by type -- `allowedMimeTypes` --
+* by [files' size](../uploads/file-limits.md) -- `fileSizeLimit` --

@@ -101,20 +101,8 @@ For use-cases which require low-latency, use [Edge Functions](../../guides/funct
 
 ### Security `definer` vs `invoker`
 
-Postgres allows you to specify whether you want the function to be executed as the user _calling_ the function (`invoker`), or as the _creator_ of the function (`definer`)
-* For example:
-
-```sql
-create function hello_world()
-returns text
-language plpgsql
-security definer set search_path = ''
-as $$
-begin
-  return 'hello world';
-end;
-$$;
-```
+Postgres allows you to specify whether you want the function to be executed 
+as the user _calling_ the function (`invoker`), or as the _creator_ of the function (`definer`)
 
 It is best practice to use `security invoker` (which is also the default)
 * If you ever use `security definer`, you _must_ set the `search_path`.

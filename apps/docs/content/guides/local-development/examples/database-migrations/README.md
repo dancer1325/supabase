@@ -2,9 +2,9 @@
   * create a table / name: `employees` + check how to make changes | it
 
 # prerequisites
-
-* TODO:
-* `supabase start`
+* download Docker Desktop
+* `npx supabase init` OR `supabase init`
+* `npx supabase start` OR `supabase start`
 
 # Database migrations
 

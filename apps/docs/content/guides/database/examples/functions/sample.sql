@@ -65,3 +65,17 @@ $$;
 select * from add_planet('Jakku');
 
 \dp;
+
+-- TODO:
+
+-- x. Security `definer` vs `invoker`
+
+create function hello_world()
+    returns text
+    language plpgsql
+    security definer set search_path = ''
+as $$
+begin
+    return 'hello world';
+end;
+$$;

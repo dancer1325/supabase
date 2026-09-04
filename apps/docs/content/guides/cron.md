@@ -28,6 +28,7 @@ subtitle: 'Schedule Recurring Jobs with Cron Syntax in Postgres'
 * recommendations
   * \<= 8 8 jobs running CONCURRENTLY
   * job's run time <= 10 minutes
+  * if you want to check the job runs | APPROPRIATE schedule -> use [crontab.guru](https://crontab.guru/)
 
 ## Resources
 

@@ -59,566 +59,76 @@ subtitle: 'Use your own email service to send authentication emails.'
 
 ### What to send
 
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="http"
-  queryGroup="language"
->
-<TabPanel id="sql" label="SQL">
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="sql-queue-email-messages"
->
-<TabPanel id="sql-queue-email-messages" label="Queue Email Messages">
-Your company uses a worker to manage all emails related jobs
-* For performance reasons, the messaging system sends emails in batches via a job queue
-* Instead of sending a message immediately, messages are queued and sent in periodic intervals via `pg_cron`.
-
-Create a table to store jobs
-
-```sql
-create table job_queue (
-  job_id uuid primary key default gen_random_uuid(),
-  job_data jsonb not null,
-  created_at timestamp default now(),
-  status text default 'pending',
-  priority int default 0,
-  retry_count int default 0,
-  max_retries int default 2,
-  scheduled_at timestamp default now()
-);
-```
-
-Create the hook
-
-```sql
-create or replace function send_email(event jsonb) returns jsonb as $$
-declare
-    job_data jsonb;
-    scheduled_time timestamp;
-    priority int;
-begin
-    -- Extract email details from the event JSON
-    job_data := jsonb_build_object(
-        'email_action_type', event->'email_data'->>'email_action_type',
-        'token_hash', event->'email_data'->>'token_hash',
-        'token', event->'email_data'->>'token',
-        'email', event->'user'->>'email'
-    );
-
-    -- Calculate the nearest 5-minute window for scheduled_time
-    scheduled_time := date_trunc('minute', now()) + interval '5 minute' * floor(extract('epoch' from (now() - date_trunc('minute', now())) / 60) / 5);
-
-    -- Assign priority dynamically (example logic: higher priority for earlier scheduled time)
-    priority := extract('epoch' from (scheduled_time - now()))::int;
-
-    insert into public.job_queue (job_data, priority, scheduled_at, max_retries)
-    values (job_data, priority, scheduled_time, 2);
-
-    return '{}'::jsonb;
-end;
-$$ language plpgsql;
-
-grant all
-  on table public.job_queue
-  to supabase_auth_admin;
-
-revoke all
-  on table public.job_queue
-  from authenticated, anon;
-```
-
-Create a function to periodically run and dequeue all jobs
-
-```sql
-create or replace function dequeue_and_run_jobs() returns void as $$
-declare
-    job record;
-begin
-    for job in
-        select * from job_queue
-        where status = 'pending'
-          and scheduled_at <= now()
-        order by priority desc, created_at
-        for update skip locked
-    loop
-        begin
-            -- add job processing logic here.
-            -- for demonstration, we'll just update the job status to 'completed'.
-            update job_queue
-            set status = 'completed'
-            where job_id = job.job_id;
-
-        exception when others then
-            -- handle job failure and retry logic
-            if job.retry_count < job.max_retries then
-                update job_queue
-                set retry_count = retry_count + 1,
-                    scheduled_at = now() + interval '1 minute'  -- delay retry by 1 minute
-                where job_id = job.job_id;
-            else
-                update job_queue
-                set status = 'failed'
-                where job_id = job.job_id;
-            end if;
-        end;
-    end loop;
-end;
-$$ language plpgsql;
-
-grant execute
-  on function public.dequeue_and_run_jobs
-  to supabase_auth_admin;
-
-revoke execute
-  on function public.dequeue_and_run_jobs
-  from authenticated, anon;
-```
-
-Configure `pg_cron` to run the job on an interval
-* You can use a tool like [crontab.guru](https://crontab.guru/) to check that your job is running on an appropriate schedule
-* Ensure that `pg_cron` is enabled under `Database > Extensions`
-
-```sql
-select
-  cron.schedule(
-    '* * * * *', -- this cron expression means every minute.
-    'select dequeue_and_run_jobs();'
-  );
-```
-
-</TabPanel>
-</Tabs>
-</TabPanel>
-<TabPanel id="http" label="HTTP">
-<Tabs
-  scrollable
-  size="small"
-  type="underlined"
-  defaultActiveId="http-send-email-with-resend"
->
-<TabPanel id="http-send-email-with-resend" label="Use Resend as an email provider">
-You can configure [Resend](https://resend.com/) as the custom email provider through the "Send Email" hook
-* This allows you to take advantage of Resend's developer-friendly APIs to send emails and leverage [React Email](https://react.email/) for managing your email templates
-* For a more advanced React Email tutorial, refer to [this guide](/docs/guides/functions/examples/auth-send-email-hook-react-email-resend).
-
-If you want to send emails through the Supabase Resend integration, which uses Resend's SMTP server, check out [this integration](/partners/integrations/resend) instead.
-
-Create a `.env` file with the following environment variables:
-
-```ini
-RESEND_API_KEY="your_resend_api_key"
-SEND_EMAIL_HOOK_SECRET="v1,whsec_<base64_secret>"
-```
-
-<Admonition type="note">
-
-You can generate the secret in the [Auth Hooks](/dashboard/project/_/auth/hooks) section of the Supabase dashboard.
-
-</Admonition>
-
-Set the secrets in your Supabase project:
-
-```bash
-supabase secrets set --env-file .env
-```
-
-Create a new edge function:
-
-```bash
-supabase functions new send-email
-```
-
-Add the following code to your edge function:
-
-```javascript
-import { Webhook } from "https://esm.sh/standardwebhooks@1.0.0";
-import { Resend } from "npm:resend";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY") as string);
-const hookSecret = (Deno.env.get("SEND_EMAIL_HOOK_SECRET") as string).replace("v1,whsec_", "");
-
-Deno.serve(async (req) => {
-  if (req.method !== "POST") {
-    return new Response("not allowed", { status: 400 });
-  }
-
-  const payload = await req.text();
-  const headers = Object.fromEntries(req.headers);
-  const wh = new Webhook(hookSecret);
-  try {
-    const { user, email_data } = wh.verify(payload, headers) as {
-      user: {
-        email: string;
-      };
-      email_data: {
-        token: string;
-        token_hash: string;
-        redirect_to: string;
-        email_action_type: string;
-        site_url: string;
-        token_new: string;
-        token_hash_new: string;
-      };
-    };
-
-    const { error } = await resend.emails.send({
-      from: "welcome <onboarding@example.com>",
-      to: [user.email],
-      subject: "Welcome to my site!",
-      text: `Confirm you signup with this code: ${email_data.token}`,
-    });
-    if (error) {
-      throw error;
-    }
-  } catch (error) {
-    return new Response(
-      JSON.stringify({
-        error: {
-          http_code: error.code,
-          message: error.message,
-        },
-      }),
-      {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
-
-  const responseHeaders = new Headers();
-  responseHeaders.set("Content-Type", "application/json");
-  return new Response(JSON.stringify({}), {
-    status: 200,
-    headers: responseHeaders,
-  });
-});
-```
-
-Deploy your edge function and [configure it as a hook](/dashboard/project/_/auth/hooks):
-
-```bash
-supabase functions deploy send-email --no-verify-jwt
-```
-
-</TabPanel>
-<TabPanel id="http-internationalization-for-emails" label="Add Internationalization for Email Templates">
-Your company is expanding to France and Spain
-* As part of expansion efforts, the company would like to deliver internationalized email templates to best support local users in their native language
-* Ensure that you have configured `POSTMARK_SERVER_TOKEN` and `SEND_EMAIL_HOOK_SECRET` in your `.env` file.
-
-```javascript
-import { readAll } from 'https://deno.land/std/io/read_all.ts'
-import { Webhook } from 'https://esm.sh/standardwebhooks@1.0.0'
-
-const postmarkEndpoint = 'https://api.postmarkapp.com/email'
-// Replace this with your email
-const FROM_EMAIL = 'myemail@gmail.com'
-const PROJECT_REF = '<your-project-ref>'
-
-// Email Subjects
-const subjects = {
-  en: {
-    signup: 'Confirm your email address',
-    recovery: 'Reset your password',
-    invite: "You've been invited",
-    magiclink: 'Your sign-in link',
-    email_change: 'Confirm your new email address',
-    email_change_new: 'Confirm your new email address',
-    reauthentication: '{{token}} is your verification code',
-  },
-  es: {
-    signup: 'Confirma tu correo electrónico',
-    recovery: 'Restablece tu contraseña',
-    invite: 'Has sido invitado',
-    magiclink: 'Tu enlace de inicio de sesión',
-    email_change: 'Confirma tu nueva dirección de correo electrónico',
-    email_change_new: 'Confirma tu nueva dirección de correo electrónico',
-    reauthentication: '{{token}} es tu código de verificación',
-  },
-  fr: {
-    signup: 'Confirmez votre adresse e-mail',
-    recovery: 'Réinitialisez votre mot de passe',
-    invite: 'Vous avez été invité',
-    magiclink: 'Votre lien de connexion',
-    email_change: 'Confirmez votre nouvelle adresse e-mail',
-    email_change_new: 'Confirmez la nouvelle adresse e-mail',
-    reauthentication: '{{token}} est votre code de vérification',
-  },
-}
-
-// HTML Body
-const templates = {
-  en: {
-    signup: `<h2>Confirm your email address</h2><p>Follow the link below to confirm this email address and finish signing up.</p><p><a href="{{confirmation_url}}">Confirm email address</a></p>`,
-    recovery: `<h2>Reset your password</h2><p>We received a request to reset your password. Follow the link below to choose a new one.</p><p><a href="{{confirmation_url}}">Reset password</a></p><p>If you didn't request this, you can safely ignore this email.</p>`,
-    invite: `<h2>You've been invited</h2><p>You've been invited to create an account. Follow the link below to accept.</p><p><a href="{{confirmation_url}}">Accept invitation</a></p>`,
-    magiclink: `<h2>Your sign-in link</h2><p>Follow the link below to sign in. This link expires shortly and can only be used once.</p><p><a href="{{confirmation_url}}">Sign in</a></p>`,
-    email_change: `<h2>Confirm your new email address</h2><p>Follow the link below to confirm {{new_email}} as your new email address.</p><p><a href="{{confirmation_url}}">Confirm new email address</a></p><p>If you didn't request this change, you can safely ignore this email.</p>`,
-    email_change_new: `<h2>Confirm your new email address</h2><p>Follow the link below to confirm {{new_email}} as your new email address.</p><p><a href="{{confirmation_url}}">Confirm new email address</a></p><p>If you didn't request this change, you can safely ignore this email.</p>`,
-    reauthentication: `<h2>Your verification code</h2><p>Use the code below to verify your identity. It expires shortly.</p><p>{{token}}</p>`,
-  },
-  es: {
-    signup: `<h2>Confirma tu dirección de correo electrónico</h2><p>Sigue el enlace de abajo para confirmar esta dirección de correo electrónico y terminar el registro.</p><p><a href="{{confirmation_url}}">Confirmar dirección de correo electrónico</a></p>`,
-    recovery: `<h2>Restablece tu contraseña</h2><p>Recibimos una solicitud para restablecer tu contraseña. Sigue el enlace de abajo para elegir una nueva.</p><p><a href="{{confirmation_url}}">Restablecer contraseña</a></p><p>Si no solicitaste esto, puedes ignorar este correo.</p>`,
-    invite: `<h2>Has sido invitado</h2><p>Te han invitado a crear una cuenta. Sigue el enlace de abajo para aceptar.</p><p><a href="{{confirmation_url}}">Aceptar invitación</a></p>`,
-    magiclink: `<h2>Tu enlace de inicio de sesión</h2><p>Sigue el enlace de abajo para iniciar sesión. Este enlace caduca pronto y solo se puede usar una vez.</p><p><a href="{{confirmation_url}}">Iniciar sesión</a></p>`,
-    email_change: `<h2>Confirma tu nueva dirección de correo electrónico</h2><p>Sigue el enlace de abajo para confirmar {{new_email}} como tu nueva dirección de correo electrónico.</p><p><a href="{{confirmation_url}}">Confirmar nueva dirección de correo electrónico</a></p><p>Si no solicitaste este cambio, puedes ignorar este correo.</p>`,
-    email_change_new: `<h2>Confirma tu nueva dirección de correo electrónico</h2><p>Sigue el enlace de abajo para confirmar {{new_email}} como tu nueva dirección de correo electrónico.</p><p><a href="{{confirmation_url}}">Confirmar nueva dirección de correo electrónico</a></p><p>Si no solicitaste este cambio, puedes ignorar este correo.</p>`,
-    reauthentication: `<h2>Tu código de verificación</h2><p>Usa el código de abajo para verificar tu identidad. Caduca pronto.</p><p>{{token}}</p>`,
-  },
-  fr: {
-    signup: `<h2>Confirmez votre adresse e-mail</h2><p>Suivez le lien ci-dessous pour confirmer cette adresse e-mail et terminer votre inscription.</p><p><a href="{{confirmation_url}}">Confirmer l'adresse e-mail</a></p>`,
-    recovery: `<h2>Réinitialisez votre mot de passe</h2><p>Nous avons reçu une demande de réinitialisation de votre mot de passe. Suivez le lien ci-dessous pour en choisir un nouveau.</p><p><a href="{{confirmation_url}}">Réinitialiser le mot de passe</a></p><p>Si vous n'avez pas fait cette demande, vous pouvez ignorer cet e-mail.</p>`,
-    invite: `<h2>Vous avez été invité</h2><p>Vous avez été invité à créer un compte. Suivez le lien ci-dessous pour accepter.</p><p><a href="{{confirmation_url}}">Accepter l'invitation</a></p>`,
-    magiclink: `<h2>Votre lien de connexion</h2><p>Suivez le lien ci-dessous pour vous connecter. Ce lien expire bientôt et ne peut être utilisé qu'une seule fois.</p><p><a href="{{confirmation_url}}">Se connecter</a></p>`,
-    email_change: `<h2>Confirmez votre nouvelle adresse e-mail</h2><p>Suivez le lien ci-dessous pour confirmer {{new_email}} comme nouvelle adresse e-mail.</p><p><a href="{{confirmation_url}}">Confirmer la nouvelle adresse e-mail</a></p><p>Si vous n'avez pas demandé ce changement, vous pouvez ignorer cet e-mail.</p>`,
-    email_change_new: `<h2>Confirmez votre nouvelle adresse e-mail</h2><p>Suivez le lien ci-dessous pour confirmer {{new_email}} comme nouvelle adresse e-mail.</p><p><a href="{{confirmation_url}}">Confirmer la nouvelle adresse e-mail</a></p><p>Si vous n'avez pas demandé ce changement, vous pouvez ignorer cet e-mail.</p>`,
-    reauthentication: `<h2>Votre code de vérification</h2><p>Utilisez le code ci-dessous pour vérifier votre identité. Il expire bientôt.</p><p>{{token}}</p>`,
-  },
-}
-
-function generateConfirmationURL(email_data) {
-  const baseUrl = `https://${PROJECT_REF}.supabase.co/auth/v1/verify`
-  const params = new URLSearchParams({
-    token: email_data.token_hash,
-    type: email_data.email_action_type,
-    redirect_to: email_data.redirect_to,
-  })
-
-  return `${baseUrl}?${params.toString()}`
-}
-
-Deno.serve(async (req) => {
-  const payload = await req.text()
-  const serverToken = Deno.env.get('POSTMARK_SERVER_TOKEN')
-  const headers = Object.fromEntries(req.headers)
-  const base64_secret = Deno.env.get('SEND_EMAIL_HOOK_SECRET').replace('v1,whsec_', '')
-  const wh = new Webhook(base64_secret)
-  const { user, email_data } = wh.verify(payload, headers)
-
-  const language = (user.user_metadata && user.user_metadata.i18n) || 'en'
-  const subject = subjects[language][email_data.email_action_type] || 'Notification'
-
-  let template = templates[language][email_data.email_action_type]
-  const confirmation_url = generateConfirmationURL(email_data)
-  let htmlBody = template
-    .replace('{{confirmation_url}}', confirmation_url)
-    .replace('{{token}}', email_data.token || '')
-    .replace('{{new_token}}', email_data.new_token || '')
-    .replace('{{site_url}}', email_data.site_url || '')
-    .replace('{{old_email}}', email_data.old_email || '')
-    .replace('{{new_email}}', user.new_email || '')
-
-  const requestOptions = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'X-Postmark-Server-Token': serverToken,
-    },
-    body: JSON.stringify({
-      From: FROM_EMAIL,
-      To: user.email,
-      Subject: subject,
-      HtmlBody: htmlBody,
-    }),
-  }
-
-  try {
-    const response = await fetch(postmarkEndpoint, requestOptions)
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Failed to send email: ${errorData.Message}`)
-    }
-    return new Response(
-      JSON.stringify({
-        message: 'Email sent successfully.',
-      }),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-  } catch (error) {
-    return new Response(
-      JSON.stringify({
-        error: `Failed to process the request: ${error.message}`,
-      }),
-      {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-  }
-})
-```
-
-</TabPanel>
-{/* <TabPanel id="http-backup-email-provider" label="Add Backup Email Provider">
-Your company is rapidly growing and depends heavily on email signups. You'd like to configure a backup email provider in case the email provider runs out of credits during your new product launch. Postmark and Sengrid are used as examples but in practice you can use any email provider.
-Ensure that you have configured `POSTMARK_SERVER_TOKEN`, `SENDGRID_API_KEY` and `SEND_EMAIL_HOOK_SECRET` in your `.env` file.
-
-```javascript
-import {
-    Webhook
-} from "https://esm.sh/standardwebhooks@1.0.0";
-import {
-    readAll
-} from "https://deno.land/std/io/read_all.ts";
-
-const postmarkEndpoint = 'https://api.postmarkapp.com/email';
-const sendGridEndpoint = 'https://api.sendgrid.com/v3/mail/send';
-const FROM_EMAIL = 'myemail@gmail.com'
-
-// Email Subjects
-const subjects = {
-    signup: 'Confirm your email address',
-    recovery: 'Reset your password',
-    invite: "You've been invited",
-    magiclink: 'Your sign-in link',
-    email_change: 'Confirm your new email address',
-    email_change_new: 'Confirm your new email address',
-    reauthentication: '{{token}} is your verification code'
-};
-
-// HTML Body
-const templates = {
-    signup: `<h2>Confirm your email address</h2><p>Follow the link below to confirm this email address and finish signing up.</p><p><a href="{{confirmation_url}}">Confirm email address</a></p>`,
-    recovery: `<h2>Reset your password</h2><p>We received a request to reset your password. Follow the link below to choose a new one.</p><p><a href="{{confirmation_url}}">Reset password</a></p><p>If you didn't request this, you can safely ignore this email.</p>`,
-    invite: `<h2>You've been invited</h2><p>You've been invited to create an account. Follow the link below to accept.</p><p><a href="{{confirmation_url}}">Accept invitation</a></p>`,
-    magiclink: `<h2>Your sign-in link</h2><p>Follow the link below to sign in. This link expires shortly and can only be used once.</p><p><a href="{{confirmation_url}}">Sign in</a></p>`,
-    email_change: `<h2>Confirm your new email address</h2><p>Follow the link below to confirm {{new_email}} as your new email address.</p><p><a href="{{confirmation_url}}">Confirm new email address</a></p><p>If you didn't request this change, you can safely ignore this email.</p>`,
-    email_change_new: `<h2>Confirm your new email address</h2><p>Follow the link below to confirm {{new_email}} as your new email address.</p><p><a href="{{confirmation_url}}">Confirm new email address</a></p><p>If you didn't request this change, you can safely ignore this email.</p>`,
-    reauthentication: `<h2>Your verification code</h2><p>Use the code below to verify your identity. It expires shortly.</p><p>{{token}}</p>`
-};
-
-function generateConfirmationURL(email_data) {
-   // TODO: replace the ref with your project ref
-   return `https://<ref>.supabase.co/auth/v1/verify?token=${email_data.token_hash}&type=${email_data.email_action_type}&redirect_to=${email_data.redirect_to}`
-}
-
-async function sendEmailWithPostmark(user: any, email_data: any, serverToken: string): Promise<Response> {
-    const subject = subjects[email_data.email_action_type] || 'Notification';
-    const confirmation_url = generateConfirmationURL(email_data)
-    let template = templates[email_data.email_action_type];
-    let htmlBody = template.replace('{{confirmation_url}}', confirmation_url)
-        .replace('{{token}}', email_data.token || '')
-        .replace('{{new_token}}', email_data.new_token || '')
-        .replace('{{site_url}}', email_data.site_url || '')
-        .replace('{{old_email}}', email_data.old_email || '')
-        .replace('{{new_email}}', user.new_email || '');
-
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-Postmark-Server-Token': serverToken
-        },
-        body: JSON.stringify({
-            From: FROM_EMAIL,
-            To: user.email,
-            Subject: subject,
-            HtmlBody: htmlBody
-        })
-    };
-
-    return await fetch(postmarkEndpoint, requestOptions);
-}
-
-async function sendEmailWithSendGrid(user: any, email_data: any, apiKey: string): Promise<Response> {
-    const subject = subjects[email_data.email_action_type] || 'Notification';
-    let template = templates[email_data.email_action_type];
-    cont confirmation_url = generateConfirmationURL(email_data)
-    let htmlBody = template.replace('{{confirmation_url}}', confirmation_url)
-        .replace('{{token}}', email_data.token || '')
-        .replace('{{new_token}}', email_data.new_token || '')
-        .replace('{{site_url}}', email_data.site_url || '')
-        .replace('{{old_email}}', email_data.old_email || '')
-        .replace('{{new_email}}', user.new_email || '');
-
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-            personalizations: [{
-                to: [{
-                    email: user.email
-                }],
-                subject: subject
-            }],
-            from: {
-                email: FROM_EMAIL
-            },
-            content: [{
-                type: "text/html",
-                value: htmlBody
-            }]
-        })
-    };
-
-    return await fetch(sendGridEndpoint, requestOptions);
-}
-
-Deno.serve(async (req) => {
-    const payload = await req.text();
-    const postmarkServerToken = Deno.env.get("POSTMARK_SERVER_TOKEN");
-    const sendGridApiKey = Deno.env.get("SENDGRID_API_KEY");
-    const headers = Object.fromEntries(req.headers);
-    const base64_secret = Deno.env.get('SEND_EMAIL_HOOK_SECRET').replace('v1,whsec_', '');
-    const wh = new Webhook(base64_secret);
-    const {
-        user,
-        email_data
-    } = wh.verify(payload, headers);
-
-    try {
-        // Try sending email using Postmark
-        let response = await sendEmailWithPostmark(user, email_data, postmarkServerToken!);
-
-        if (!response.ok) {
-            // If Postmark fails, try SendGrid
-            console.error(`Primary email send failed: ${await response.text()}`);
-            response = await sendEmailWithSendGrid(user, email_data, sendGridApiKey!);
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Failed to send email via backup: ${errorData.errors[0].message}`);
-            }
-        }
-
-        return new Response(JSON.stringify({
-            message: "Email sent successfully."
-        }), {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-    } catch (error) {
-        return new Response(JSON.stringify({
-            error: `Failed to process the request: ${error.message}`
-        }), {
-            status: 500,
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-    }
-});
-```
-
-</TabPanel> */}
-</Tabs>
-</TabPanel>
-</Tabs>
+* ways
+  * -- via -- SQL
+  * -- via -- HTTP
+
+#### SQL
+
+* Queue Email Messages
+  * == send emails in batches -- via -- a job queue
+    * == queue the messages + send them | intervals  
+    * ❌!= send messages IMMEDIATELY❌
+  * Reason:🧠better performance🧠
+  * steps
+    * create a table | store jobs
+    * create the hook
+    * create a function / periodically run & dequeue ALL jobs
+    * [enable `pg_cron`](../../cron.md)
+    * configure `pg_cron` / run the job | an interval
+
+#### HTTP
+
+##### Use Resend -- as -- an email provider
+
+* [Resend](https://resend.com/)
+  * benefits
+    * Resend's developer-friendly APIs
+    * email templates -- through -- [React Email](https://react.email/) 
+      * [tutorial](../../functions/examples/auth-send-email-hook-react-email-resend)
+  * 👀ways to use Resend | Supabase👀
+    * -- via -- Supabase Resend integration
+      * [here1](https://resend.com/docs/knowledge-base/getting-started-with-resend-and-supabase)
+      * [here2](https://resend.com/docs/send-with-supabase-edge-functions)
+      * [here3](https://resend.com/docs/knowledge-base/how-do-i-maximize-deliverability-for-supabase-auth-emails)
+    * -- via -- Send Email Hook + Resend API
+
+* Send Email Hook + Resend API
+  * steps
+    * generate `SEND_EMAIL_HOOK_SECRET`
+      * Supabase Dashboard > choose project > Authentication > Auth Hooks > Send Email Hook
+    * | ".env"
+
+      ```ini
+      RESEND_API_KEY="your_resend_api_key"
+      SEND_EMAIL_HOOK_SECRET="v1,whsec_<base64_secret>"
+      ```
+    * `supabase secrets set --env-file .env`
+      * set the secrets | your Supabase project
+    * `supabase functions new send-email`
+      * create a NEW edge function
+    * `supabase functions deploy send-email --no-verify-jwt`
+      * deploy your edge function
+
+##### Add Internationalization for Email Templates
+
+* steps
+  * | ".env", configure
+
+      ```ini
+      POSTMARK_SERVER_TOKEN=<POSTMARK_SERVER_TOKEN>
+      SEND_EMAIL_HOOK_SECRET="v1,whsec_<base64_secret>"
+      ```
+
+##### Add Backup Email Provider
+
+* _Example:_ -- through -- Postmark & Sengrid
+
+* steps
+  * | ".env", configure
+
+      ```ini
+      POSTMARK_SERVER_TOKEN=<POSTMARK_SERVER_TOKEN>
+      SENDGRID_API_KEY=<SENDGRID_API_KEY>
+      SEND_EMAIL_HOOK_SECRET="v1,whsec_<base64_secret>"
+      ```

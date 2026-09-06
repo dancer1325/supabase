@@ -6,25 +6,25 @@ subtitle: 'Set up your local development environment for Edge Functions.'
 tocVideo: 'lFhU3L8VoSQ'
 ---
 
-<Admonition type="note">
-
-Before getting started, make sure you have the Supabase CLI installed. Check out the [CLI installation guide](/docs/guides/cli) for installation methods and troubleshooting.
-
-</Admonition>
-
----
+* requirements
+  * [install Supabase CLI](../cli.md)
 
 ## Step 1: Install Deno CLI
 
-The Supabase CLI doesn't use the standard Deno CLI to serve functions locally. Instead, it uses its own Edge Runtime to keep the development and production environment consistent.
+* Supabase CLI
+  * 👀serves -- , through its OWN Edge Runtime, -- functions locally👀
+    * ❌!= use the standard Deno CLI❌ 
+    * Reason:🧠 keep consistent the development & production environment🧠
 
-You can follow the [Deno guide](https://deno.com/manual@v1.32.5/getting_started/setup_your_environment) for setting up your development environment with your favorite editor/IDE.
-
-The benefit of installing Deno separately is that you can use the Deno LSP to improve your editor's autocompletion, type checking, and testing. You can also use Deno's built-in tools such as `deno fmt`, `deno lint`, and `deno test`.
-
-After installing, you should have Deno installed and available in your terminal. Verify with `deno --version`
-
----
+* [how to install SEPARATELY Deno?](https://deno.com/manual@v1.32.5/getting_started/setup_your_environment)
+  * ADVANTAGES
+    * Deno LSP enable
+      * improve your editor's autocompletion
+      * type checking
+      * testing
+    * Deno's built-in tools
+      * _Examples:_ `deno fmt`, `deno lint`, and `deno test`
+  * if you want to check that it's PROPERLY installed -> `deno --version`
 
 ## Step 2: Set up your editor
 
@@ -46,13 +46,16 @@ Set up your editor environment for proper TypeScript support, autocompletion, an
    }
    ```
 
-This configuration enables the Deno language server only for the `supabase/functions` folder, while using VSCode's built-in JavaScript/TypeScript language server for all other files.
+This configuration enables the Deno language server only for the `supabase/functions` folder, 
+while using VSCode's built-in JavaScript/TypeScript language server for all other files.
 
 ---
 
 ### Multi-root workspaces
 
-The standard `.vscode/settings.json` setup works perfectly for projects where your Edge Functions live alongside your main application code. However, you might need multi-root workspaces if your development setup involves:
+The standard `.vscode/settings.json` setup works perfectly for projects where your Edge Functions
+live alongside your main application code
+* However, you might need multi-root workspaces if your development setup involves:
 
 - **Multiple repositories:** Edge Functions in one repo, main app in another
 - **Microservices:** Several services you need to develop in parallel
@@ -92,27 +95,36 @@ It's recommended to organize your functions according to the following structure
     └── config.toml
 ```
 
-- **Use "fat functions"**. Develop few, large functions by combining related functionality. This minimizes cold starts.
-- **Name functions with hyphens (`-`)**. This is the most URL-friendly approach
-- **Store shared code in `_shared`**. Store any shared code in a folder prefixed with an underscore (`_`).
-- **Separate tests**. Use a separate folder for [Unit Tests](/docs/guides/functions/unit-test) that includes the name of the function followed by a `-test` suffix.
+- **Use "fat functions"**
+* Develop few, large functions by combining related functionality
+* This minimizes cold starts.
+- **Name functions with hyphens (`-`)**
+* This is the most URL-friendly approach
+- **Store shared code in `_shared`**
+* Store any shared code in a folder prefixed with an underscore (`_`).
+- **Separate tests**
+* Use a separate folder for [Unit Tests](/docs/guides/functions/unit-test) that includes the name of the function followed by a `-test` suffix.
 
 ---
 
 ## Essential CLI commands
 
-Get familiar with the most commonly used CLI commands for developing and deploying Edge Functions.
-
 ### `supabase start`
 
-This command spins up your entire Supabase stack locally: database, auth, storage, and Edge Functions runtime. You're developing against the exact same environment you'll deploy to.
+* allow
+  * start LOCALLY your entire Supabase stack (database, auth, storage, and Edge Functions runtime)
 
 ### `supabase functions serve [function-name]`
 
-Develop a specific function with hot reloading. Your functions run at `http://localhost:54321/functions/v1/[function-name]`. When you save your file, you’ll see the changes instantly without having to wait.
+* allow
+  * develop a specific function / 
+    * hot reloading feature
+    * functions run | http://localhost:54321/functions/v1/[function-name
 
-Alternatively, use `supabase functions serve` to serve all functions at once.
+* `supabase functions serve`
+  * serve ALL functions
 
 ### `supabase functions deploy hello-world`
 
-Deploy the function when you’re ready
+* allow
+  * deploy the function

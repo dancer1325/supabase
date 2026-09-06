@@ -4,41 +4,35 @@ title: 'Testing Overview'
 description: 'Learn how to develop and test database schemas, tables, functions, and Row Level Security (RLS) policies.'
 ---
 
-Testing is a critical part of database development, especially when working with features like Row Level Security (RLS) policies. This guide provides a comprehensive approach to testing your Supabase database.
+* Testing
+  * critical part of database development
+    * ESPECIALLY working with RLS policies
+
+* goal
+  * how to test your Supabase database
 
 ## Testing approaches
 
-### Database unit testing with pgTAP
+### Database unit testing -- with -- pgTAP
 
-[pgTAP](https://pgtap.org) is a unit testing framework for Postgres that allows testing:
+* [pgTAP](https://pgtap.org)
+  * == unit testing framework -- for -- Postgres 
+    * allows testing
+      * Database structure: tables, columns, constraints
+      * RLS policies
+      * Functions and procedures
+      * Data integrity
 
-- Database structure: tables, columns, constraints
-- Row Level Security (RLS) policies
-- Functions and procedures
-- Data integrity
+* steps
+  * `supabase test new <TEST_DESCRIPTION.test>`
+  * | "TEST_DESCRIPTION.test",
+    * write your tests
+  * `supabase test db`
+
+TODO:
+
 
 This example demonstrates setting up and testing RLS policies for a basic todo application:
-
-1. Create a test table with RLS enabled:
-
-   ```sql
-   -- Create a todos table
-   create table todos (
-   id uuid primary key default gen_random_uuid(),
-   task text not null,
-   user_id uuid references auth.users not null,
-   completed boolean default false
-   );
-
-   -- Enable RLS
-   alter table todos enable row level security;
-
-   -- Create a policy
-   create policy "Users can only access their own todos"
-   on todos for all -- this policy applies to all operations
-   to authenticated
-   using ((select auth.uid()) = user_id);
-   ```
 
 2. Set up your testing environment:
 
@@ -120,125 +114,18 @@ This example demonstrates setting up and testing RLS policies for a basic todo a
 
 ### Application-Level testing
 
-Testing through application code provides end-to-end verification. Unlike database-level testing with pgTAP, application-level tests cannot use transactions for isolation.
-
-<Admonition type="caution">
-
-Application-level tests should not rely on a clean database state, as resetting the database before each test can be slow and makes tests difficult to parallelize.
-Instead, design your tests to be independent by using unique user IDs for each test case.
-
-</Admonition>
-
-Here's an example using TypeScript that mirrors the pgTAP tests above:
-
-```typescript
-import crypto from 'crypto'
-import { createClient } from '@supabase/supabase-js'
-import { beforeAll, describe, expect, it } from 'vitest'
-
-describe('Todos RLS', () => {
-  // Generate unique IDs for this test suite to avoid conflicts with other tests
-  const USER_1_ID = crypto.randomUUID()
-  const USER_2_ID = crypto.randomUUID()
-
-  const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!)
-
-  beforeAll(async () => {
-    // Setup test data specific to this test suite
-    const adminSupabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SECRET_KEY!)
-
-    // Create test users with unique IDs
-    await adminSupabase.auth.admin.createUser({
-      id: USER_1_ID,
-      email: `user1-${USER_1_ID}@test.com`,
-      password: 'password123',
-      // We want the user to be usable right away without email confirmation
-      email_confirm: true,
-    })
-    await adminSupabase.auth.admin.createUser({
-      id: USER_2_ID,
-      email: `user2-${USER_2_ID}@test.com`,
-      password: 'password123',
-      email_confirm: true,
-    })
-
-    // Create initial todos
-    await adminSupabase.from('todos').insert([
-      { task: 'User 1 Task 1', user_id: USER_1_ID },
-      { task: 'User 1 Task 2', user_id: USER_1_ID },
-      { task: 'User 2 Task 1', user_id: USER_2_ID },
-    ])
-  })
-
-  it('should allow User 1 to only see their own todos', async () => {
-    // Sign in as User 1
-    await supabase.auth.signInWithPassword({
-      email: `user1-${USER_1_ID}@test.com`,
-      password: 'password123',
-    })
-
-    const { data: todos } = await supabase.from('todos').select('*')
-
-    expect(todos).toHaveLength(2)
-    todos?.forEach((todo) => {
-      expect(todo.user_id).toBe(USER_1_ID)
-    })
-  })
-
-  it('should allow User 1 to create their own todo', async () => {
-    await supabase.auth.signInWithPassword({
-      email: `user1-${USER_1_ID}@test.com`,
-      password: 'password123',
-    })
-
-    const { error } = await supabase.from('todos').insert({ task: 'New Task', user_id: USER_1_ID })
-
-    expect(error).toBeNull()
-  })
-
-  it('should allow User 2 to only see their own todos', async () => {
-    // Sign in as User 2
-    await supabase.auth.signInWithPassword({
-      email: `user2-${USER_2_ID}@test.com`,
-      password: 'password123',
-    })
-
-    const { data: todos } = await supabase.from('todos').select('*')
-    expect(todos).toHaveLength(1)
-    todos?.forEach((todo) => {
-      expect(todo.user_id).toBe(USER_2_ID)
-    })
-  })
-
-  it('should prevent User 2 from modifying User 1 todos', async () => {
-    await supabase.auth.signInWithPassword({
-      email: `user2-${USER_2_ID}@test.com`,
-      password: 'password123',
-    })
-
-    // Attempt to update the todos we shouldn't have access to
-    // result will be a no-op
-    await supabase.from('todos').update({ task: 'Hacked!' }).eq('user_id', USER_1_ID)
-
-    // Log back in as User 1 to verify their todos weren't changed
-    await supabase.auth.signInWithPassword({
-      email: `user1-${USER_1_ID}@test.com`,
-      password: 'password123',
-    })
-
-    // Fetch User 1's todos
-    const { data: todos } = await supabase.from('todos').select('*')
-
-    // Verify that none of the todos were changed to "Hacked!"
-    expect(todos).toBeDefined()
-    todos?.forEach((todo) => {
-      expect(todo.task).not.toBe('Hacked!')
-    })
-  })
-})
-```
+* application-level tests
+  * vs database-level testing
+    * ❌can NOT use transactions -- for -- isolation❌
+  * ❌should NOT rely -- on -- a clean database state❌
+    * Reason:🧠reset the database BEFORE EACH test, can 
+      * be slow
+      * make tests DIFFICULT to PARALELLIZE🧠
+  * SOLUTION: 🧠design your tests / are -- , by using UNIQUE UID / EACH test case, -- independent🧠
 
 #### Test isolation strategies
+
+TODO: 
 
 For application-level testing, consider these approaches for test isolation:
 
@@ -298,10 +185,8 @@ jobs:
 
 ## Real-World examples
 
-For more complex, real-world examples of database testing, check out:
-
-- [Database Tests Example Repository](https://github.com/usebasejump/basejump/tree/main/supabase/tests/database) - A production-grade example of testing RLS policies
-- [RLS Guide and Best Practices](https://github.com/orgs/supabase/discussions/14576)
+* [Database Tests Example Repository](https://github.com/usebasejump/basejump/tree/main/supabase/tests/database)
+* [RLS Guide and Best Practices](https://github.com/orgs/supabase/discussions/14576)
 
 ## Troubleshooting
 

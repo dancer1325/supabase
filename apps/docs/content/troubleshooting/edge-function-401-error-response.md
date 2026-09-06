@@ -8,13 +8,14 @@ http_status_code = 401
 message = "Invalid JWT"
 ---
 
-A 401 response from an Edge Function means either:
-
-- The function failed the [legacy auth verification check](/docs/guides/functions/development-tips#skipping-authorization-checks)
-- Your function's logic deliberately returned a 401 response
+* Edge Function's 401 response 
+  * ==
+    * function failed -- due to -- [legacy auth verification check](../guides/functions/function-configuration.md#skipping-authorization-checks), OR
+    * your function's logic DELIBERATELY returned a 401 response
 
 ## Quick triage
 
+TODO: 
 Check the response body returned by the request
 
 ### Case 1: `"Invalid Token"` or `"Missing authorization header"`
@@ -222,8 +223,3 @@ Alternatively, you can disable the built-in check entirely (see [Incompatible ke
 - [Error Handling Edge Functions](/docs/guides/functions/error-handling)
 - [Quickstart: Dashboard deployment](/docs/guides/functions/quickstart-dashboard)
 - [Quickstart: CLI deployment](/docs/guides/functions/quickstart)
-
-## Still stuck?
-
-- Check the [Discord](https://discord.com/channels/839993398554656828/1006358244786196510), [Supabase GitHub Discussions](https://github.com/orgs/supabase/discussions), and [Reddit page](https://www.reddit.com/r/Supabase/) for similar reports that can help with debugging
-- Open a [support ticket](/dashboard/support/new) for your project if the problem persists and you believe it is a platform issue

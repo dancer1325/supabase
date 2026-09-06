@@ -8,8 +8,8 @@ sidebar_label: 'S3'
 
 * Supabase Storage S3
   * ways to authenticate
-    - [S3 access keys](#s3-access-keys) 
-    - [Session Token](#session-token)
+    * [S3 access keys](#s3-access-keys) 
+    * [Session Token](#session-token)
 
 ## S3 access keys
 
@@ -94,25 +94,6 @@ which validates the token server-side
 * Since no client-side auth decision is made based on the session data, `getSession` is appropriate here.
 
 </Admonition>
-
-```javascript
-import { S3Client } from '@aws-sdk/client-s3'
-
-const {
-  data: { session },
-} = await supabase.auth.getSession()
-
-const client = new S3Client({
-  forcePathStyle: true,
-  region: 'project_region',
-  endpoint: 'https://project_ref.storage.supabase.co/storage/v1/s3',
-  credentials: {
-    accessKeyId: 'project_ref',
-    secretAccessKey: 'anonKey',
-    sessionToken: session.access_token,
-  },
-})
-```
 
 <Admonition type="note">
 

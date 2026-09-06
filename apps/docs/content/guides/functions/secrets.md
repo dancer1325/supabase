@@ -16,13 +16,13 @@ subtitle: 'Manage sensitive data securely across environments.'
     - `SUPABASE_PUBLISHABLE_KEYS`
       - your Supabase API's `publishable` keys 
       - if you have enabled RLS -> safe to use | a browser
-    - `SUPABASE_SECRET_KEYS`
-      - your Supabase API's `secret` keys /
-        - bypass RLS 
-      - use cases
-        - | Edge Functions
-      - ❌NOT use cases❌
-        - | browser
+    * `SUPABASE_SECRET_KEYS`
+      * your Supabase API's `secret` keys /
+        * bypass RLS 
+      * use cases
+        * | Edge Functions
+      * ❌NOT use cases❌
+        * | browser
     - `SUPABASE_JWKS`
       - uses
         - verify user JWTs
@@ -32,10 +32,11 @@ subtitle: 'Manage sensitive data securely across environments.'
   - `SUPABASE_ANON_KEY`
     - The `anon` key for your Supabase API
     - This is safe to use in a browser when you have Row Level Security enabled
-  - `SUPABASE_SERVICE_ROLE_KEY`
-    - The `service_role` key for your Supabase API
-    - This is safe to use in Edge Functions, but it should NEVER be used in a browser
-    - This key will bypass Row Level Security
+  * `SUPABASE_SERVICE_ROLE_KEY`
+    * == your Supabase API's `service_role` key /
+      * bypass RLS
+    * ❌NOT use cases❌
+      * | browser
 
 * environment variables / Edge Functions have access
   * | hosted environment,
@@ -47,139 +48,73 @@ subtitle: 'Manage sensitive data securely across environments.'
       - == function code's version
         - (`{project_ref}_{function_id}_{version}`)
 
-## Accessing environment variables
+## how to access environment variables?
 
-TODO:
+* steps to access environment variables
+  * Deno's built-in handler
+  * passing the name of the environment variable
 
-You can access environment variables using Deno's built-in handler, and 
-passing it the name of the environment variable you’d like to access.
-
-```js
-Deno.env.get('NAME_OF_SECRET')
-```
-
-For example, in a function:
-
-```ts
-import { createClient } from 'npm:@supabase/supabase-js@2'
-
-const SUPABASE_PUBLISHABLE_KEYS = JSON.parse(Deno.env.get('SUPABASE_PUBLISHABLE_KEYS')!)
-
-// For user-facing operations (respects RLS)
-const supabase = createClient(
-  Deno.env.get('SUPABASE_URL')!,
-  // If you want to use a different api key, change 'default' to your preferred key name
-  SUPABASE_PUBLISHABLE_KEYS['default']
-)
-
-const SUPABASE_SECRET_KEYS = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS')!)
-// For admin operations (bypasses RLS)
-const supabaseAdmin = createClient(
-  Deno.env.get('SUPABASE_URL')!,
-  // If you want to use a different api key, change 'default' to your preferred key name
-  SUPABASE_SECRET_KEYS['default']
-)
-```
-
----
+    ```js
+    Deno.env.get('NAME_OF_SECRET')
+    ```
 
 ### Local secrets
 
-In development, you can load environment variables in two ways:
+* ways to load environment variables
+  1. -- through -- "supabase/functions/.env" /
+     * AUTOMATICALLY loaded | `supabase start`
+  2. -- through -- `supabase functions serve --env-file <PATH_FROM_ROOT_PATH_TO_ENV_FILE>`
+     * allows you to 
+       * use custom file names
+         * _Example:_ ".env.local"
+     * use cases
+       * DIFFERENT environments
 
-1. Through an `.env` file placed at `supabase/functions/.env`, which is automatically loaded on `supabase start`
-2. Through the `--env-file` option for `supabase functions serve`. This allows you to use custom file names like `.env.local` to distinguish between different environments.
+* ".env"
+  * add | ".gitignore"
 
-```bash
-supabase functions serve --env-file .env.local
-```
+* steps to invoke LOCALLY our function
+  * load the environment variables
+  * | Edge Functions,
+    * you can access -- , through Deno’s handler, to -- the environment variables
 
-<Admonition type="caution">
-
-Never check your `.env` files into Git! Instead, add the path to this file to your `.gitignore`.
-
-</Admonition>
-
-We can automatically access the secrets in our Edge Functions through Deno’s handler
-
-```tsx
-const secretKey = Deno.env.get('STRIPE_SECRET_KEY')
-```
-
-Now we can invoke our function locally. If you're using the default `.env` file at `supabase/functions/.env`, it's automatically loaded:
-
-```bash
-supabase functions serve hello-world
-```
-
-Or you can specify a custom `.env` file with the `--env-file` flag:
-
-```bash
-supabase functions serve hello-world --env-file .env.local
-```
-
-This is useful for managing different environments (development, staging, etc.).
-
----
+      ```tsx
+      const secretKey = Deno.env.get('STRIPE_SECRET_KEY')
+      ```
+  * invoke our function locally
+    * if you're using 
+      * the default ".env" (== | "supabase/functions/.env") -> `supabase functions serve <EDGE_FUNCTION_NAME>`
+      * a custom ".env" -> `supabase functions serve <EDGE_FUNCTION_NAME> --env-file <PATH_FROM_ROOT_PATH_TO_ENV_FILE>`
 
 ### Production secrets
 
-You will also need to set secrets for your production Edge Functions. You can do this via the Dashboard or using the CLI.
+* ways 
+  * -- via -- Supabase Dashboard
+    * steps
+      * Supabase Dashboard > project > choose the project > functions > secrets > add 
 
-**Using the Dashboard**:
+        ![Edge Functions Secrets Management (dark)](../../../public/img/edge-functions-secrets.jpg)
 
-1. Visit [Edge Function Secrets Management](/dashboard/project/_/functions/secrets) page in your Dashboard.
-2. Add the Key and Value for your secret and press Save
+  * -- via -- Supabase CLI
+    * steps
+      * `touch .env.production`
+      * | ".gitignore"
 
-<Image
-  alt="Edge Functions Secrets Management"
-  src={{
-    light: '/docs/img/edge-functions-secrets--light.jpg',
-    dark: '/docs/img/edge-functions-secrets.jpg',
-  }}
+        ```bash
+        .env.production
+        ```
 
-width={3757}
-height={1525}
-/>
+      * `vim .env.production`
 
-Note that you can paste multiple secrets at a time.
-
-**Using the CLI**
-
-You can create a `.env` file to help deploy your secrets to production
-
-```bash
-# .env
-STRIPE_SECRET_KEY=sk_live_...
-```
-
-<Admonition type="caution">
-
-Never check your `.env` files into Git! Instead, add the path to this file to your `.gitignore`.
-
-</Admonition>
-
-You can push all the secrets from the `.env` file to your remote project using `supabase secrets set`. This makes the environment visible in the dashboard as well.
-
-```bash
-supabase secrets set --env-file .env
-```
-
-Alternatively, this command also allows you to set production secrets individually rather than storing them in a `.env` file.
-
-```bash
-supabase secrets set STRIPE_SECRET_KEY=sk_live_...
-```
-
-To see all the secrets which you have set remotely, you can use `supabase secrets list`
-
-```bash
-supabase secrets list
-```
-
-<Admonition type="note">
-
-You don't need to re-deploy after setting your secrets. They're available immediately in your
-functions.
-
-</Admonition>
+        ```bash
+        # .env
+        STRIPE_SECRET_KEY=sk_live_...
+        ```
+      * `supabase secrets set --env-file .env.production`
+        * == push ALL ".env.production"'s secrets | your remote project / 
+          * == environment is visible | dashboard
+          * ⚠️IMMEDIATELY AVAILABLE | your functions⚠️
+            * == ❌you do NOT need to re-deploy❌
+        * if you want to set secrets INDIVIDUALLY -> `supabase secrets set <SECRET_KEY>=<SECRET_VALUE>`
+      * `supabase secrets list`
+        * check ALL secrets / set REMOTELY

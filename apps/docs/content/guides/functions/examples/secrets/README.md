@@ -1,0 +1,3 @@
+
+
+`supabase functions serve --env-file .env.local`

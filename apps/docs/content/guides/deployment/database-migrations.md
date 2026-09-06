@@ -48,75 +48,38 @@ tocVideo: 'Kx5nHBmIxyQ'
 
 * [here](../local-development/database-migrations.md#deploy-your-project)
 
+## Working >1 people
 
-### 3. Deploy database migrations
+* use case
+  * \>1 developers share a Supabase project
 
-[Push](/docs/reference/cli/supabase-db-push) your migrations to the remote database.
-
-```bash
-supabase db push
-```
-
-### 4. Deploy database seed data (optional)
-
-[Push](/docs/reference/cli/supabase-db-push) your migrations and seed the remote database.
-
-```bash
-supabase db push --include-seed
-```
-
-Visiting your live project on [Supabase](/dashboard/project/_), you'll see a new `employees` table, complete with the `department` column you added in the second migration above.
-
-## Working with a team
-
-When multiple developers share a Supabase project, a few rules keep migrations from getting out of sync.
-
-**The golden rule: never change the remote database directly.** Once you're using migrations, all schema changes — even small ones — should go through migration files
-* Using the Dashboard's SQL editor or Table Editor on your remote database bypasses the migration history, and `db push` will start failing with sync errors.
-
-**The team workflow:**
-
-### 1. Create a migration locally
-
-Each developer creates migration files on their own branch, never touching the remote database directly.
-
-```bash
-supabase migration new your_change_description
-```
-
-### 2. Test and commit
-
-Reset your local database to apply the migration, then commit the migration file to git.
-
-```bash
-supabase db reset
-git add supabase/migrations
-git commit -m "add migration: your_change_description"
-```
-
-### 3. Pull and reset when a teammate merges a migration
-
-After pulling new migration files from git, reset your local database to apply them.
-
-```bash
-git pull
-supabase db reset
-```
-
-### 4. One person deploys to remote
-
-Coordinate so only one person runs `db push` at a time
-* Migration files are applied in timestamp order, so concurrent pushes from different machines can cause conflicts.
-
-```bash
-supabase db push
-```
-
-> 💡 For a more automated deployment approach, consider using [Supabase Branching](/docs/guides/deployment/branching) or a CI/CD pipeline that runs `supabase db push` on merge to your main branch.
+* how to change the remote database?
+  * ❌NEVER change DIRECTLY the REMOTE database❌
+  * ⚠️if you're using migrations -> ALL schema changes go -- through -- migration files⚠️
+    * ways
+      * steps / EACH developer
+        * `supabase migration new <change_description>`
+          * == creates "migration/<change_description>"
+        * `supabase db reset`
+          * == reset your local database 
+        * `git add supabase/migrations` && `git commit -m "add migration: your_change_description"`
+        * `git pull`
+          * pull "migration/" -- from -- master
+        * `supabase db reset`
+        * ⚠️decide by the team / ONLY 1 guy runs `supabase db push`⚠️
+          * Reason:🧠"migration/<FILE_NAME>" are applied | timestamp order🧠
+      * AUTOMATED deployment approach
+        * ways
+          * [Supabase Branching](branching), OR
+          * CI/CD pipeline / 
+            * onMerge your main branch, run `supabase db push`
 
 ## Diagnosing and fixing sync errors
 
-If `db push` fails with errors suggesting you run `supabase migration repair`, your local migration files and the remote database's migration history are out of sync
+TODO:
+
+If `db push` fails with errors suggesting you run `supabase migration repair`, 
+your local migration files and the remote database's migration history are out of sync
 * Here's how to diagnose and fix it.
 
 ### How migration tracking works

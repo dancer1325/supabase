@@ -92,10 +92,13 @@ npx supabase login
       * align local database -- & -- remote database
   * `supabase db reset`
 
-### Deploy database changes
+### Deploy database changes | Supabase Cloud remote
 
 ```bash
 supabase db push
+
+# if you want to push the seed | remote database -> --include-seed 
+supabase db push --include-seed
 ```
 
 ### Deploy Edge Functions

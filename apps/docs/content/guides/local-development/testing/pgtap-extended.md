@@ -4,178 +4,80 @@ title: 'Advanced pgTAP Testing'
 description: 'Learn how to leverage dbdev and test helpers for advanced database testing.'
 ---
 
-While basic pgTAP provides excellent testing capabilities, you can enhance the testing workflow using database development tools and helper packages. This guide covers advanced testing techniques using database.dev and community-maintained test helpers.
+* pgTAP
+  * provides
+    * excellent testing capabilities 
+  * allows
+    * enhance -- , via database development tools & helper packages, -- the testing workflow 
 
-## Using database.dev
+* goal
+  * advanced testing techniques -- via --
+    * database.dev
+    * community-maintained test helpers
 
-[Database.dev](https://database.dev) is a package manager for Postgres that allows installation and use of community-maintained packages, including testing utilities.
+## Using [database.dev](https://database.dev)
 
-### Setting up dbdev
+* Database.dev
+  * == package manager for Postgres /
+    * allows , about community-maintained packages, 
+      * installation
+      * use of
+  * steps
+    * set up dbdev
+    * install test helpers
 
-To use database development tools and packages, install some prerequisites:
-
-```sql
-create extension if not exists http with schema extensions;
-create extension if not exists pg_tle;
-drop extension if exists "supabase-dbdev";
-select pgtle.uninstall_extension_if_exists('supabase-dbdev');
-select
-    pgtle.install_extension(
-        'supabase-dbdev',
-        resp.contents ->> 'version',
-        'PostgreSQL package manager',
-        resp.contents ->> 'sql'
-    )
-from extensions.http(
-    (
-        'GET',
-        'https://api.database.dev/rest/v1/'
-        || 'package_versions?select=sql,version'
-        || '&package_name=eq.supabase-dbdev'
-        || '&order=version.desc'
-        || '&limit=1',
-        array[
-            ('apiKey', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s')::extensions.http_header
-        ],
-        null,
-        null
-    )
-) x,
-lateral (
-    select
-        ((row_to_json(x) -> 'content') #>> '{}')::json -> 0
-) resp(contents);
-create extension "supabase-dbdev";
-select dbdev.install('supabase-dbdev');
-
--- Drop and recreate the extension to ensure a clean installation
-drop extension if exists "supabase-dbdev";
-create extension "supabase-dbdev";
-```
-
-### Installing test helpers
-
-The Test Helpers package provides utilities that simplify testing Supabase-specific features:
-
-```sql
-select dbdev.install('basejump-supabase_test_helpers');
-create extension if not exists "basejump-supabase_test_helpers" version '0.0.6';
-```
+* Test Helpers package
+  * provides
+    * utilities / simplify testing Supabase-specific features
 
 ## Test helper benefits
 
-The test helpers package provides several advantages over writing raw pgTAP tests:
+* test helpers package's benefits vs raw pgTAP tests
+  1. **Simplified User Management**
+     * `tests.create_supabase_user()`
+       * == create test users 
+     * `tests.authenticate_as()`
+       * == switch contexts 
+     * `tests.get_supabase_uid()`
+       * retrieve user IDs 
+  2. **Row Level Security (RLS) Testing Utilities**
+     * `tests.rls_enabled()`
+       * == verify RLS status 
+     * Test policy enforcement
+     * Simulate DIFFERENT user contexts
+  3. **Reduced Boilerplate**
+     * NO need to MANUALLY insert auth.users
+     * Simplified JWT claim management
+     * Clean test setup and cleanup
 
-1. **Simplified User Management**
-   - Create test users with `tests.create_supabase_user()`
-   - Switch contexts with `tests.authenticate_as()`
-   - Retrieve user IDs using `tests.get_supabase_uid()`
+## Schema-wide RLS testing
 
-2. **Row Level Security (RLS) Testing Utilities**
-   - Verify RLS status with `tests.rls_enabled()`
-   - Test policy enforcement
-   - Simulate different user contexts
-
-3. **Reduced Boilerplate**
-   - No need to manually insert auth.users
-   - Simplified JWT claim management
-   - Clean test setup and cleanup
-
-## Schema-wide Row Level Security testing
-
-When working with Row Level Security, it's crucial to ensure that RLS is enabled on all tables that need it. Create a basic test to verify RLS is enabled across an entire schema:
-
-```sql
-begin;
-select plan(1);
-
--- Verify RLS is enabled on all tables in the public schema
-select tests.rls_enabled('public');
-
-select * from finish();
-rollback;
-```
+* enable RLS | ALL tables / need it
 
 ## Test file organization
 
-When working with multiple test files that share common setup requirements, it's beneficial to create a single "pre-test" file that handles the global environment setup. This approach reduces duplication and ensures consistent test environments.
+* 1! "pre-test" file / handles the GLOBAL environment setup
+  * use case
+    * work with >1 test files / share COMMON setup requirements  
+  * allows
+    * reduces duplication
+    * consistent test environments
 
 ### Creating a pre-test hook
 
-Since pgTAP test files are executed in alphabetical order, create a setup file that runs first by using a naming convention like `000-setup-tests-hooks.sql`:
-
-```bash
-supabase test new 000-setup-tests-hooks
-```
-
-This setup file should contain:
-
-1. All shared extensions and dependencies
-2. Common test utilities
-3. A basic always-green test to verify the setup
-
-Here's an example setup file:
-
-```sql
--- install tests utilities
--- install pgtap extension for testing
-create extension if not exists pgtap with schema extensions;
-/*
----------------------
----- install dbdev ----
-----------------------
-Requires:
-  - pg_tle: https://github.com/aws/pg_tle
-  - pgsql-http: https://github.com/pramsey/pgsql-http
-*/
-create extension if not exists http with schema extensions;
-create extension if not exists pg_tle;
-drop extension if exists "supabase-dbdev";
-select pgtle.uninstall_extension_if_exists('supabase-dbdev');
-select
-    pgtle.install_extension(
-        'supabase-dbdev',
-        resp.contents ->> 'version',
-        'PostgreSQL package manager',
-        resp.contents ->> 'sql'
-    )
-from extensions.http(
-    (
-        'GET',
-        'https://api.database.dev/rest/v1/'
-        || 'package_versions?select=sql,version'
-        || '&package_name=eq.supabase-dbdev'
-        || '&order=version.desc'
-        || '&limit=1',
-        array[
-            ('apiKey', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s')::extensions.http_header
-        ],
-        null,
-        null
-    )
-) x,
-lateral (
-    select
-        ((row_to_json(x) -> 'content') #>> '{}')::json -> 0
-) resp(contents);
-create extension "supabase-dbdev";
-select dbdev.install('supabase-dbdev');
-drop extension if exists "supabase-dbdev";
-create extension "supabase-dbdev";
--- Install test helpers
-select dbdev.install('basejump-supabase_test_helpers');
-create extension if not exists "basejump-supabase_test_helpers" version '0.0.6';
-
--- Verify setup with a no-op test
-begin;
-select plan(1);
-select ok(true, 'Pre-test hook completed successfully');
-select * from finish();
-rollback;
-```
+* pre-test hook
+  * == pgTAP test file /
+    * naming recommendation: "00*.sql"
+      * Reason:🧠are executed -- via -- alphabetical order🧠
+      * _Example:_ "000-setup-tests-hooks.sql"
+    * contain
+      * ALL shared extensions & dependencies
+      * COMMON test utilities
+      * basic ALWAYS-green test / verify the setup 
 
 ### Benefits
 
+TODO: 
 This approach provides several advantages:
 
 - Reduces code duplication across test files
@@ -245,7 +147,8 @@ rollback;
 
 ## Not another todo app: Testing complex organizations
 
-Todo apps are great for learning, but this section explores testing a more realistic scenario: a multi-tenant content publishing platform. This example demonstrates testing complex permissions, plan restrictions, and content management.
+Todo apps are great for learning, but this section explores testing a more realistic scenario: a multi-tenant content publishing platform
+* This example demonstrates testing complex permissions, plan restrictions, and content management.
 
 ### System overview
 
@@ -494,7 +397,8 @@ create policy "Users can update their own comments"
 
 #### 4. Test cases:
 
-With setup complete, write RLS test cases. Each section can be in its own test:
+With setup complete, write RLS test cases
+* Each section can be in its own test:
 
 ```sql
 -- Assuming we already have: 000-setup-tests-hooks.sql file we can use tests helpers
@@ -682,7 +586,7 @@ rollback;
 
 ## Additional resources
 
-- [Test Helpers Documentation](https://database.dev/basejump/supabase_test_helpers)
+* [Test Helpers Documentation](https://database.dev/basejump/supabase_test_helpers)
 - [Test Helpers Reference](https://github.com/usebasejump/supabase-test-helpers)
 - [Row Level Security Writing Guide](https://usebasejump.com/blog/testing-on-supabase-with-pgtap)
 - [Database.dev Package Registry](https://database.dev)

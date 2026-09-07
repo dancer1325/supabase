@@ -1,0 +1,9 @@
+PATCH https://api.supabase.com/v1/projects/PROJECT_ID/functions/FUNCTION_NAME
+Authorization: Bearer YOUR_SECRET_TOKEN
+Content-Type: application/json
+
+{
+  "verify_jwt": false
+}
+
+###

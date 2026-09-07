@@ -120,81 +120,62 @@ See: [Error handling in Edge Functions](/docs/guides/functions/error-handling)
 
 ## Built-in JWT check failures
 
-Supabase Edge Functions have a legacy auth verification check that runs before your code. When it fails, your function never executes, and you get a 401 with `"Invalid JWT"` or `"Missing authorization header"` directly from the platform.
+* Supabase Edge Functions
+  * have 
+    * ⚠️a legacy auth verification check / runs BEFORE your code⚠️
+      * == if it fails (== get a 401 / `"Invalid JWT"` OR `"Missing authorization header"`) -> your function NEVER executes
+      * SOLUTION:🧠
+        * turn off the auth built-in check
+          * ways
+            * -- via -- Supabase Cloud Dashboard
+              * requirements
+                * ⚠️Supabase Cloud Dashboard (!= local)⚠️
+              * Supabase Cloud Dashboard > project > choose the project > functions > choose a function > Settings > toggle off JWT verification
 
-<Admonition type="deprecation">
+                ![image](../../public/img/troubleshooting/401_edge_functions_toggle_off_JWT_check.png)
 
-Supabase now recommends turning off this built-in check and managing authentication directly in your function code, giving you more control over access. See [Securing Edge Functions](/docs/guides/functions/auth).
+            * `supabase functions deploy <YOUR_FUNCTION_NAME> --no-verify-jwt`
+            * -- via -- [Supabase Management API](../../docs/ref/api/introduction)
+              * steps
+                * Supabase Cloud Dashboard > 
+                  * your profile > Account > Access Tokens > Copy
+                  * Settings > General > Copy Organization slug
+                * run
 
-</Admonition>
+                  ```
+                  curl 'https://api.supabase.com/v1/projects/PROJECT_ID/functions/FUNCTION_NAME' \
+                  --request PATCH \
+                  --header 'Content-Type: application/json' \
+                  --header 'Authorization: Bearer YOUR_SECRET_TOKEN' \
+                  --data '{"verify_jwt": false}'
+                  ```
 
-The subsections below cover specific failure modes.
+        * [manage authentication DIRECTLY | your function code](../guides/functions/auth.md)🧠
+      * types of failure modes
+        * [incompatible key format](#incompatible-key-format)
+        * [invalid key](#invalid-key)
+        * [missing authorization header](#missing-authorization-header)
 
 ### Incompatible key format
 
-Your project uses the [new asymmetric keys](/blog/jwt-signing-keys) for authentication. However, the [legacy auth verification check](/docs/guides/functions/development-tips#skipping-authorization-checks) only understands the legacy format.
+* Reason of the error: 🧠
+  * your project uses the [NEW asymmetric keys -- for -- authentication](../../../www/_blog/2025-07-14-jwt-signing-keys.md)
+  * [legacy auth verification check ONLY understand the legacy format](../guides/functions/function-configuration#skipping-authorization-checks)🧠
 
-**Fix:** Disable the built-in JWT check using one of the below methods and optionally [handle auth in your function code](/docs/guides/functions/auth)
-
-<Accordion
-  type="default"
-  chevronAlign="right"
-  justified
-  size="medium"
-  className="text-foreground-light mt-8 mb-6"
->
-  <AccordionItem
-      header="Method A: Dashboard"
-      id="item-1"
-    >
-
-In the [Functions Dashboard](/dashboard/project/_/functions/), open the affected function's `detail tab` and toggle off JWT verification.
-
-![image](/docs/img/troubleshooting/401_edge_functions_toggle_off_JWT_check.png)
-
-  </AccordionItem>
-  <AccordionItem
-      header="Method B: Supabase CLI"
-      id="item-2"
-    >
-
-Redeploy the edge function from the [Supabase CLI](/docs/guides/functions/quickstart) with the `--no-verify-jwt` flag
-
-```sh
-supabase functions deploy YOUR_FUNCTION_NAME --no-verify-jwt
-```
-
-    </AccordionItem>
-
-  <AccordionItem
-      header="Method C: Management API"
-      id="item-3"
-    >
-Disable the legacy auth check with the [Supabase Management API](/docs/reference/api/introduction):
-
-1. Generate a token at [Account Preferences](/dashboard/account/tokens).
-2. Get your project ID from [General Settings](/dashboard/project/_/settings/general).
-3. Run:
-
-```sh
-curl 'https://api.supabase.com/v1/projects/PROJECT_ID/functions/FUNCTION_NAME' \
-  --request PATCH \
-  --header 'Content-Type: application/json' \
-  --header 'Authorization: Bearer YOUR_SECRET_TOKEN' \
-  --data '{"verify_jwt": false}'
-```
-
-    </AccordionItem>
-
-</Accordion>
+* SOLUTION:
+  * 💡turn off the auth built-in check
+  * [handle auth | your function code](../guides/functions/auth)💡
 
 ### Invalid key
+
+TODO: 
 
 The built-in check is enabled and the key you sent doesn't match your project's keys.
 
 **Fix (recommended):** Disable the built-in check using the steps in [Incompatible key format](#incompatible-key-format).
 
-**Fix (alternative):** If you want to keep the built-in check, ensure you're sending a valid key. Use one of your [legacy API keys](/dashboard/project/_/settings/api-keys/legacy) with the [Supabase client library](/docs/guides/api/rest/client-libs) when making your request.
+**Fix (alternative):** If you want to keep the built-in check, ensure you're sending a valid key
+* Use one of your [legacy API keys](/dashboard/project/_/settings/api-keys/legacy) with the [Supabase client library](/docs/guides/api/rest/client-libs) when making your request.
 
 ```js
 const supabase = createClient('https://xyzcompany.supabase.co', 'anon-key-or-service_role-key')
@@ -204,7 +185,8 @@ const supabase = createClient('https://xyzcompany.supabase.co', 'anon-key-or-ser
 
 The built-in check is enabled but your request has no `Authorization` header at all.
 
-If you're using a [Supabase client library](/docs/guides/api/rest/client-libs), the header is added automatically. If you're calling the function from an external client (cURL, fetch, etc.), you need to supply it:
+If you're using a [Supabase client library](/docs/guides/api/rest/client-libs), the header is added automatically
+* If you're calling the function from an external client (cURL, fetch, etc.), you need to supply it:
 
 ```sh
 curl -L -X POST 'https://PROJECT_REF.supabase.co/functions/v1/hello-world' \

@@ -1,0 +1,14 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize)]
+struct JwtClaims {
+    iss: String,
+    # ref
+    #   == reserved keyword
+    #[serde(rename = "ref")] // Handle reserved keyword
+    project_ref: Option<String>,
+    role: String,
+    iat: i64,
+    exp: i64,
+    // ... other claims
+}

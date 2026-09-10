@@ -1,0 +1,26 @@
+{
+  "aal": "aal1",
+  "amr": [
+    {
+      "method": "password",
+      "timestamp": 1640991600
+    }
+  ],
+  "app_metadata": {
+    "provider": "email",
+    "providers": ["email"]
+  },
+  "aud": "authenticated",
+  "email": "user@example.com",
+  "exp": 1640995200,
+  "iat": 1640991600,
+  "iss": "https://abcdefghijklmnopqrst.supabase.co/auth/v1",
+  "phone": "",
+  "role": "authenticated",
+  "session_id": "123e4567-e89b-12d3-a456-426614174000",
+  "sub": "123e4567-e89b-12d3-a456-426614174000",
+  "user_metadata": {
+    "name": "John Doe"
+  },
+  "is_anonymous": false
+}

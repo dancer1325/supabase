@@ -3,15 +3,16 @@ title: 'Branching'
 subtitle: 'Use Supabase Branches to test and preview changes'
 ---
 
-You can deploy directly from GitHub on any plan 
-— connect your repository and changes pushed to `main` are automatically deployed to your project
-* Branching takes this further, adding isolated preview environments for each pull request.
-
-Use branching to safely experiment with changes to your Supabase project.
-
-Supabase branches create separate environments that spin off from your main project
-* You can use these branching environments to create and test changes like new configurations, database schemas, or features without affecting your production setup
-* When you're ready to ship your changes, merge your branch to update your production instance with the new changes.
+* Supabase branching
+  * ⚠️requirements⚠️
+    * [connect Github repo -- to -- Supabase](branching/github-integration.md)
+  * == create -- , from your main project, -- SEPARATE environments
+  * allows
+    * | your Supabase project, experiment with changes
+  * how to use?
+    * branch
+    * test it
+    * if ALL | branch works fine -> merge your branch | main branch
 
 ## How branching works
 
@@ -20,7 +21,8 @@ Supabase branches create separate environments that spin off from your main proj
 * They are automatically paused after inactivity or deleted when a PR is merged or closed.
 - **Persistent Branches**: Persistent branches are long-lived and recommended for environments like staging, QA, or development
 * Unlike preview branches, they aren't automatically paused or deleted due to inactivity or when a PR is merged or closed.
-- **Managing Branches**: You can create, review, and merge branches either automatically via our [GitHub integration](/docs/guides/deployment/branching/github-integration) or directly [through the dashboard](/docs/guides/deployment/branching/dashboard) (currently in beta)
+- **Managing Branches**: You can create, review, and merge branches either automatically via our [GitHub integration](/docs/guides/deployment/branching/github-integration) or 
+directly [through the dashboard](/docs/guides/deployment/branching/dashboard) (currently in beta)
 * All branches show up in the branches page in the dashboard, regardless of how they were created.
 - **Data-less**: New branches do not start with any data from your main project
 * This is meant to better protect your sensitive production data

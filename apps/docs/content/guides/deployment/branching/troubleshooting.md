@@ -23,11 +23,16 @@ For detailed troubleshooting guidance, see our [Troubleshooting guide](/docs/gui
 
 ### Rolling back migrations
 
-You might want to roll back changes you've made in an earlier migration change. For example, you may have pushed a migration file containing schema changes you no longer want.
+* _Example:_ you pushed a migration file / contain schema changes / you NO longer want
 
-To fix this, push the latest changes, then delete the preview branch in Supabase and reopen it.
-
-The new preview branch is reseeded from the `./supabase/seed.sql` file by default. Any additional data changes made on the old preview branch are lost. This is equivalent to running `supabase db reset` locally. All migrations are rerun in sequential order.
+* SOLUTION:
+  * | Supabase remote,
+    * push the latest changes
+    * delete the PREVIEW branch | Supabase
+    * reopen the PREVIEW branch
+      * -> reseeded -- from -- "./supabase/seed.sql"
+  * | Supabase local
+    * `supabase db reset`
 
 ### Deployment failures
 

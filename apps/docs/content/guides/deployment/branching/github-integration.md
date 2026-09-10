@@ -5,6 +5,8 @@ subtitle: 'Connect with GitHub to sync branches with your repository'
 
 Supabase Branching uses the Supabase GitHub integration to read files from your GitHub repository. With this integration, Supabase watches all commits, branches, and pull requests of your GitHub repository.
 
+* AVAILABLE | any Github plan
+
 ## Installation
 
 In the Supabase Dashboard:

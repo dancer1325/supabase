@@ -7,7 +7,7 @@ subtitle: 'Complete reference for claims appearing in JWTs created by Supabase A
 * goal
   * Supabase authentication tokens' ALL JWT claims
     * uses
-      * server-side JWT validation & serialization
+      * [server-side](server-side.md) JWT validation & serialization
         * _Examples:_ | implement authentication | languages (Rust) / `ref` are reserved keywords
 
 ## JWT structure
@@ -110,183 +110,19 @@ subtitle: 'Complete reference for claims appearing in JWTs created by Supabase A
 | `"token_refresh"` | Token refresh                 |
 | `"anonymous"`     | Anonymous authentication      |
 
-## JWT examples
+## Validation guidelines | your server
 
-### Authenticated user token
-
-```json
-{
-  "aal": "aal1",
-  "amr": [
-    {
-      "method": "password",
-      "timestamp": 1640991600
-    }
-  ],
-  "app_metadata": {
-    "provider": "email",
-    "providers": ["email"]
-  },
-  "aud": "authenticated",
-  "email": "user@example.com",
-  "exp": 1640995200,
-  "iat": 1640991600,
-  "iss": "https://abcdefghijklmnopqrst.supabase.co/auth/v1",
-  "phone": "",
-  "role": "authenticated",
-  "session_id": "123e4567-e89b-12d3-a456-426614174000",
-  "sub": "123e4567-e89b-12d3-a456-426614174000",
-  "user_metadata": {
-    "name": "John Doe"
-  },
-  "is_anonymous": false
-}
-```
-
-### Anonymous user token
-
-```json
-{
-  "iss": "supabase",
-  "ref": "abcdefghijklmnopqrst",
-  "role": "anon",
-  "iat": 1640991600,
-  "exp": 1640995200
-}
-```
-
-### Service role token
-
-```json
-{
-  "iss": "supabase",
-  "ref": "abcdefghijklmnopqrst",
-  "role": "service_role",
-  "iat": 1640991600,
-  "exp": 1640995200
-}
-```
-
-## Language-Specific considerations
-
-### Rust
-
-In Rust, the `ref` field is a reserved keyword
-* When deserializing JWTs, you'll need to handle this:
-
-```rust
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Deserialize, Serialize)]
-struct JwtClaims {
-    iss: String,
-    #[serde(rename = "ref")] // Handle reserved keyword
-    project_ref: Option<String>,
-    role: String,
-    iat: i64,
-    exp: i64,
-    // ... other claims
-}
-```
-
-### TypeScript/JavaScript
-
-```typescript
-interface JwtClaims {
-  iss: string
-  aud: string | string[]
-  exp: number
-  iat: number
-  sub: string
-  role: string
-  aal: 'aal1' | 'aal2'
-  session_id: string
-  email: string
-  phone: string
-  is_anonymous: boolean
-  jti?: string
-  nbf?: number
-  app_metadata?: Record<string, any>
-  user_metadata?: Record<string, any>
-  amr?: Array<{
-    method: string
-    timestamp: number
-  }>
-  ref?: string // Only in anon/service role tokens
-}
-```
-
-### Python
-
-```python
-from typing import Optional, Union, List, Dict, Any
-from dataclasses import dataclass
-
-@dataclass
-class AmrEntry:
-    method: str
-    timestamp: int
-
-@dataclass
-class JwtClaims:
-    iss: str
-    aud: Union[str, List[str]]
-    exp: int
-    iat: int
-    sub: str
-    role: str
-    aal: str
-    session_id: str
-    email: str
-    phone: str
-    is_anonymous: bool
-    jti: Optional[str] = None
-    nbf: Optional[int] = None
-    app_metadata: Optional[Dict[str, Any]] = None
-    user_metadata: Optional[Dict[str, Any]] = None
-    amr: Optional[List[AmrEntry]] = None
-    ref: Optional[str] = None  # Only in anon/service role tokens
-```
-
-### Go
-
-```go
-type AmrEntry struct {
-    Method    string `json:"method"`
-    Timestamp int64  `json:"timestamp"`
-}
-
-type JwtClaims struct {
-    Iss         string                 `json:"iss"`
-    Aud         interface{}            `json:"aud"` // string or []string
-    Exp         int64                  `json:"exp"`
-    Iat         int64                  `json:"iat"`
-    Sub         string                 `json:"sub"`
-    Role        string                 `json:"role"`
-    Aal         string                 `json:"aal"`
-    SessionID   string                 `json:"session_id"`
-    Email       string                 `json:"email"`
-    Phone       string                 `json:"phone"`
-    IsAnonymous bool                   `json:"is_anonymous"`
-    Jti         *string                `json:"jti,omitempty"`
-    Nbf         *int64                 `json:"nbf,omitempty"`
-    AppMetadata map[string]interface{} `json:"app_metadata,omitempty"`
-    UserMetadata map[string]interface{} `json:"user_metadata,omitempty"`
-    Amr         []AmrEntry             `json:"amr,omitempty"`
-    Ref         *string                `json:"ref,omitempty"` // Only in anon/service role tokens
-}
-```
-
-## Validation guidelines
-
-When implementing JWT validation on your server:
-
-1. **Check Required Fields**: Ensure all required claims are present
-2. **Validate Types**: Verify field types match expected types
-3. **Check Expiration**: Validate `exp` timestamp is in the future
-4. **Verify Issuer**: Ensure `iss` matches your Supabase project
-5. **Check Audience**: Validate `aud` matches expected audience
-6. **Handle Reserved Keywords**: Use field renaming for languages like Rust
+1. [**Check Required Fields**](#required-claims)
+2. **Validate Types**
+   * == field types == expected types
+3. **Check Expiration**
+   * == `exp` timestamp is | future
+4. **Verify Issuer**
+   * == `iss` == your Supabase project
+5. **Check Audience**
+   * == `aud` == expected audience
+6. **Handle Reserved Keywords**
+   * _Example:_ | Rust, rename `ref` 
 
 ## Security considerations
 
@@ -297,10 +133,3 @@ When implementing JWT validation on your server:
 - **Use HTTPS** for all JWT transmission
 - **Rotate JWT secrets** regularly
 - **Implement proper error handling** for invalid tokens
-
-## Related documentation
-
-- [JWT Overview](/docs/guides/auth/jwts)
-- [Custom Access Token Hooks](/docs/guides/auth/auth-hooks/custom-access-token-hook)
-- [Row Level Security](/docs/guides/database/postgres/row-level-security)
-- [Server-Side Auth](/docs/guides/auth/server-side)

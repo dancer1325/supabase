@@ -300,108 +300,36 @@ This prevents the policy `( (select auth.uid()) = user_id )` from running for an
   * == TODO: SQL logic / attached -- to -- a Postgres table
     * You can attach as many policies as you want to each table.
 
-Supabase provides some [helpers](#helper-functions) that simplify RLS 
-if you're using Supabase Auth
-* We'll use these helpers to illustrate some basic policies:
+* [Supabase' helper functions](#helper-functions) 
+  * simplify RLS
 
 ### SELECT policies
 
-You can specify select policies with the `using` clause.
-
-Say you have a table called `profiles` in the public schema and you want to enable read access to everyone.
-
-```sql
--- 1. Create table
-create table profiles (
-  id uuid primary key,
-  user_id uuid references auth.users,
-  avatar_url text
-);
-
--- 2. Enable RLS
-alter table profiles enable row level security;
-
--- 3. Create Policy
-create policy "Public profiles are visible to everyone."
-on profiles for select
-to anon         -- the Postgres Role (recommended)
-using ( true ); -- the actual Policy
-```
-
-Alternatively, if you only wanted users to be able to see their own profiles:
-
-```sql
-create policy "User can see their own profile only."
-on profiles
-for select using ( (select auth.uid()) = user_id );
-```
+* `select ... using ...`
 
 ### INSERT policies
 
-You can specify insert policies with the `with check` clause
-* The `with check` expression ensures that any new row data adheres to the policy constraints.
-
-Say you have a table called `profiles` in the public schema and you only want users to create a profile for themselves
-* In that case, we want to check their User ID matches the value that they are trying to insert:
-
-```sql
--- 1. Create table
-create table profiles (
-  id uuid primary key,
-  user_id uuid references auth.users,
-  avatar_url text
-);
-
--- 2. Enable RLS
-alter table profiles enable row level security;
-
--- 3. Create Policy
-create policy "Users can create a profile."
-on profiles for insert
-to authenticated                          -- the Postgres Role (recommended)
-with check ( (select auth.uid()) = user_id );      -- the actual Policy
-```
+* `with check`
+  * ensures
+    * ANY NEW row data adheres -- to -- the policy constraints
 
 ### UPDATE policies
 
-You can specify update policies by combining both the `using` and `with check` expressions.
-
-The `using` clause represents the condition that must be true for the update to be allowed, and `with check` clause
-ensures that the updates made adhere to the policy constraints.
-
-Say you have a table called `profiles` in the public schema and you only want users to update their own profile.
-
-You can create a policy where the `using` clause checks if the user owns the profile being updated
-* And the `with check` clause ensures that, in the resultant row, users do not change the `user_id` to a value that 
-is not equal to their User ID, maintaining that the modified profile still meets the ownership condition.
-
-```sql
--- 1. Create table
-create table profiles (
-  id uuid primary key,
-  user_id uuid references auth.users,
-  avatar_url text
-);
-
--- 2. Enable RLS
-alter table profiles enable row level security;
-
--- 3. Create Policy
-create policy "Users can update their own profile."
-on profiles for update
-to authenticated                    -- the Postgres Role (recommended)
-using ( (select auth.uid()) = user_id )       -- checks if the existing row complies with the policy expression
-with check ( (select auth.uid()) = user_id ); -- checks if the new row complies with the policy expression
-```
-
-If no `with check` expression is defined, then the `using` expression will be used both to determine 
-which rows are visible (normal USING case) and which new rows will be allowed to be added (WITH CHECK case).
-
-> ⚠️ To perform an `UPDATE` operation, a corresponding [SELECT policy](#select-policies) is required
-> * Without a `SELECT` policy, the `UPDATE` operation will not work as expected.
+* `using` + `with check`
+  * `using`
+    * == condition / 
+      * if it's matched -> enable the update
+    * ⚠️MANDATORY⚠️
+  * `with check`
+    * ensures that
+      * updates made, adhere -- to -- the policy constraints
+    * if you do NOT specify it -> `using` expression determines the rows / are
+      * [visible](#select-policies)
+      * [allowed -- to -- be added](#insert-policies)
 
 ### DELETE policies
 
+TODO: 
 You can specify delete policies with the `using` clause.
 
 Say you have a table called `profiles` in the public schema and you only want users to be able to delete their own profile:
@@ -531,15 +459,4 @@ to fit inside this limitation.
 
 ### MFA
 
-The `auth.jwt()` function can be used to check for [Multi-Factor Authentication](/docs/guides/auth/auth-mfa#enforce-rules-for-mfa-logins)
-* For example, you could restrict a user from updating their profile unless they have at least 2 levels of authentication (Assurance Level 2):
-
-```sql
-create policy "Restrict updates."
-on profiles
-as restrictive
-for update
-to authenticated using (
-  (select auth.jwt()->>'aal') = 'aal2'
-);
-```
+* [Multi-Factor Authentication](../../auth/auth-mfa.md#enforce-rules----for----mfa-logins)

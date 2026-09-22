@@ -47,3 +47,78 @@ CREATE EVENT TRIGGER ensure_rls
 ON ddl_command_end
 WHEN TAG IN ('CREATE TABLE', 'CREATE TABLE AS', 'SELECT INTO')
 EXECUTE FUNCTION rls_auto_enable();
+
+-- X.
+-- X.1 SELECT policies
+       -- 1. Create table | public schema
+create table profiles (
+                          id uuid primary key,
+                          user_id uuid references auth.users,
+                          avatar_url text
+);
+
+        -- 2. Enable RLS
+alter table profiles enable row level security;
+
+        -- 3. Policies
+        -- 3.1 Create Policy / enable read access | everyone
+create policy "Public profiles are visible to everyone."
+on profiles for select
+       to anon         -- the Postgres Role (recommended)
+       using ( true ); -- the actual Policy
+        -- 3.2 Create Policy / ONLY OWN users can see their OWN profiles
+create policy "User can see their own profile only."
+on profiles
+for select using ( (select auth.uid()) = user_id );
+
+-- X.2 INSERT policies
+        -- X.2.1 Create table | public schema
+create table profiles (
+                          id uuid primary key,
+                          user_id uuid references auth.users,
+                          avatar_url text
+);
+
+        -- X.2.2 Enable RLS
+alter table profiles enable row level security;
+
+        -- X.2.3 Create Policy /
+        --      ONLY users can create a profile -- for -- themselves
+create policy "Users can create a profile."
+on profiles for insert
+to authenticated                          -- the Postgres Role (recommended)
+with check ( (select auth.uid()) = user_id );      -- the actual Policy
+
+-- X.3 UPDATE policies
+       -- X.3.1 Create a table | public schema
+       --      ONLY users can update their OWN profile
+create table profiles (
+                          id uuid primary key,
+                          user_id uuid references auth.users,
+                          avatar_url text
+);
+
+       -- X.3.2. Enable RLS
+alter table profiles enable row level security;
+
+       -- X.3.3. Create Policy
+create policy "Users can update their own profile."
+on profiles for update
+                           to authenticated                    -- the Postgres Role (recommended)
+                           using ( (select auth.uid()) = user_id )       -- checks if the existing row complies with the policy expression
+                with check ( (select auth.uid()) = user_id ); -- checks if the new row complies with the policy expression
+
+-- X.4 DELETE policies
+
+
+-- Y. Helper functions
+
+-- Y.3 MFA
+--      users can update their OWN profile ONLY if they have 2 2 levels of authentication                                                                -
+create policy "Restrict updates."
+on profiles
+as restrictive
+for update
+               to authenticated using (
+               (select auth.jwt()->>'aal') = 'aal2'
+               );

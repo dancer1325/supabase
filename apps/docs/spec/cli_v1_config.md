@@ -6,568 +6,6 @@
     * `supabase start`
 
 # parameters
-  - id: 'project_id' # {string} A unique identifier for this param.
-    title: 'project_id' # {string} Any name.
-    tags: ['general'] # {string[]} These tags are useful for grouping parameters
-    required: true
-    description: |
-      A string used to distinguish different Supabase projects on the same host. Defaults to the working directory name when running `supabase init`.
-
-  - id: 'api.enabled'
-    title: 'api.enabled'
-    tags: ['api']
-    required: false
-    default: 'true'
-    description: |
-      Enable the local PostgREST service.
-    links:
-      - name: 'PostgREST configuration'
-        link: 'https://postgrest.org/en/stable/configuration.html'
-
-  - id: 'api.port'
-    title: 'api.port'
-    tags: ['api']
-    required: false
-    default: '54321'
-    description: |
-      Port to use for the API URL.
-    links:
-      - name: 'PostgREST configuration'
-        link: 'https://postgrest.org/en/stable/configuration.html'
-    usage: |
-      [api]
-      port = 54321
-
-  - id: 'api.schemas'
-    title: 'api.schemas'
-    tags: ['api']
-    required: false
-    default: '["public", "storage", "graphql_public"]'
-    description: |
-      Schemas to expose in your API. Tables, views and functions in this schema will get API endpoints. `public` and `storage` are always included.
-    links:
-      - name: 'PostgREST configuration'
-        link: 'https://postgrest.org/en/stable/configuration.html'
-
-  - id: 'api.extra_search_path'
-    title: 'api.extra_search_path'
-    tags: ['api']
-    required: false
-    default: '["public", "extensions"]'
-    description: |
-      Extra schemas to add to the search_path of every request. public is always included.
-    links:
-      - name: 'PostgREST configuration'
-        link: 'https://postgrest.org/en/stable/configuration.html'
-
-  - id: 'api.max_rows'
-    title: 'api.max_rows'
-    tags: ['api']
-    required: false
-    default: '1000'
-    description: |
-      The maximum number of rows returned from a view, table, or function. Limits payload size for accidental or malicious requests.
-    links:
-      - name: 'PostgREST configuration'
-        link: 'https://postgrest.org/en/stable/configuration.html'
-
-  - id: 'db.port'
-    title: 'db.port'
-    tags: ['database']
-    required: false
-    default: '54322'
-    description: |
-      Port to use for the local database URL.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://postgrest.org/en/stable/configuration.html'
-
-  - id: 'db.shadow_port'
-    title: 'db.shadow_port'
-    tags: ['database']
-    required: false
-    default: '54320'
-    description: |
-      Port to use for the local shadow database.
-    links: []
-
-  - id: 'db.major_version'
-    title: 'db.major_version'
-    tags: ['database']
-    required: false
-    default: '15'
-    description: |
-      The database major version to use. This has to be the same as your remote database's. Run `SHOW server_version;` on the remote database to check.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://postgrest.org/en/stable/configuration.html'
-
-  - id: 'db.pooler.enabled'
-    title: 'db.pooler.enabled'
-    tags: ['database']
-    required: false
-    default: 'false'
-    description: |
-      Enable the local PgBouncer service.
-    links:
-      - name: 'PgBouncer Configuration'
-        link: https://www.pgbouncer.org/config.html
-
-  - id: 'db.pooler.port'
-    title: 'db.pooler.port'
-    tags: ['database']
-    required: false
-    default: '54329'
-    description: |
-      Port to use for the local connection pooler.
-    links:
-      - name: 'PgBouncer Configuration'
-        link: https://www.pgbouncer.org/config.html#listen_port
-
-  - id: 'db.pooler.pool_mode'
-    title: 'db.pooler.pool_mode'
-    tags: ['database']
-    required: false
-    default: '"transaction"'
-    description: |
-      Specifies when a server connection can be reused by other clients. Configure one of the supported pooler modes: `transaction`, `session`.
-    links:
-      - name: 'PgBouncer Configuration'
-        link: https://www.pgbouncer.org/config.html#pool_mode
-
-  - id: 'db.pooler.default_pool_size'
-    title: 'db.pooler.default_pool_size'
-    tags: ['database']
-    required: false
-    default: '20'
-    description: |
-      How many server connections to allow per user/database pair.
-    links:
-      - name: 'PgBouncer Configuration'
-        link: https://www.pgbouncer.org/config.html#default_pool_size
-
-  - id: 'db.settings.effective_cache_size'
-    title: 'db.settings.effective_cache_size'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the planner's assumption about the effective size of the disk cache.
-      This is a query planner parameter that doesn't affect actual memory allocation.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-EFFECTIVE-CACHE-SIZE'
-
-  - id: 'db.settings.logical_decoding_work_mem'
-    title: 'db.settings.logical_decoding_work_mem'
-    tags: ['database']
-    required: false
-    description: |
-      Specifies the amount of memory to be used by logical decoding, before writing data to local disk.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-LOGICAL-DECODING-WORK-MEM'
-
-  - id: 'db.settings.maintenance_work_mem'
-    title: 'db.settings.maintenance_work_mem'
-    tags: ['database']
-    required: false
-    description: |
-      Specifies the maximum amount of memory to be used by maintenance operations, such as VACUUM, CREATE INDEX, and ALTER TABLE ADD FOREIGN KEY.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAINTENANCE-WORK-MEM'
-
-  - id: 'db.settings.max_connections'
-    title: 'db.settings.max_connections'
-    tags: ['database']
-    required: false
-    description: |
-      Determines the maximum number of concurrent connections to the database server.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS'
-
-  - id: 'db.settings.max_locks_per_transaction'
-    title: 'db.settings.max_locks_per_transaction'
-    tags: ['database']
-    required: false
-    description: |
-      Controls the average number of object locks allocated for each transaction.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-locks.html#GUC-MAX-LOCKS-PER-TRANSACTION'
-
-  - id: 'db.settings.max_parallel_maintenance_workers'
-    title: 'db.settings.max_parallel_maintenance_workers'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the maximum number of parallel workers that can be started by a single utility command.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-MAINTENANCE-WORKERS'
-
-  - id: 'db.settings.max_parallel_workers'
-    title: 'db.settings.max_parallel_workers'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the maximum number of parallel workers that the system can support.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-WORKERS'
-
-  - id: 'db.settings.max_parallel_workers_per_gather'
-    title: 'db.settings.max_parallel_workers_per_gather'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the maximum number of parallel workers that can be started by a single Gather or Gather Merge node.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-WORKERS-PER-GATHER'
-
-  - id: 'db.settings.max_replication_slots'
-    title: 'db.settings.max_replication_slots'
-    tags: ['database']
-    required: false
-    description: |
-      Specifies the maximum number of replication slots that the server can support.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-REPLICATION-SLOTS'
-
-  - id: 'db.settings.max_slot_wal_keep_size'
-    title: 'db.settings.max_slot_wal_keep_size'
-    tags: ['database']
-    required: false
-    description: |
-      Specifies the maximum size of WAL files that replication slots are allowed to retain in the pg_wal directory.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-SLOT-WAL-KEEP-SIZE'
-
-  - id: 'db.settings.max_standby_archive_delay'
-    title: 'db.settings.max_standby_archive_delay'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the maximum delay before canceling queries when a hot standby server is processing archived WAL data.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-STANDBY-ARCHIVE-DELAY'
-
-  - id: 'db.settings.max_standby_streaming_delay'
-    title: 'db.settings.max_standby_streaming_delay'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the maximum delay before canceling queries when a hot standby server is processing streamed WAL data.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-STANDBY-STREAMING-DELAY'
-
-  - id: 'db.settings.max_wal_size'
-    title: 'db.settings.max_wal_size'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the maximum size of WAL files that the system will keep in the pg_wal directory.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MAX-WAL-SIZE'
-
-  - id: 'db.settings.max_wal_senders'
-    title: 'db.settings.max_wal_senders'
-    tags: ['database']
-    required: false
-    description: |
-      Specifies the maximum number of concurrent connections from standby servers or streaming base backup clients.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-WAL-SENDERS'
-
-  - id: 'db.settings.max_worker_processes'
-    title: 'db.settings.max_worker_processes'
-    tags: ['database']
-    required: false
-    type: 'uint'
-    description: |
-      Sets the maximum number of background processes that the system can support.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-WORKER-PROCESSES'
-
-  - id: 'db.settings.session_replication_role'
-    title: 'db.settings.session_replication_role'
-    tags: ['database']
-    required: false
-    description: |
-      Controls whether triggers and rewrite rules are enabled. Valid values are: "origin", "replica", or "local".
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-SESSION-REPLICATION-ROLE'
-
-  - id: 'db.settings.shared_buffers'
-    title: 'db.settings.shared_buffers'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the amount of memory the database server uses for shared memory buffers.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS'
-
-  - id: 'db.settings.statement_timeout'
-    title: 'db.settings.statement_timeout'
-    tags: ['database']
-    required: false
-    description: |
-      Abort any statement that takes more than the specified amount of time.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-STATEMENT-TIMEOUT'
-
-  - id: 'db.settings.track_activity_query_size'
-    title: 'db.settings.track_activity_query_size'
-    tags: ['database']
-    required: false
-    description: |
-      Sets the maximum size of the query string that will be tracked in pg_stat_activity.current_query field.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-statistics.html#GUC-TRACK-ACTIVITY-QUERY-SIZE'
-
-  - id: 'db.settings.track_commit_timestamp'
-    title: 'db.settings.track_commit_timestamp'
-    tags: ['database']
-    required: false
-    type: 'bool'
-    description: |
-      Record commit time of transactions.
-      Note: Changing this parameter requires a database restart.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-TRACK-COMMIT-TIMESTAMP'
-
-  - id: 'db.settings.wal_keep_size'
-    title: 'db.settings.wal_keep_size'
-    tags: ['database']
-    required: false
-    description: |
-      Specifies the minimum size of past log file segments kept in the pg_wal directory.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-WAL-KEEP-SIZE'
-
-  - id: 'db.settings.wal_sender_timeout'
-    title: 'db.settings.wal_sender_timeout'
-    tags: ['database']
-    required: false
-    description: |
-      Terminate replication connections that are inactive for longer than this amount of time.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-WAL-SENDER-TIMEOUT'
-
-  - id: 'db.settings.work_mem'
-    title: 'db.settings.work_mem'
-    tags: ['database']
-    required: false
-    description: |
-      Specifies the amount of memory to be used by internal sort operations and hash tables before writing to temporary disk files.
-    links:
-      - name: 'PostgreSQL configuration'
-        link: 'https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM'
-
-  - id: 'db.pooler.max_client_conn'
-    title: 'db.pooler.max_client_conn'
-    tags: ['database']
-    required: false
-    default: '100'
-    description: |
-      Maximum number of client connections allowed.
-    links:
-      - name: 'PgBouncer Configuration'
-        link: https://www.pgbouncer.org/config.html#max_client_conn
-
-  - id: 'db.seed.enabled'
-    title: 'db.seed.enabled'
-    tags: ['database']
-    required: false
-    default: 'true'
-    description: |
-      Enables running seeds when starting or resetting the database.
-    links: []
-
-  - id: 'db.seed.sql_paths'
-    title: 'db.seed.sql_paths'
-    tags: ['database']
-    required: false
-    default: '["./seed.sql"]'
-    description: |
-      An array of files or glob patterns to find seeds in.
-    links:
-      - name: 'Seeding your database'
-        link: 'https://supabase.com/docs/guides/cli/seeding-your-database'
-
-  - id: 'realtime.enabled'
-    title: 'realtime.enabled'
-    tags: ['realtime']
-    required: false
-    default: 'true'
-    description: |
-      Enable the local Realtime service.
-    links: []
-
-  - id: 'realtime.ip_version'
-    title: 'realtime.ip_version'
-    tags: ['realtime']
-    required: false
-    default: '"IPv6"'
-    description: |
-      Bind realtime via either IPv4 or IPv6. (default: IPv6)
-    links: []
-
-  - id: 'studio.enabled'
-    title: 'studio.enabled'
-    tags: ['dashboard']
-    required: false
-    default: 'true'
-    description: |
-      Enable the local Supabase Studio dashboard.
-    links: []
-
-  - id: 'studio.port'
-    title: 'studio.port'
-    tags: ['dashboard']
-    required: false
-    default: '54323'
-    description: |
-      Port to use for Supabase Studio.
-    links: []
-
-  - id: 'studio.api_url'
-    title: 'studio.api_url'
-    tags: ['dashboard']
-    required: false
-    default: '"http://localhost"'
-    description: |
-      External URL of the API server that frontend connects to.
-    links: []
-
-  - id: 'studio.openai_api_key'
-    title: 'studio.openai_api_key'
-    tags: ['dashboard']
-    required: false
-    default: 'env(OPENAI_API_KEY)'
-    description: |
-      OpenAI API key used for AI features in the Studio dashboard.
-      DO NOT commit your OpenAI API key to git. Use environment variable substitution instead.
-    links:
-      - name: 'OpenAI API Keys'
-        link: 'https://platform.openai.com/api-keys'
-
-  - id: 'inbucket.enabled'
-    title: 'inbucket.enabled'
-    tags: ['local']
-    required: false
-    default: 'true'
-    description: |
-      Enable the local InBucket service.
-    links:
-      - name: 'Inbucket documentation'
-        link: 'https://www.inbucket.org'
-
-  - id: 'inbucket.port'
-    title: 'inbucket.port'
-    tags: ['local']
-    required: false
-    default: '54324'
-    description: |
-      Port to use for the email testing server web interface.
-
-      Emails sent with the local dev setup are not actually sent - rather, they are monitored, and you can view the emails that would have been sent from the web interface.
-    links:
-      - name: 'Inbucket documentation'
-        link: 'https://www.inbucket.org'
-
-  - id: 'inbucket.smtp_port'
-    title: 'inbucket.smtp_port'
-    tags: ['local']
-    required: false
-    default: '54325'
-    description: |
-      Port to use for the email testing server SMTP port.
-
-      Emails sent with the local dev setup are not actually sent - rather, they are monitored, and you can view the emails that would have been sent from the web interface.
-
-      If set, you can access the SMTP server from this port.
-    links:
-      - name: 'Inbucket documentation'
-        link: 'https://www.inbucket.org'
-
-  - id: 'inbucket.pop3_port'
-    title: 'inbucket.pop3_port'
-    tags: ['local']
-    required: false
-    default: '54326'
-    description: |
-      Port to use for the email testing server POP3 port.
-
-      Emails sent with the local dev setup are not actually sent - rather, they are monitored, and you can view the emails that would have been sent from the web interface.
-
-      If set, you can access the POP3 server from this port.
-    links:
-      - name: 'Inbucket documentation'
-        link: 'https://www.inbucket.org'
-
-  - id: 'inbucket.admin_email'
-    title: 'inbucket.admin_email'
-    tags: ['local']
-    required: false
-    default: 'admin@email.com'
-    description: |
-      Email used as the sender for emails sent from the application.
-
-  - id: 'inbucket.sender_name'
-    title: 'inbucket.sender_name'
-    tags: ['local']
-    required: false
-    default: 'Admin'
-    description: |
-      Display name used as the sender for emails sent from the application.
-
-  - id: 'storage.enabled'
-    title: 'storage.enabled'
-    tags: ['storage']
-    required: false
-    default: 'true'
-    description: |
-      Enable the local Storage service.
-    links:
-      - name: 'Storage server configuration'
-        link: 'https://supabase.com/docs/guides/self-hosting/storage/config'
-
-  - id: 'storage.file_size_limit'
-    title: 'storage.file_size_limit'
-    tags: ['storage']
-    required: false
-    default: '"50MiB"'
-    description: |
-      The maximum file size allowed for all buckets in the project.
-    links:
-      - name: 'Storage server configuration'
-        link: 'https://supabase.com/docs/guides/self-hosting/storage/config'
-
 ## `storage.buckets.bucket_name.public`
 * enable
   * public access -- to -- the bucket
@@ -581,1159 +19,527 @@
 ## `storage.buckets.bucket_name.objects_path`
 * == local directory | upload objects | bucket
 
+## `project_id`
+* == unique identifier -- for -- this project
+  * | same host, distinguishes different Supabase projects
+  * default: working directory name | running `supabase init`
 
-    - id: 'auth.enabled'
-      title: 'auth.enabled'
-      tags: ['auth']
-      required: false
-      default: 'true'
-      description: |
-        Enable the local GoTrue service.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.site_url'
-      title: 'auth.site_url'
-      tags: ['auth']
-      required: false
-      default: '"http://localhost:3000"'
-      description: |
-        The base URL of your website. Used as an allow-list for redirects and for constructing URLs used in emails.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.additional_redirect_urls'
-      title: 'auth.additional_redirect_urls'
-      tags: ['auth']
-      required: false
-      default: '["https://localhost:3000"]'
-      description: |
-        A list of _exact_ URLs that auth providers are permitted to redirect to post authentication.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.jwt_expiry'
-      title: 'auth.jwt_expiry'
-      tags: ['auth']
-      required: false
-      default: '3600'
-      description: |
-        How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 seconds (one week).
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.enable_manual_linking'
-      title: 'auth.enable_manual_linking'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Allow testing manual linking of accounts
-      links:
-        - name: 'Anonymous Sign Ins (Manual Linking)'
-          link: 'https://supabase.com/docs/guides/auth/auth-anonymous?queryGroups=language&language=python#convert-an-anonymous-user-to-a-permanent-user'
-
-    - id: 'auth.enable_refresh_token_rotation'
-      title: 'auth.enable_refresh_token_rotation'
-      tags: ['auth']
-      required: false
-      default: 'true'
-      description: |
-        If disabled, the refresh token will never expire.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.refresh_token_reuse_interval'
-      title: 'auth.refresh_token_reuse_interval'
-      tags: ['auth']
-      required: false
-      default: '10'
-      description: |
-        Allows refresh tokens to be reused after expiry, up to the specified interval in seconds. Requires enable_refresh_token_rotation = true.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.rate_limit.email_sent'
-      title: 'auth.rate_limit.email_sent'
-      tags: ['auth']
-      required: false
-      default: '2'
-      description: |
-        Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.rate_limit.sms_sent'
-      title: 'auth.rate_limit.sms_sent'
-      tags: ['auth']
-      required: false
-      default: '30'
-      description: |
-        Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.rate_limit.anonymous_users'
-      title: 'auth.rate_limit.anonymous_users'
-      tags: ['auth']
-      required: false
-      default: '30'
-      description: |
-        Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.rate_limit.token_refresh'
-      title: 'auth.rate_limit.token_refresh'
-      tags: ['auth']
-      required: false
-      default: '150'
-      description: |
-        Number of sessions that can be refreshed in a 5 minute interval per IP address.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.rate_limit.sign_in_sign_ups'
-      title: 'auth.rate_limit.sign_in_sign_ups'
-      tags: ['auth']
-      required: false
-      default: '30'
-      description: |
-        Number of sign up and sign-in requests that can be made in a 5 minute interval per IP address (excludes anonymous users).
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.rate_limit.token_verifications'
-      title: 'auth.rate_limit.token_verifications'
-      tags: ['auth']
-      required: false
-      default: '30'
-      description: |
-        Number of OTP / Magic link verifications that can be made in a 5 minute interval per IP address.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.enable_signup'
-      title: 'auth.enable_signup'
-      tags: ['auth']
-      required: false
-      default: 'true'
-      description: |
-        Allow/disallow new user signups to your project.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.enable_anonymous_sign_ins'
-      title: 'auth.enable_anonymous_sign_ins'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Allow/disallow anonymous sign-ins to your project.
-      links:
-        - name: 'Anonymous Sign Ins'
-          link: 'https://supabase.com/docs/guides/auth/auth-anonymous'
-
-    - id: 'auth.email.enable_signup'
-      title: 'auth.email.enable_signup'
-      tags: ['auth']
-      required: false
-      default: 'true'
-      description: |
-        Allow/disallow new user signups via email to your project.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.double_confirm_changes'
-      title: 'auth.email.double_confirm_changes'
-      tags: ['auth']
-      required: false
-      default: 'true'
-      description: |
-        If enabled, a user will be required to confirm any email change on both the old, and new email addresses. If disabled, only the new email is required to confirm.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.enable_confirmations'
-      title: 'auth.email.enable_confirmations'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        If enabled, users need to confirm their email address before signing in.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.secure_password_change'
-      title: 'auth.email.secure_password_change'
-      tags: ['auth']
-      required: false
-      type: 'bool'
-      default: false
-      description: |
-        If enabled, requires the user's current password to be provided when changing to a new password.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.max_frequency'
-      title: 'auth.email.max_frequency'
-      tags: ['auth']
-      required: false
-      type: 'duration'
-      default: '1m'
-      description: |
-        The minimum amount of time that must pass between email requests.
-        Helps prevent email spam by limiting how frequently emails can be sent.
-        Example values: "1m", "1h", "24h"
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.otp_length'
-      title: 'auth.email.otp_length'
-      tags: ['auth']
-      required: false
-      default: '6'
-      description: |
-        The length of the OTP code to be sent in emails.
-        Must be between 6 and 10 digits.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.otp_expiry'
-      title: 'auth.email.otp_expiry'
-      tags: ['auth']
-      required: false
-      default: '3600'
-      description: |
-        The expiry time for an OTP code in seconds.
-        Default is 3600 seconds (1 hour).
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.smtp.host'
-      title: 'auth.email.smtp.host'
-      tags: ['auth']
-      required: false
-      default: 'inbucket'
-      description: |
-        Hostname or IP address of the SMTP server.
-
-    - id: 'auth.email.smtp.port'
-      title: 'auth.email.smtp.port'
-      tags: ['auth']
-      required: false
-      default: 2500
-      description: |
-        Port number of the SMTP server.
-
-    - id: 'auth.email.smtp.user'
-      title: 'auth.email.smtp.user'
-      tags: ['auth']
-      required: false
-      description: |
-        Username for authenticating with the SMTP server.
-
-    - id: 'auth.email.smtp.pass'
-      title: 'auth.email.smtp.pass'
-      tags: ['auth']
-      required: false
-      description: |
-        Password for authenticating with the SMTP server.
-
-    - id: 'auth.email.smtp.admin_email'
-      title: 'auth.email.smtp.admin_email'
-      tags: ['auth']
-      required: false
-      default: 'admin@email.com'
-      description: |
-        Email used as the sender for emails sent from the application.
-
-    - id: 'auth.email.smtp.sender_name'
-      title: 'auth.email.smtp.sender_name'
-      tags: ['auth']
-      required: false
-      description: |
-        Display name used as the sender for emails sent from the application.
-
-    - id: 'auth.email.template.type.subject'
-      title: 'auth.email.template.<type>.subject'
-      tags: ['auth']
-      required: false
-      description: |
-        The full list of email template types are:
-
-        - `invite`
-        - `confirmation`
-        - `recovery`
-        - `magic_link`
-        - `email_change`
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.template.type.content_path'
-      title: 'auth.email.template.<type>.content_path'
-      tags: ['auth']
-      required: false
-      description: |
-        The full list of email template types are:
-
-        - `invite`
-        - `confirmation`
-        - `recovery`
-        - `magic_link`
-        - `email_change`
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.notification.type.enabled'
-      title: 'auth.email.notification.<type>.enabled'
-      tags: ['auth']
-      required: false
-      description: |
-        Determines whether or not to send email notifications for the given type.
-
-        The full list of email notification types are:
-
-        - `password_changed`
-        - `email_changed`
-        - `phone_changed`
-        - `mfa_factor_enrolled`
-        - `mfa_factor_unenrolled`
-        - `identity_linked`
-        - `identity_unlinked`
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.notification.type.subject'
-      title: 'auth.email.notification.<type>.subject'
-      tags: ['auth']
-      required: false
-      description: |
-        The subject for the given email notification type.
-
-        The full list of email notification types are:
-
-        - `password_changed`
-        - `email_changed`
-        - `phone_changed`
-        - `mfa_factor_enrolled`
-        - `mfa_factor_unenrolled`
-        - `identity_linked`
-        - `identity_unlinked`
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.email.notification.type.content_path'
-      title: 'auth.email.notification.<type>.content_path'
-      tags: ['auth']
-      required: false
-      description: |
-        The relative path to the content template for the given email notification type.
-
-        The full list of email notification types are:
-
-        - `password_changed`
-        - `email_changed`
-        - `phone_changed`
-        - `mfa_factor_enrolled`
-        - `mfa_factor_unenrolled`
-        - `identity_linked`
-        - `identity_unlinked`
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.enable_signup'
-      title: 'auth.sms.enable_signup'
-      tags: ['auth']
-      required: false
-      default: 'true'
-      description: |
-        Allow/disallow new user signups via SMS to your project.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.enable_confirmations'
-      title: 'auth.sms.enable_confirmations'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        If enabled, users need to confirm their phone number before signing in.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.test_otp'
-      title: 'auth.sms.test_otp'
-      tags: ['auth']
-      required: false
-      description: |
-        Use pre-defined map of phone number to OTP for testing.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-      usage: |
-        [auth.sms.test_otp]
-        4152127777 = "123456"
-
-    - id: 'auth.sms.provider.enabled'
-      title: 'auth.sms.<provider>.enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Use an external SMS provider. The full list of providers are:
-
-        - `twilio`
-        - `twilio_verify`
-        - `messagebird`
-        - `textlocal`
-        - `vonage`
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.twilio.account_sid'
-      title: 'auth.sms.<twilio|twilio_verify>.account_sid'
-      tags: ['auth']
-      required: true
-      description: |
-        Twilio Account SID
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.twilio.message_service_sid'
-      title: 'auth.sms.<twilio|twilio_verify>.message_service_sid'
-      tags: ['auth']
-      required: true
-      description: |
-        Twilio Message Service SID
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.twilio.auth_token'
-      title: 'auth.sms.<twilio|twilio_verify>.auth_token'
-      tags: ['auth']
-      required: true
-      default: 'env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)'
-      description: |
-        Twilio Auth Token
-
-        DO NOT commit your Twilio auth token to git. Use environment variable substitution instead.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.messagebird.originator'
-      title: 'auth.sms.messagebird.originator'
-      tags: ['auth']
-      required: true
-      description: |
-        MessageBird Originator
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.messagebird.access_key'
-      title: 'auth.sms.messagebird.access_key'
-      tags: ['auth']
-      required: true
-      default: 'env(SUPABASE_AUTH_SMS_MESSAGEBIRD_ACCESS_KEY)'
-      description: |
-        MessageBird Access Key
-
-        DO NOT commit your MessageBird access key to git. Use environment variable substitution instead.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.textlocal.sender'
-      title: 'auth.sms.textlocal.sender'
-      tags: ['auth']
-      required: true
-      description: |
-        TextLocal Sender
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.textlocal.api_key'
-      title: 'auth.sms.textlocal.api_key'
-      tags: ['auth']
-      required: true
-      default: 'env(SUPABASE_AUTH_SMS_TEXTLOCAL_API_KEY)'
-      description: |
-        TextLocal API Key
-
-        DO NOT commit your TextLocal API key to git. Use environment variable substitution instead.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.vonage.from'
-      title: 'auth.sms.vonage.from'
-      tags: ['auth']
-      required: true
-      description: |
-        Vonage From
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.vonage.api_key'
-      title: 'auth.sms.vonage.api_key'
-      tags: ['auth']
-      required: true
-      description: |
-        Vonage API Key
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.sms.vonage.api_secret'
-      title: 'auth.sms.vonage.api_secret'
-      tags: ['auth']
-      required: true
-      default: 'env(SUPABASE_AUTH_SMS_VONAGE_API_SECRET)'
-      description: |
-        Vonage API Secret
-
-        DO NOT commit your Vonage API secret to git. Use environment variable substitution instead.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.external.provider.enabled'
-      title: 'auth.external.<provider>.enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Use an external OAuth provider. The full list of providers are:
-
-        - `apple`
-        - `azure`
-        - `bitbucket`
-        - `discord`
-        - `facebook`
-        - `github`
-        - `gitlab`
-        - `google`
-        - `kakao`
-        - `keycloak`
-        - `linkedin_oidc`
-        - `notion`
-        - `twitch`
-        - `twitter`
-        - `slack_oidc`
-        - `spotify`
-        - `workos`
-        - `zoom`
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.external.provider.client_id'
-      title: 'auth.external.<provider>.client_id'
-      tags: ['auth']
-      required: true
-      description: |
-        Client ID for the external OAuth provider.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.external.provider.secret'
-      title: 'auth.external.<provider>.secret'
-      tags: ['auth']
-      required: true
-      default: 'env(SUPABASE_AUTH_EXTERNAL_<PROVIDER>_SECRET)'
-      description: |
-        Client secret for the external OAuth provider.
-
-        DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.external.provider.url'
-      title: 'auth.external.<provider>.url'
-      tags: ['auth']
-      required: false
-      description: |
-        The base URL used for constructing the URLs to request authorization and
-        access tokens. Used by gitlab and keycloak. For gitlab it defaults to
-        https://gitlab.com. For keycloak you need to set this to your instance,
-        for example: https://keycloak.example.com/realms/myrealm .
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.external.provider.redirect_uri'
-      title: 'auth.external.<provider>.redirect_uri'
-      tags: ['auth']
-      required: false
-      description: |
-        The URI a OAuth2 provider will redirect to with the code and state values.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.external.provider.skip_nonce_check'
-      title: 'auth.external.<provider>.skip_nonce_check'
-      tags: ['auth']
-      required: false
-      description: |
-        Disables nonce validation during OIDC authentication flow for the specified provider. Enable only when client libraries cannot properly handle nonce verification. Be aware that this reduces security by allowing potential replay attacks with stolen ID tokens.
-      links:
-        - name: 'Auth Server configuration'
-          link: 'https://supabase.com/docs/reference/auth'
-
-    - id: 'auth.hook.<hook_name>.enabled'
-      title: 'auth.hook.<hook_name>.enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable Auth Hook. Possible values for `hook_name` are: `custom_access_token`, `send_sms`, `send_email`, `mfa_verification_attempt`, and `password_verification_attempt`.
-      links:
-        - name: 'Auth Hooks'
-          link: 'https://supabase.com/docs/guides/auth/auth-hooks'
-
-    - id: 'auth.hook.<hook_name>.uri'
-      title: 'auth.hook.<hook_name>.uri'
-      tags: ['auth']
-      required: false
-      default: ''
-      description: |
-        URI of hook to invoke. Should be a http or https function or Postgres function taking the form: `pg-functions://<database>/<schema>/<function-name>`. For example, `pg-functions://postgres/auth/custom-access-token-hook`.
-      links:
-        - name: 'Auth Hooks'
-          link: 'https://supabase.com/docs/guides/auth/auth-hooks'
-
-    - id: 'auth.hook.<hook_name>.secrets'
-      title: 'auth.hook.<hook_name>.secrets'
-      tags: ['auth']
-      required: false
-      default: ''
-      description: |
-        Configure when using a HTTP Hooks. Takes a list of base64 comma separated values to allow for secret rotation. Currently, Supabase Auth uses only the first value in the list.
-      links:
-        - name: 'Auth Hooks'
-          link: 'https://supabase.com/docs/guides/auth/auth-hooks?queryGroups=language&language=http'
-
-    - id: 'auth.mfa.totp.enroll_enabled'
-      title: 'auth.mfa.totp.enroll_enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable TOTP enrollment for multi-factor authentication.
-      links:
-        - name: 'Auth Multi-Factor Authentication (TOTP)'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
-
-    - id: 'auth.mfa.totp.verify_enabled'
-      title: 'auth.mfa.totp.verify_enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable TOTP verification for multi-factor authentication.
-      links:
-        - name: 'Auth Multi-Factor Authentication (TOTP)'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
-
-    - id: 'auth.mfa.max_enrolled_factors'
-      title: 'auth.mfa.max_enrolled_factors'
-      tags: ['auth']
-      required: false
-      default: '10'
-      description: |
-        Control how many MFA factors can be enrolled at once per user.
-      links:
-        - name: 'Auth Multi-Factor Authentication (TOTP)'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa/totp'
-
-    - id: 'auth.mfa.phone.enroll_enabled'
-      title: 'auth.mfa.phone.enroll_enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable Phone enrollment for multi-factor authentication.
-      links:
-        - name: 'Auth Multi-Factor Authentication (Phone)'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-    - id: 'auth.mfa.phone.otp_length'
-      title: 'auth.mfa.phone.otp_length'
-      tags: ['auth']
-      required: false
-      default: '6'
-      description: |
-        Length of OTP code sent when using phone multi-factor authentication
-      links:
-        - name: 'Auth Multi-Factor Authentication (Phone)'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-    - id: 'auth.mfa.phone.max_frequency'
-      title: 'auth.mfa.phone.max_frequency'
-      tags: ['auth']
-      required: false
-      default: '10s'
-      description: |
-        The minimum amount of time that must pass between phone requests.
-        Helps prevent spam by limiting how frequently messages can be sent.
-        Example values: "10s", "20s", "1m"
-      links:
-        - name: 'Auth Multi-Factor Authentication (Phone)'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-    - id: 'auth.mfa.phone.otp_length'
-      title: 'auth.mfa.phone.otp_length'
-      tags: ['auth']
-      required: false
-      default: '6'
-      description: |
-        Length of OTP sent when using phone multi-factor authentication
-      links:
-        - name: 'Auth Multi-Factor Authentication (Phone)'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-    - id: 'auth.mfa.phone.verify_enabled'
-      title: 'auth.mfa.phone.verify_enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable Phone verification for multi-factor authentication.
-      links:
-        - name: 'Auth Multi-Factor Authentication (Phone)'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa/phone'
-
-    - id: 'auth.mfa.web_authn.enroll_enabled'
-      title: 'auth.mfa.web_authn.enroll_enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable WebAuthn enrollment for multi-factor authentication.
-      links:
-        - name: 'Auth Multi-Factor Authentication'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa'
-
-    - id: 'auth.mfa.web_authn.verify_enabled'
-      title: 'auth.mfa.web_authn.verify_enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable WebAuthn verification for multi-factor authentication.
-      links:
-        - name: 'Auth Multi-Factor Authentication'
-          link: 'https://supabase.com/docs/guides/auth/auth-mfa'
-
-    - id: 'auth.passkey.enabled'
-      title: 'auth.passkey.enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable passkey sign-in and registration. Requires `auth.webauthn` to be configured.
-      links:
-        - name: 'Sign in with Passkey'
-          link: 'https://supabase.com/docs/guides/auth/passkeys'
-
-    - id: 'auth.webauthn.rp_display_name'
-      title: 'auth.webauthn.rp_display_name'
-      tags: ['auth']
-      required: false
-      default: ''
-      description: |
-        Human-readable name for the WebAuthn relying party shown to users during the passkey ceremony. Required when `auth.passkey.enabled` is `true`.
-      links:
-        - name: 'Sign in with Passkey'
-          link: 'https://supabase.com/docs/guides/auth/passkeys'
-
-    - id: 'auth.webauthn.rp_id'
-      title: 'auth.webauthn.rp_id'
-      tags: ['auth']
-      required: false
-      default: ''
-      description: |
-        WebAuthn relying party identifier. Must be a registrable suffix of every origin in `auth.webauthn.rp_origins` (for example `example.com` for `https://app.example.com`). Required when `auth.passkey.enabled` is `true`.
-      links:
-        - name: 'Sign in with Passkey'
-          link: 'https://supabase.com/docs/guides/auth/passkeys'
-
-    - id: 'auth.webauthn.rp_origins'
-      title: 'auth.webauthn.rp_origins'
-      tags: ['auth']
-      required: false
-      default: '[]'
-      description: |
-        List of origins your app is served from. The browser refuses the WebAuthn ceremony if the page origin is not in this list. Required when `auth.passkey.enabled` is `true`.
-      links:
-        - name: 'Sign in with Passkey'
-          link: 'https://supabase.com/docs/guides/auth/passkeys'
-
-    - id: 'auth.sessions.timebox'
-      title: 'auth.sessions.timebox'
-      tags: ['auth']
-      required: false
-      default: ''
-      description: |
-        Force log out after the specified duration. Sample values include: '50m', '20h'.
-      links:
-        - name: 'Auth Sessions'
-          link: 'https://supabase.com/docs/guides/auth/sessions'
-
-    - id: 'auth.sessions.inactivity_timeout'
-      title: 'auth.sessions.inactivity_timeout'
-      tags: ['auth']
-      required: false
-      default: ''
-      description: |
-        Force log out if the user has been inactive longer than the specified duration. Sample values include: '50m', '20h'.
-      links:
-        - name: 'Auth Sessions'
-          link: 'https://supabase.com/docs/guides/auth/sessions'
-
-    - id: 'auth.third_party.aws_cognito.enabled'
-      title: 'auth.third_party.aws_cognito.enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable third party auth with AWS Cognito (Amplify)
-      links:
-        - name: 'Third Party Auth (Cognito)'
-          link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
-
-    - id: 'auth.third_party.aws_cognito.user_pool_id'
-      title: 'auth.third_party.aws_cognito.user_pool_id'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        User Pool ID for AWS Cognito (Amplify) that you are integrating with
-      links:
-        - name: 'Third Party Auth (Cognito)'
-          link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
-
-    - id: 'auth.third_party.aws_cognito.user_pool_region'
-      title: 'auth.third_party.aws_cognito.user_pool_region'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        User Pool region for AWS Cognito (Amplify) that you are integrating with. Example values: 'ap-southeast-1', 'us-east-1'
-      links:
-        - name: 'Third Party Auth (Cognito)'
-          link: 'https://supabase.com/docs/guides/auth/third-party/aws-cognito'
-
-    - id: 'auth.third_party.auth0.enabled'
-      title: 'auth.third_party.auth0.enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable third party auth with Auth0
-      links:
-        - name: 'Third Party Auth (Auth0)'
-          link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
-
-    - id: 'auth.third_party.auth0.tenant'
-      title: 'auth.third_party.auth0.tenant'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Tenant Identifier for Auth0 instance that you are integrating with
-      links:
-        - name: 'Third Party Auth (Auth0)'
-          link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
-
-    - id: 'auth.third_party.auth0.tenant_region'
-      title: 'auth.third_party.tenant_region'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Tenant region for Auth0 instance that you are integrating with
-      links:
-        - name: 'Third Party Auth (Auth0)'
-          link: 'https://supabase.com/docs/guides/auth/third-party/auth0'
-
-    - id: 'auth.third_party.firebase.enabled'
-      title: 'auth.third_party.firebase.enabled'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Enable third party auth with Firebase
-      links:
-        - name: 'Third Party Auth (Firebase)'
-          link: 'https://supabase.com/docs/guides/auth/third-party/firebase-auth'
-
-    - id: 'auth.third_party.firebase.project_id'
-      title: 'auth.third_party.firebase.project_id'
-      tags: ['auth']
-      required: false
-      default: 'false'
-      description: |
-        Project ID for Firebase instance that you are integrating with
-      links:
-        - name: 'Third Party Auth (Firebase)'
-          link: 'https://supabase.com/docs/guides/auth/third-party/firebase-auth'
-
-    - id: 'edge_runtime.enabled'
-      title: 'edge_runtime.enabled'
-      tags: ['edge-functions']
-      required: false
-      default: 'true'
-      description: |
-        Enable the local Edge Runtime service for Edge Functions.
-      links: []
-
-    - id: 'edge_runtime.policy'
-      title: 'edge_runtime.policy'
-      tags: ['edge-functions']
-      required: false
-      default: '"oneshot"'
-      description: |
-        Configure the request handling policy for Edge Functions. Available options:
-        - `oneshot`: Recommended for development with hot reload support
-        - `per_worker`: Recommended for load testing scenarios
-      links: []
-
-    - id: 'edge_runtime.inspector_port'
-      title: 'edge_runtime.inspector_port'
-      tags: ['edge-functions']
-      required: false
-      default: '8083'
-      description: |
-        Port to attach the Chrome inspector for debugging Edge Functions.
-      links: []
-
-    - id: 'functions.function_name.enabled'
-      title: 'functions.<function_name>.enabled'
-      tags: ['edge-functions']
-      required: false
-      default: 'true'
-      description: |
-        Controls whether a function is deployed or served. When set to false,
-        the function will be skipped during deployment and won't be served locally.
-        This is useful for disabling demo functions or temporarily disabling a function
-        without removing its code.
-      links:
-        - name: '`supabase functions` CLI subcommands'
-          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-
-    - id: 'functions.function_name.verify_jwt'
-      title: 'functions.<function_name>.verify_jwt'
-      tags: ['edge-functions']
-      required: false
-      default: 'true'
-      description: |
-        By default, when you deploy your Edge Functions or serve them locally, it
-        will reject requests without a valid JWT in the Authorization header.
-        Setting this configuration changes the default behavior.
-
-        Note that the `--no-verify-jwt` flag overrides this configuration.
-      links:
-        - name: '`supabase functions` CLI subcommands'
-          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-
-    - id: 'functions.function_name.import_map'
-      title: 'functions.<function_name>.import_map'
-      tags: ['edge-functions']
-      required: false
-      description: |
-        Specify the Deno import map file to use for the Function.
-        When not specified, defaults to `supabase/functions/<function_name>/deno.json`.
-
-        Note that the `--import-map` flag overrides this configuration.
-      links:
-        - name: '`supabase functions` CLI subcommands'
-          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-
-    - id: 'functions.function_name.entrypoint'
-      title: 'functions.<function_name>.entrypoint'
-      tags: ['edge-functions']
-      required: false
-      description: |
-        Specify a custom entrypoint path for the function relative to the project root.
-        When not specified, defaults to `supabase/functions/<function_name>/index.ts`.
-      links:
-        - name: '`supabase functions` CLI subcommands'
-          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-      usage: |
-        [functions.my_function]
-        entrypoint = "path/to/custom/function.ts"
-
-    - id: 'functions.function_name.static_files'
-      title: 'functions.<function_name>.static_files'
-      tags: ['edge-functions']
-      required: false
-      description: |
-        Specify an array of static files to be bundled with the function. Supports glob patterns.
-
-        NOTE: only file paths within `functions` directory are supported at the moment.
-      links:
-        - name: '`supabase functions` CLI subcommands'
-          link: 'https://supabase.com/docs/reference/cli/supabase-functions'
-      usage: |
-        [functions.my_function]
-        static_files = [ "./functions/MY_FUNCTION_NAME/*.html", "./functions/MY_FUNCTION_NAME/custom.wasm" ]
-
-    - id: 'analytics.enabled'
-      title: 'analytics.enabled'
-      tags: ['analytics']
-      required: false
-      default: 'false'
-      description: |
-        Enable the local Logflare service.
-      links:
-        - name: Self-hosted Logflare Configuration
-          link: https://supabase.com/docs/reference/self-hosting-analytics/list-endpoints#getting-started
-
-    - id: 'analytics.port'
-      title: 'analytics.port'
-      tags: ['analytics']
-      required: false
-      default: '54327'
-      description: |
-        Port to the local Logflare service.
-      links: []
-
-    - id: 'analytics.vector_port'
-      title: 'analytics.vector_port'
-      tags: ['analytics']
-      required: false
-      default: '54328'
-      description: |
-        Port to the local syslog ingest service.
-      links: []
-
-    - id: 'analytics.backend'
-      title: 'analytics.backend'
-      tags: ['analytics']
-      required: false
-      default: '"postgres"'
-      description: |
-        Configure one of the supported backends:
-
-        - `postgres`
-        - `bigquery`
-      links:
-        - name: Self-hosted Logflare Configuration
-          link: https://supabase.com/docs/reference/self-hosting-analytics/list-endpoints#getting-started
-
-    - id: 'experimental.webhooks.enabled'
-      title: 'experimental.webhooks.enabled'
-      tags: ['experimental']
-      required: false
-      default: 'false'
-      description: |
-        Automatically enable webhook features on each new created branch
-        Note: This is an experimental feature and may change in future releases.
-      links: []
-
-    - id: 'experimental.orioledb_version'
-      title: 'experimental.orioledb_version'
-      tags: ['experimental']
-      required: false
-      description: |
-        Configures Postgres storage engine to use OrioleDB with S3 support.
-        Note: This is an experimental feature and may change in future releases.
-      links: []
-
-    - id: 'experimental.s3_host'
-      title: 'experimental.s3_host'
-      tags: ['experimental']
-      required: false
-      default: 'env(S3_HOST)'
-      description: |
-        Configures S3 bucket URL for OrioleDB storage.
-        Format example: <bucket_name>.s3-<region>.amazonaws.com
-        Note: This is an experimental feature and may change in future releases.
-      links: []
-
-    - id: 'experimental.s3_region'
-      title: 'experimental.s3_region'
-      tags: ['experimental']
-      required: false
-      default: 'env(S3_REGION)'
-      description: |
-        Configures S3 bucket region for OrioleDB storage.
-        Example: us-east-1
-        Note: This is an experimental feature and may change in future releases.
-      links: []
-
-    - id: 'experimental.s3_access_key'
-      title: 'experimental.s3_access_key'
-      tags: ['experimental']
-      required: false
-      default: 'env(S3_ACCESS_KEY)'
-      description: |
-        Configures AWS_ACCESS_KEY_ID for S3 bucket access.
-        DO NOT commit your AWS access key to git. Use environment variable substitution instead.
-        Note: This is an experimental feature and may change in future releases.
-      links: []
-
-    - id: 'experimental.s3_secret_key'
-      title: 'experimental.s3_secret_key'
-      tags: ['experimental']
-      required: false
-      default: 'env(S3_SECRET_KEY)'
-      description: |
-        Configures AWS_SECRET_ACCESS_KEY for S3 bucket access.
-        DO NOT commit your AWS secret key to git. Use environment variable substitution instead.
-        Note: This is an experimental feature and may change in future releases.
-      links: []
-
-    - id: 'remotes.branch_name.project_id'
-      title: 'remotes.<branch_name>.project_id'
-      tags: ['branching']
-      required: true
-      description: |
-        The project reference ID for a specific persistent Supabase branch.
-        This ID is used to configure branch-specific settings in your config.toml file for branches deployments.
-        All other configuration options available in the root config are also supported in the remotes block.
-        For example, you can specify branch-specific database settings like so:
-      usage: |
-        [remotes.<branch_name>]
-        project_id = "your-project-ref"
-
-        [remotes.<branch_name>.db.seed]
-        sql_paths = ["./seeds/staging.sql"]
+## `api.enabled`
+* enable the local PostgREST service
+
+## `api.port`
+* port -- for -- the API URL
+
+## `api.schemas`
+* schemas -- to -- expose | your API
+  * tables, views, functions -> get API endpoints
+  * `public` & `storage` always included
+
+## `api.extra_search_path`
+* extra schemas -- to -- add | search_path of every request
+  * `public` always included
+
+## `api.max_rows`
+* MAXIMUM number of rows -- returned from -- view / table / function
+  * limits payload size for accidental or malicious requests
+
+## `db.port`
+* port -- for -- the local database URL
+
+## `db.shadow_port`
+* port -- for -- the local shadow database
+
+## `db.major_version`
+* database major version
+  * ⚠️ must == your remote database's⚠️
+  * check: `SHOW server_version;` | remote database
+
+## `db.pooler.enabled`
+* enable the local PgBouncer service
+
+## `db.pooler.port`
+* port -- for -- the local connection pooler
+
+## `db.pooler.pool_mode`
+* specifies when a server connection can be reused by other clients
+  * supported modes: `transaction`, `session`
+
+## `db.pooler.default_pool_size`
+* number of server connections allowed per user/database pair
+
+## `db.pooler.max_client_conn`
+* MAXIMUM number of client connections allowed
+
+## `db.settings.effective_cache_size`
+* planner's assumption about the effective size of the disk cache
+  * query planner parameter — ❌ does NOT affect actual memory allocation❌
+
+## `db.settings.logical_decoding_work_mem`
+* memory -- for -- logical decoding, before writing data to local disk
+
+## `db.settings.maintenance_work_mem`
+* MAXIMUM memory -- for -- maintenance operations (VACUUM, CREATE INDEX, ALTER TABLE ADD FOREIGN KEY)
+
+## `db.settings.max_connections`
+* MAXIMUM number of concurrent connections
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.max_locks_per_transaction`
+* average number of object locks -- allocated for -- each transaction
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.max_parallel_maintenance_workers`
+* MAXIMUM parallel workers -- started by -- a single utility command
+
+## `db.settings.max_parallel_workers`
+* MAXIMUM parallel workers -- supported by -- the system
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.max_parallel_workers_per_gather`
+* MAXIMUM parallel workers -- started by -- a single Gather or Gather Merge node
+
+## `db.settings.max_replication_slots`
+* MAXIMUM number of replication slots
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.max_slot_wal_keep_size`
+* MAXIMUM size of WAL files -- retained by -- replication slots | pg_wal directory
+
+## `db.settings.max_standby_archive_delay`
+* MAXIMUM delay before canceling queries | hot standby -- processing -- archived WAL data
+
+## `db.settings.max_standby_streaming_delay`
+* MAXIMUM delay before canceling queries | hot standby -- processing -- streamed WAL data
+
+## `db.settings.max_wal_size`
+* MAXIMUM size of WAL files | pg_wal directory
+
+## `db.settings.max_wal_senders`
+* MAXIMUM concurrent connections from standby servers or streaming base backup clients
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.max_worker_processes`
+* MAXIMUM number of background processes
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.session_replication_role`
+* controls whether triggers and rewrite rules are enabled
+  * valid values: `"origin"`, `"replica"`, `"local"`
+
+## `db.settings.shared_buffers`
+* memory -- for -- shared memory buffers
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.statement_timeout`
+* abort any statement -- taking more than -- the specified time
+
+## `db.settings.track_activity_query_size`
+* MAXIMUM size of the query string tracked | pg_stat_activity.current_query
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.track_commit_timestamp`
+* record commit time of transactions
+  * ⚠️ requires database restart⚠️
+
+## `db.settings.wal_keep_size`
+* MINIMUM size of past log file segments | pg_wal directory
+
+## `db.settings.wal_sender_timeout`
+* terminate replication connections inactive longer than this time
+
+## `db.settings.work_mem`
+* memory -- for -- internal sort operations and hash tables, before writing to temp disk files
+
+## `db.seed.enabled`
+* enables running seeds | starting or resetting the database
+
+## `db.seed.sql_paths`
+* array of files or glob patterns -- to -- find seeds
+
+## `realtime.enabled`
+* enable the local Realtime service
+
+## `realtime.ip_version`
+* bind realtime -- via -- IPv4 or IPv6
+
+## `studio.enabled`
+* enable the local Supabase Studio dashboard
+
+## `studio.port`
+* port -- for -- Supabase Studio
+
+## `studio.api_url`
+* external URL of the API server -- that -- frontend connects to
+
+## `studio.openai_api_key`
+* OpenAI API key -- for -- AI features | Studio dashboard
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `inbucket.enabled`
+* enable the local InBucket service
+
+## `inbucket.port`
+* port -- for -- the email testing server web interface
+  * emails sent | local dev setup are ❌ NOT actually sent❌ — monitored via web interface
+
+## `inbucket.smtp_port`
+* port -- for -- the email testing server SMTP port
+
+## `inbucket.pop3_port`
+* port -- for -- the email testing server POP3 port
+
+## `inbucket.admin_email`
+* email -- used as -- sender | emails sent from the application
+
+## `inbucket.sender_name`
+* display name -- used as -- sender | emails sent from the application
+
+## `storage.enabled`
+* enable the local Storage service
+
+## `storage.file_size_limit`
+* MAXIMUM file size allowed -- for -- ALL buckets | the project
+
+## `auth.enabled`
+* enable the local GoTrue service
+
+## `auth.site_url`
+* base URL of your website
+  * used as allow-list for redirects & for constructing URLs | emails
+
+## `auth.additional_redirect_urls`
+* list of _exact_ URLs -- that -- auth providers are permitted to redirect to post authentication
+
+## `auth.jwt_expiry`
+* how long tokens are valid, in seconds
+  * default: 3600 (1 hour), maximum: 604800 (1 week)
+
+## `auth.enable_manual_linking`
+* allow testing manual linking of accounts
+
+## `auth.enable_refresh_token_rotation`
+* if disabled -> refresh token will ❌ NEVER expire❌
+
+## `auth.refresh_token_reuse_interval`
+* allows refresh tokens -- to be -- reused after expiry, up to the specified interval (seconds)
+  * ⚠️ requires `enable_refresh_token_rotation = true`⚠️
+
+## `auth.rate_limit.email_sent`
+* number of emails -- sent per -- hour
+  * ⚠️ requires `auth.email.smtp` to be enabled⚠️
+
+## `auth.rate_limit.sms_sent`
+* number of SMS messages -- sent per -- hour
+  * ⚠️ requires `auth.sms` to be enabled⚠️
+
+## `auth.rate_limit.anonymous_users`
+* number of anonymous sign-ins per hour per IP address
+  * ⚠️ requires `enable_anonymous_sign_ins = true`⚠️
+
+## `auth.rate_limit.token_refresh`
+* number of sessions -- refreshed in -- a 5 minute interval per IP address
+
+## `auth.rate_limit.sign_in_sign_ups`
+* number of sign up and sign-in requests in a 5 minute interval per IP address
+  * excludes anonymous users
+
+## `auth.rate_limit.token_verifications`
+* number of OTP / Magic link verifications in a 5 minute interval per IP address
+
+## `auth.enable_signup`
+* allow/disallow new user signups
+
+## `auth.enable_anonymous_sign_ins`
+* allow/disallow anonymous sign-ins
+
+## `auth.email.enable_signup`
+* allow/disallow new user signups -- via -- email
+
+## `auth.email.double_confirm_changes`
+* if enabled -> user must confirm email change | BOTH old & new email addresses
+
+## `auth.email.enable_confirmations`
+* if enabled -> users must confirm their email address before signing in
+
+## `auth.email.secure_password_change`
+* if enabled -> requires current password -- when -- changing to a new password
+
+## `auth.email.max_frequency`
+* MINIMUM time -- between -- email requests
+  * _Example values:_ `"1m"`, `"1h"`, `"24h"`
+
+## `auth.email.otp_length`
+* length of OTP code -- sent in -- emails
+  * must be between 6 and 10 digits
+
+## `auth.email.otp_expiry`
+* expiry time for an OTP code, in seconds
+
+## `auth.email.smtp.host`
+* hostname or IP address of the SMTP server
+
+## `auth.email.smtp.port`
+* port number of the SMTP server
+
+## `auth.email.smtp.user`
+* username -- for -- authenticating with the SMTP server
+
+## `auth.email.smtp.pass`
+* password -- for -- authenticating with the SMTP server
+
+## `auth.email.smtp.admin_email`
+* email -- used as -- sender | emails sent from the application
+
+## `auth.email.smtp.sender_name`
+* display name -- used as -- sender | emails sent from the application
+
+## `auth.email.template.<type>.subject`
+* subject | email template -- for -- the given type
+  * types: `invite`, `confirmation`, `recovery`, `magic_link`, `email_change`
+
+## `auth.email.template.<type>.content_path`
+* content path | email template -- for -- the given type
+  * types: `invite`, `confirmation`, `recovery`, `magic_link`, `email_change`
+
+## `auth.email.notification.<type>.enabled`
+* determines whether to send email notifications -- for -- the given type
+  * types: `password_changed`, `email_changed`, `phone_changed`, `mfa_factor_enrolled`, `mfa_factor_unenrolled`, `identity_linked`, `identity_unlinked`
+
+## `auth.email.notification.<type>.subject`
+* subject -- for -- the given email notification type
+
+## `auth.email.notification.<type>.content_path`
+* relative path to the content template -- for -- the given email notification type
+
+## `auth.sms.enable_signup`
+* allow/disallow new user signups -- via -- SMS
+
+## `auth.sms.enable_confirmations`
+* if enabled -> users must confirm their phone number before signing in
+
+## `auth.sms.test_otp`
+* pre-defined map of phone number -> OTP -- for -- testing
+  * usage: `[auth.sms.test_otp]` / `4152127777 = "123456"`
+
+## `auth.sms.<provider>.enabled`
+* use an external SMS provider
+  * providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`
+
+## `auth.sms.<twilio|twilio_verify>.account_sid`
+* Twilio Account SID
+
+## `auth.sms.<twilio|twilio_verify>.message_service_sid`
+* Twilio Message Service SID
+
+## `auth.sms.<twilio|twilio_verify>.auth_token`
+* Twilio Auth Token
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `auth.sms.messagebird.originator`
+* MessageBird Originator
+
+## `auth.sms.messagebird.access_key`
+* MessageBird Access Key
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `auth.sms.textlocal.sender`
+* TextLocal Sender
+
+## `auth.sms.textlocal.api_key`
+* TextLocal API Key
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `auth.sms.vonage.from`
+* Vonage From
+
+## `auth.sms.vonage.api_key`
+* Vonage API Key
+
+## `auth.sms.vonage.api_secret`
+* Vonage API Secret
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `auth.external.<provider>.enabled`
+* use an external OAuth provider
+  * providers: `apple`, `azure`, `bitbucket`, `discord`, `facebook`, `github`, `gitlab`, `google`, `kakao`, `keycloak`, `linkedin_oidc`, `notion`, `twitch`, `twitter`, `slack_oidc`, `spotify`, `workos`, `zoom`
+
+## `auth.external.<provider>.client_id`
+* client ID -- for -- the external OAuth provider
+
+## `auth.external.<provider>.secret`
+* client secret -- for -- the external OAuth provider
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `auth.external.<provider>.url`
+* base URL -- for -- constructing authorization and access token URLs
+  * used by `gitlab` and `keycloak`
+
+## `auth.external.<provider>.redirect_uri`
+* URI -- that -- OAuth2 provider will redirect to with the code and state values
+
+## `auth.external.<provider>.skip_nonce_check`
+* disables nonce validation during OIDC authentication flow
+  * ⚠️ reduces security — allows potential replay attacks with stolen ID tokens⚠️
+
+## `auth.hook.<hook_name>.enabled`
+* enable Auth Hook
+  * possible values: `custom_access_token`, `send_sms`, `send_email`, `mfa_verification_attempt`, `password_verification_attempt`
+
+## `auth.hook.<hook_name>.uri`
+* URI of hook to invoke
+  * http/https function OR Postgres function: `pg-functions://<database>/<schema>/<function-name>`
+
+## `auth.hook.<hook_name>.secrets`
+* configure -- when using -- HTTP Hooks
+  * base64 comma-separated values — for secret rotation
+
+## `auth.mfa.totp.enroll_enabled`
+* enable TOTP enrollment -- for -- MFA
+
+## `auth.mfa.totp.verify_enabled`
+* enable TOTP verification -- for -- MFA
+
+## `auth.mfa.max_enrolled_factors`
+* MAXIMUM number of MFA factors -- enrolled per -- user
+
+## `auth.mfa.phone.enroll_enabled`
+* enable Phone enrollment -- for -- MFA
+
+## `auth.mfa.phone.otp_length`
+* length of OTP code -- sent when using -- phone MFA
+
+## `auth.mfa.phone.max_frequency`
+* MINIMUM time -- between -- phone requests
+  * _Example values:_ `"10s"`, `"20s"`, `"1m"`
+
+## `auth.mfa.phone.verify_enabled`
+* enable Phone verification -- for -- MFA
+
+## `auth.mfa.web_authn.enroll_enabled`
+* enable WebAuthn enrollment -- for -- MFA
+
+## `auth.mfa.web_authn.verify_enabled`
+* enable WebAuthn verification -- for -- MFA
+
+## `auth.passkey.enabled`
+* enable passkey sign-in and registration
+  * ⚠️ requires `auth.webauthn` to be configured⚠️
+
+## `auth.webauthn.rp_display_name`
+* human-readable name -- for -- the WebAuthn relying party, shown to users during passkey ceremony
+  * ⚠️ required when `auth.passkey.enabled = true`⚠️
+
+## `auth.webauthn.rp_id`
+* WebAuthn relying party identifier
+  * must be a registrable suffix of every origin | `auth.webauthn.rp_origins`
+  * ⚠️ required when `auth.passkey.enabled = true`⚠️
+
+## `auth.webauthn.rp_origins`
+* list of origins your app is served from
+  * browser refuses WebAuthn ceremony if page origin ❌ NOT in this list❌
+  * ⚠️ required when `auth.passkey.enabled = true`⚠️
+
+## `auth.sessions.timebox`
+* force log out after the specified duration
+  * _Example values:_ `'50m'`, `'20h'`
+
+## `auth.sessions.inactivity_timeout`
+* force log out if user has been inactive longer than the specified duration
+
+## `auth.third_party.aws_cognito.enabled`
+* enable third party auth -- with -- AWS Cognito (Amplify)
+
+## `auth.third_party.aws_cognito.user_pool_id`
+* User Pool ID -- for -- AWS Cognito (Amplify)
+
+## `auth.third_party.aws_cognito.user_pool_region`
+* User Pool region -- for -- AWS Cognito (Amplify)
+  * _Example values:_ `'ap-southeast-1'`, `'us-east-1'`
+
+## `auth.third_party.auth0.enabled`
+* enable third party auth -- with -- Auth0
+
+## `auth.third_party.auth0.tenant`
+* Tenant Identifier -- for -- Auth0 instance
+
+## `auth.third_party.auth0.tenant_region`
+* Tenant region -- for -- Auth0 instance
+
+## `auth.third_party.firebase.enabled`
+* enable third party auth -- with -- Firebase
+
+## `auth.third_party.firebase.project_id`
+* Project ID -- for -- Firebase instance
+
+## `edge_runtime.enabled`
+* enable the local Edge Runtime service -- for -- Edge Functions
+
+## `edge_runtime.policy`
+* request handling policy -- for -- Edge Functions
+  * `oneshot`: recommended for development (hot reload support)
+  * `per_worker`: recommended for load testing
+
+## `edge_runtime.inspector_port`
+* port -- to -- attach the Chrome inspector for debugging Edge Functions
+
+## `functions.<function_name>.enabled`
+* controls whether a function is deployed or served
+  * `false` -> skipped during deployment & ❌ NOT served locally❌
+
+## `functions.<function_name>.verify_jwt`
+* if `true` -> rejects requests ❌ without❌ a valid JWT | Authorization header
+
+## `functions.<function_name>.import_map`
+* Deno import map file -- for -- the Function
+  * default: `supabase/functions/<function_name>/deno.json`
+
+## `functions.<function_name>.entrypoint`
+* custom entrypoint path -- for -- the function, relative to project root
+  * default: `supabase/functions/<function_name>/index.ts`
+
+## `functions.<function_name>.static_files`
+* array of static files -- to -- bundle with the function
+  * supports glob patterns
+  * ⚠️ only file paths within `functions` directory supported⚠️
+
+## `analytics.enabled`
+* enable the local Logflare service
+
+## `analytics.port`
+* port -- to -- the local Logflare service
+
+## `analytics.vector_port`
+* port -- to -- the local syslog ingest service
+
+## `analytics.backend`
+* configure one of the supported backends: `postgres`, `bigquery`
+
+## `experimental.webhooks.enabled`
+* automatically enable webhook features -- on -- each new created branch
+  * ⚠️ experimental — may change in future releases⚠️
+
+## `experimental.orioledb_version`
+* configures Postgres storage engine -- to use -- OrioleDB with S3 support
+  * ⚠️ experimental — may change in future releases⚠️
+
+## `experimental.s3_host`
+* S3 bucket URL -- for -- OrioleDB storage
+  * format: `<bucket_name>.s3-<region>.amazonaws.com`
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `experimental.s3_region`
+* S3 bucket region -- for -- OrioleDB storage
+  * _Example:_ `us-east-1`
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `experimental.s3_access_key`
+* `AWS_ACCESS_KEY_ID` -- for -- S3 bucket access
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `experimental.s3_secret_key`
+* `AWS_SECRET_ACCESS_KEY` -- for -- S3 bucket access
+  * ❌ DO NOT commit to git❌ — use env variable substitution
+
+## `remotes.<branch_name>.project_id`
+* project reference ID -- for -- a specific persistent Supabase branch
+  * all root config options also supported | `remotes` block

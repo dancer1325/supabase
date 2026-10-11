@@ -5,19 +5,23 @@ description: 'Get started with Supabase Edge Functions.'
 subtitle: 'Learn how to create, test, and deploy your first Edge Function using the Supabase Dashboard.'
 ---
 
-Supabase allows you to create Supabase Edge Functions directly from the Supabase Dashboard, making it easy to deploy functions without needing to set up a local development environment. The Edge Functions editor in the Dashboard has built-in syntax highlighting and type-checking for Deno and Supabase-specific APIs.
+Supabase allows you to create Supabase Edge Functions directly from the Supabase Dashboard, making it easy to deploy functions without needing to set up a local development environment
+* The Edge Functions editor in the Dashboard has built-in syntax highlighting and type-checking for Deno and Supabase-specific APIs.
 
-This guide will walk you through creating, testing, and deploying your first Edge Function using the Supabase Dashboard. You'll have a working function running globally in under 10 minutes.
+This guide will walk you through creating, testing, and deploying your first Edge Function using the Supabase Dashboard
+* You'll have a working function running globally in under 10 minutes.
 
 <Admonition type="tip" title="Prefer using the CLI?">
 
-You can also create and deploy functions using the Supabase CLI. Check out our [CLI Quickstart guide](/docs/guides/functions/quickstart).
+You can also create and deploy functions using the Supabase CLI
+* Check out our [CLI Quickstart guide](/docs/guides/functions/quickstart).
 
 </Admonition>
 
 <Admonition type="note" title="New to Supabase?">
 
-You'll need a Supabase project to get started. If you don't have one yet, create a new project at [database.new](https://database.new/).
+You'll need a Supabase project to get started
+* If you don't have one yet, create a new project at [database.new](https://database.new/).
 
 </Admonition>
 
@@ -39,22 +43,14 @@ You'll see the Edge Functions overview page where you can manage all your functi
 
 Click the **"Deploy a new function"** button and select **"Via Editor"** to create a function directly in the dashboard.
 
-<Image
-  alt="Scaffold functions through the dashboard editor"
-  src={{
-    light: '/docs/img/guides/functions/dashboard/create-edge-function--light.png',
-    dark: '/docs/img/guides/functions/dashboard/create-edge-function--dark.png',
-  }}
-
-width={2338}
-height={926}
-/>
+![Scaffold functions through the dashboard editor](../../../public/img/guides/functions/dashboard/create-edge-function--light.png)
 
 <Admonition type="note" title="Pre-built templates">
 
 The dashboard offers several pre-built templates for common use cases, such as Stripe Webhooks, OpenAI proxying, uploading files to Supabase Storage, and sending emails.
 
-For this guide, we’ll select the **"Hello World"** template. If you’d rather start from scratch, you can ignore the pre-built templates.
+For this guide, we’ll select the **"Hello World"** template
+* If you’d rather start from scratch, you can ignore the pre-built templates.
 
 </Admonition>
 
@@ -62,20 +58,13 @@ For this guide, we’ll select the **"Hello World"** template. If you’d rather
 
 ## Step 3: Customize your function code
 
-The dashboard will load your chosen template in the code editor. Here's what the "Hello World" template looks like:
+The dashboard will load your chosen template in the code editor
+* Here's what the "Hello World" template looks like:
 
-<Image
-  alt="Hello World template"
-  src={{
-    light: '/docs/img/guides/functions/dashboard/edge-function-template--light.png',
-    dark: '/docs/img/guides/functions/dashboard/edge-function-template--dark.png',
-  }}
+![Hello World template](../../../public/img/guides/functions/dashboard/edge-function-template--light.png)
 
-width={2430}
-height={1248}
-/>
-
-If needed, you can modify this code directly in the browser editor. The function accepts a JSON payload with a `name` field and returns a greeting message.
+If needed, you can modify this code directly in the browser editor
+* The function accepts a JSON payload with a `name` field and returns a greeting message.
 
 ---
 
@@ -107,16 +96,7 @@ On your function's details page:
 
 Click **"Send Request"** to test your function.
 
-<Image
-  alt="Test your function"
-  src={{
-    light: '/docs/img/guides/functions/dashboard/edge-function-test--light.png',
-    dark: '/docs/img/guides/functions/dashboard/edge-function-test--dark.png',
-  }}
-
-width={2430}
-height={1350}
-/>
+![Test your function](../../../public/img/guides/functions/dashboard/edge-function-test--light.png)
 
 In this example, we successfully tested our Hello World function by sending a JSON payload with a name field, and received the expected greeting message back.
 
@@ -208,29 +188,11 @@ You can also use Supabase's AI Assistant to generate and deploy functions automa
 
 Go to your project > **Deploy a new function** > **Via AI Assistant**.
 
-<Image
-  alt="Create Edge Function via AI Assistant"
-  src={{
-    light: '/docs/img/guides/functions/dashboard/create-ai-edge-function--light.png',
-    dark: '/docs/img/guides/functions/dashboard/create-ai-edge-function--dark.png',
-  }}
-
-width={2604}
-height={926}
-/>
+![Create Edge Function via AI Assistant](../../../public/img/guides/functions/dashboard/create-ai-edge-function--light.png)
 
 Describe what you want your function to do in the prompt
 
-<Image
-  alt="Create Edge Function via AI Assistant"
-  src={{
-    light: '/docs/img/guides/functions/dashboard/ai-edge-function--light.png',
-    dark: '/docs/img/guides/functions/dashboard/ai-edge-function--dark.png',
-  }}
-
-width={2768}
-height={1836}
-/>
+![Create Edge Function via AI Assistant](../../../public/img/guides/functions/dashboard/ai-edge-function--light.png)
 
 Click **Deploy** and the Assistant will create and deploy the function for you.
 

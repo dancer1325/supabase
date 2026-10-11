@@ -28,17 +28,19 @@ Phone OTP login can:
 ## how to enable phone login?
 
 * steps
-  * | hosted projects,
-    * Supabase dashboard > choose a project > auth > providers
-  * | self-hosted projects OR local development,
-    * set [`auth.sms`](../../../spec/config#auth.sms.enable_signup)
+  * -- based on -- Supabase stack 
+    * | hosted projects,
+      * Supabase dashboard > choose a project > auth > providers
+    * | self-hosted projects OR local development,
+      * set [`auth.sms`](../../../spec/cli_v1_config.md#aut.sms)
+  * set up an SMS provider
+    * [SUPPORTED](../../../components/AuthSmsProviderConfig)
+      * MessageBird
+      * Twilio
+      * Vonage
+      * TextLocal (community-supported)
 
-You also need to set up an SMS provider
-* Each provider has its own configuration
-* Supported providers include MessageBird, Twilio, Vonage, and TextLocal (community-supported).
-
-<AuthSmsProviderConfig />
-
+TODO: 
 By default, a user can only request an OTP once every <SharedData data="config">auth.rate_limits.otp.period</SharedData> and they expire after <SharedData data="config">auth.rate_limits.otp.validity</SharedData>.
 
 ## Signing in with phone OTP
